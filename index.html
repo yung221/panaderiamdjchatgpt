@@ -1,1861 +1,1297 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Panadería MDJ | Tienda en línea</title>
-  <meta name="theme-color" content="#d8c3a5" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Aka:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #f6efe6;
-      --bg-2: #efe4d3;
-      --card: rgba(255,255,255,0.7);
-      --card-strong: #fffaf3;
-      --text: #3d2d22;
-      --muted: #7a6353;
-      --line: rgba(84, 61, 46, 0.12);
-      --accent: #8a6245;
-      --accent-2: #b48663;
-      --accent-3: #5a3f31;
-      --ok: #2f7d4f;
-      --warn: #b17b12;
-      --bad: #b24c4c;
-      --shadow: 0 18px 40px rgba(81, 58, 40, 0.10);
-      --shadow-soft: 0 10px 24px rgba(81, 58, 40, 0.08);
-      --radius: 22px;
-      --radius-sm: 16px;
-      --radius-xs: 12px;
-    }
-
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: 'Aka', system-ui, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(255,255,255,0.8), transparent 36%),
-        radial-gradient(circle at right top, rgba(188,146,104,0.15), transparent 26%),
-        linear-gradient(180deg, var(--bg) 0%, #f8f2ea 40%, #f3ebdf 100%);
-      min-height: 100vh;
-    }
-
-    button, input, select, textarea { font: inherit; }
-    a { color: inherit; text-decoration: none; }
-    img { max-width: 100%; display: block; }
-
-    .app {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 14px 14px 110px;
-    }
-
-    .glass {
-      background: var(--card);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255,255,255,0.7);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .topbar {
-      position: sticky;
-      top: 10px;
-      z-index: 20;
-      border-radius: 26px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .brand-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .brand-mark {
-      width: 46px;
-      height: 46px;
-      border-radius: 16px;
-      background: linear-gradient(145deg, #9c7250, #c7a07e);
-      display: grid;
-      place-items: center;
-      color: white;
-      font-weight: 700;
-      box-shadow: 0 12px 28px rgba(156,114,80,0.25);
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 1.05rem;
-      line-height: 1.05;
-      letter-spacing: 0.02em;
-    }
-
-    .brand p {
-      margin: 3px 0 0;
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-
-    .icon-btn {
-      border: 0;
-      background: rgba(255,255,255,0.72);
-      color: var(--accent-3);
-      width: 46px;
-      height: 46px;
-      border-radius: 16px;
-      display: grid;
-      place-items: center;
-      box-shadow: inset 0 0 0 1px rgba(90,63,49,0.08);
-      transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
-      cursor: pointer;
-    }
-
-    .icon-btn:active, .btn:active, .chip:active, .product-card:active, .order-card:active, .mini-tab:active {
-      transform: scale(0.98);
-    }
-
-    .icon-btn:hover, .btn:hover, .chip:hover, .product-card:hover, .order-card:hover, .mini-tab:hover {
-      box-shadow: 0 14px 34px rgba(81, 58, 40, 0.10);
-    }
-
-    .search-wrap {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-    }
-
-    .search {
-      width: 100%;
-      border: 1px solid rgba(90,63,49,0.10);
-      background: rgba(255,255,255,0.76);
-      border-radius: 18px;
-      padding: 14px 16px;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .search:focus, .field:focus, .textarea:focus, .select:focus {
-      border-color: rgba(138,98,69,0.5);
-      box-shadow: 0 0 0 4px rgba(138,98,69,0.10);
-    }
-
-    .btn {
-      border: 0;
-      border-radius: 18px;
-      padding: 13px 16px;
-      cursor: pointer;
-      transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: white;
-      box-shadow: 0 16px 30px rgba(138,98,69,0.24);
-    }
-
-    .btn-secondary {
-      background: rgba(255,255,255,0.85);
-      color: var(--accent-3);
-      border: 1px solid rgba(90,63,49,0.10);
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, #a84b4b, #d26f6f);
-      color: white;
-    }
-
-    .btn-ok {
-      background: linear-gradient(135deg, #2f7d4f, #43a56b);
-      color: white;
-    }
-
-    .hero {
-      display: grid;
-      gap: 12px;
-      grid-template-columns: 1fr;
-      margin: 14px 0 16px;
-    }
-
-    .hero-card {
-      border-radius: 28px;
-      overflow: hidden;
-      background: linear-gradient(160deg, rgba(255,250,242,0.96), rgba(240,226,206,0.9));
-      position: relative;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(255,255,255,0.72);
-    }
-
-    .hero-inner {
-      padding: 20px;
-      display: grid;
-      gap: 16px;
-      align-items: center;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      gap: 8px;
-      align-items: center;
-      background: rgba(138,98,69,0.12);
-      color: var(--accent-3);
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      width: fit-content;
-    }
-
-    .hero h2 {
-      margin: 0;
-      font-size: clamp(1.8rem, 6vw, 3.2rem);
-      line-height: 0.95;
-      letter-spacing: -0.03em;
-    }
-
-    .hero p {
-      margin: 10px 0 0;
-      color: var(--muted);
-      font-size: 0.98rem;
-      max-width: 58ch;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-    }
-
-    .hero-visual {
-      min-height: 220px;
-      border-radius: 24px;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), transparent 26%),
-        radial-gradient(circle at 75% 25%, rgba(210,175,136,0.35), transparent 26%),
-        linear-gradient(160deg, #e6d3be, #c59d79 65%, #7e5840 100%);
-      position: relative;
-      overflow: hidden;
-      display: grid;
-      place-items: center;
-    }
-
-    .hero-visual::before, .hero-visual::after {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.22);
-      filter: blur(1px);
-    }
-
-    .hero-visual::before { width: 190px; height: 190px; left: -30px; bottom: -20px; }
-    .hero-visual::after { width: 130px; height: 130px; right: -10px; top: -10px; }
-
-    .hero-plate {
-      width: min(72vw, 250px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.22);
-      display: grid;
-      place-items: center;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.32);
-      backdrop-filter: blur(10px);
-      transform: rotate(-8deg);
-    }
-
-    .hero-plate span {
-      width: 74%;
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #f5eadf, #a8714a);
-      box-shadow: inset 0 0 28px rgba(78,45,21,0.12);
-      display: grid;
-      place-items: center;
-      color: white;
-      font-size: 3rem;
-    }
-
-    .section {
-      margin-top: 18px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .section-head h3 {
-      margin: 0;
-      font-size: 1.18rem;
-    }
-
-    .section-head small, .helper {
-      color: var(--muted);
-    }
-
-    .chips, .mini-tabs {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    .chips::-webkit-scrollbar, .mini-tabs::-webkit-scrollbar { display: none; }
-
-    .chip, .mini-tab {
-      border: 1px solid rgba(90,63,49,0.10);
-      background: rgba(255,255,255,0.78);
-      color: var(--accent-3);
-      padding: 11px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all .2s ease;
-      flex: 0 0 auto;
-    }
-
-    .chip.active, .mini-tab.active {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: white;
-      border-color: transparent;
-      box-shadow: 0 12px 26px rgba(138,98,69,0.22);
-    }
-
-    .filters {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .select, .field, .textarea {
-      width: 100%;
-      border: 1px solid rgba(90,63,49,0.10);
-      background: rgba(255,255,255,0.78);
-      border-radius: 16px;
-      padding: 13px 14px;
-      color: var(--text);
-      outline: none;
-      transition: all .2s ease;
-    }
-
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .product-card, .order-card, .panel-card {
-      background: rgba(255,255,255,0.78);
-      border: 1px solid rgba(90,63,49,0.08);
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: var(--shadow-soft);
-      transition: transform .18s ease, box-shadow .18s ease;
-    }
-
-    .product-card {
-      display: flex;
-      flex-direction: column;
-      min-height: 100%;
-    }
-
-    .product-media {
-      aspect-ratio: 1.15;
-      background: linear-gradient(160deg, #dfc7af, #b88a66);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .product-media img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .badge {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(255,255,255,0.88);
-      color: var(--accent-3);
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-size: 0.76rem;
-      font-weight: 700;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.05);
-    }
-
-    .badge-right {
-      right: 10px;
-      left: auto;
-    }
-
-    .product-body, .order-body, .panel-body {
-      padding: 14px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .product-title, .order-title {
-      margin: 0;
-      font-size: 1rem;
-      line-height: 1.12;
-    }
-
-    .meta {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-      color: var(--muted);
-      font-size: 0.82rem;
-    }
-
-    .price {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--accent-3);
-    }
-
-    .product-actions, .order-actions, .panel-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .product-actions .btn, .order-actions .btn, .panel-actions .btn {
-      flex: 1 1 0;
-      padding: 11px 12px;
-      border-radius: 14px;
-      font-size: 0.9rem;
-    }
-
-    .cart-fab {
-      position: fixed;
-      right: 14px;
-      bottom: 14px;
-      z-index: 30;
-      min-width: 64px;
-      height: 64px;
-      border-radius: 20px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: white;
-      border: 0;
-      box-shadow: 0 18px 32px rgba(138,98,69,0.3);
-      cursor: pointer;
-    }
-
-    .cart-count {
-      position: absolute;
-      top: -6px;
-      right: -6px;
-      background: #fff;
-      color: var(--accent-3);
-      border-radius: 999px;
-      min-width: 24px;
-      height: 24px;
-      display: grid;
-      place-items: center;
-      font-size: 0.75rem;
-      font-weight: 800;
-      border: 1px solid rgba(90,63,49,0.12);
-    }
-
-    .sheet, .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(32, 20, 13, 0.44);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: end;
-      justify-content: center;
-      z-index: 50;
-      padding: 12px;
-    }
-
-    .sheet.open, .modal.open { display: flex; }
-
-    .sheet-panel, .modal-panel {
-      width: min(100%, 820px);
-      max-height: 92vh;
-      overflow: auto;
-      border-radius: 28px;
-      background: linear-gradient(180deg, #fffaf2, #f3eadf);
-      box-shadow: 0 30px 80px rgba(0,0,0,0.25);
-      border: 1px solid rgba(255,255,255,0.72);
-      animation: rise .22s ease;
-    }
-
-    .sheet-panel { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
-
-    @keyframes rise {
-      from { transform: translateY(18px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    .sheet-head, .modal-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 16px 0;
-      gap: 10px;
-    }
-
-    .sheet-content, .modal-content {
-      padding: 16px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .cart-item, .admin-user, .status-item, .notice, .history-item {
-      border: 1px solid rgba(90,63,49,0.08);
-      background: rgba(255,255,255,0.82);
-      border-radius: 18px;
-      padding: 12px;
-      display: grid;
-      gap: 8px;
-    }
-
-    .cart-item-row, .order-row, .row-between {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .qty {
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid rgba(90,63,49,0.10);
-      border-radius: 999px;
-      overflow: hidden;
-      background: white;
-    }
-
-    .qty button {
-      border: 0;
-      background: transparent;
-      width: 34px;
-      height: 34px;
-      cursor: pointer;
-    }
-
-    .qty span {
-      width: 34px;
-      text-align: center;
-      font-weight: 700;
-    }
-
-    .grid-2 { display: grid; grid-template-columns: 1fr; gap: 10px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr; gap: 10px; }
-
-    .tabs-main {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .panel {
-      margin-top: 16px;
-      display: none;
-    }
-    .panel.active { display: grid; gap: 12px; }
-
-    .admin-layout {
-      display: grid;
-      gap: 12px;
-    }
-
-    .admin-hero {
-      padding: 16px;
-      border-radius: 26px;
-      display: grid;
-      gap: 8px;
-    }
-
-    .admin-hero h2, .admin-hero p { margin: 0; }
-
-    .subsection {
-      display: grid;
-      gap: 10px;
-    }
-
-    .status-filters {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .status-pill {
-      border: 1px solid rgba(90,63,49,0.1);
-      background: rgba(255,255,255,0.8);
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 0.82rem;
-      cursor: pointer;
-    }
-
-    .status-pill.active { background: var(--accent-3); color: white; }
-
-    .small { font-size: 0.84rem; color: var(--muted); }
-    .tag { display:inline-flex; align-items:center; gap:6px; padding: 6px 10px; border-radius:999px; background: rgba(138,98,69,0.12); color: var(--accent-3); font-size:0.78rem; font-weight:700; }
-    .tag.ok { background: rgba(47,125,79,0.12); color: var(--ok); }
-    .tag.warn { background: rgba(177,123,18,0.12); color: var(--warn); }
-    .tag.bad { background: rgba(178,76,76,0.12); color: var(--bad); }
-
-    .footer-space { height: 28px; }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 92px;
-      transform: translateX(-50%) translateY(16px);
-      background: rgba(37, 28, 22, 0.95);
-      color: white;
-      padding: 12px 14px;
-      border-radius: 999px;
-      box-shadow: 0 14px 30px rgba(0,0,0,0.22);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .22s ease, transform .22s ease;
-      z-index: 100;
-      max-width: calc(100vw - 24px);
-      text-align: center;
-      font-size: 0.9rem;
-    }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    .hidden { display:none !important; }
-    .stretch { width: 100%; }
-    .divider { height: 1px; background: rgba(90,63,49,0.1); margin: 4px 0; }
-
-    .switch-line { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-
-    @media (min-width: 700px) {
-      .app { padding: 18px 18px 120px; }
-      .topbar { padding: 16px; }
-      .hero { grid-template-columns: 1.3fr 0.9fr; }
-      .hero-inner { padding: 26px; }
-      .products-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .grid-2 { grid-template-columns: 1fr 1fr; }
-      .grid-3 { grid-template-columns: repeat(3, 1fr); }
-      .admin-layout { grid-template-columns: 260px 1fr; align-items: start; }
-      .tabs-main { flex-direction: column; overflow: visible; }
-      .mini-tab { width: 100%; text-align: left; }
-      .sheet { align-items: center; }
-      .sheet-panel { border-radius: 28px; }
-      .sheet-head, .modal-head, .sheet-content, .modal-content { padding-left: 22px; padding-right: 22px; }
-      .product-actions .btn, .order-actions .btn, .panel-actions .btn { flex: 0 1 auto; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Panadería MDJ</title>
+<link href="https://fonts.googleapis.com/css2?family=Aka+Posse&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --beige: #F5ECD7;
+    --beige-dark: #E8D5B0;
+    --beige-light: #FAF5EC;
+    --cafe: #7C5C3E;
+    --cafe-dark: #5A3E28;
+    --cafe-light: #A07850;
+    --blanco: #FFFDF8;
+    --crema: #FBF4E8;
+    --texto: #3A2A1A;
+    --texto-suave: #7A6050;
+    --texto-muy-suave: #B0967A;
+    --borde: rgba(124,92,62,0.18);
+    --borde-fuerte: rgba(124,92,62,0.35);
+    --exito: #4A7C59;
+    --peligro: #9B3A2A;
+    --aviso: #8A6A1A;
+    --shadow: 0 4px 24px rgba(90,62,40,0.10);
+    --shadow-sm: 0 2px 8px rgba(90,62,40,0.07);
+    --r: 14px;
+    --r-sm: 8px;
+    --r-xl: 22px;
+    --transition: all 0.28s cubic-bezier(0.4,0,0.2,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Aka Posse', Georgia, serif; background: var(--beige-light); color: var(--texto); min-height: 100vh; overflow-x: hidden; }
+  
+  /* TIPOGRAFÍA */
+  h1 { font-size: 2rem; font-weight: 400; letter-spacing: -0.02em; }
+  h2 { font-size: 1.4rem; font-weight: 400; letter-spacing: -0.01em; }
+  h3 { font-size: 1.1rem; font-weight: 400; }
+  p { line-height: 1.65; }
+
+  /* BOTONES */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 22px; border-radius: var(--r-sm); border: 1.5px solid var(--borde-fuerte); background: transparent; color: var(--cafe); font-family: inherit; font-size: 0.9rem; cursor: pointer; transition: var(--transition); text-decoration: none; white-space: nowrap; }
+  .btn:hover { background: var(--beige-dark); border-color: var(--cafe); transform: translateY(-1px); }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--cafe); color: var(--beige-light); border-color: var(--cafe); }
+  .btn-primary:hover { background: var(--cafe-dark); border-color: var(--cafe-dark); }
+  .btn-danger { background: var(--peligro); color: #fff; border-color: var(--peligro); }
+  .btn-danger:hover { background: #7a2c1e; border-color: #7a2c1e; }
+  .btn-sm { padding: 7px 14px; font-size: 0.82rem; border-radius: 6px; }
+  .btn-xs { padding: 5px 10px; font-size: 0.78rem; border-radius: 5px; }
+  .btn-icon { padding: 10px; border-radius: 50%; border: none; background: transparent; }
+  .btn-icon:hover { background: var(--beige-dark); }
+
+  /* INPUTS */
+  input, select, textarea { font-family: inherit; font-size: 0.95rem; padding: 11px 14px; border: 1.5px solid var(--borde-fuerte); border-radius: var(--r-sm); background: var(--blanco); color: var(--texto); width: 100%; transition: var(--transition); outline: none; }
+  input:focus, select:focus, textarea:focus { border-color: var(--cafe); box-shadow: 0 0 0 3px rgba(124,92,62,0.12); }
+  input::placeholder { color: var(--texto-muy-suave); }
+  label { display: block; font-size: 0.82rem; color: var(--texto-suave); margin-bottom: 5px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  /* CARDS */
+  .card { background: var(--blanco); border-radius: var(--r); border: 1px solid var(--borde); box-shadow: var(--shadow-sm); overflow: hidden; transition: var(--transition); }
+  .card:hover { box-shadow: var(--shadow); }
+
+  /* BADGES */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 400; }
+  .badge-cafe { background: var(--cafe); color: var(--beige-light); }
+  .badge-beige { background: var(--beige-dark); color: var(--cafe-dark); }
+  .badge-exito { background: #D4EDD8; color: #2A5C35; }
+  .badge-peligro { background: #F2D4CF; color: var(--peligro); }
+  .badge-aviso { background: #F0E4C0; color: var(--aviso); }
+  .badge-info { background: #D0E4F5; color: #1A4A7A; }
+
+  /* MODALES */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(60,40,20,0.45); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--blanco); border-radius: var(--r-xl) var(--r-xl) 0 0; width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto; transform: translateY(40px); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); padding: 24px 20px 32px; }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-handle { width: 36px; height: 4px; background: var(--borde-fuerte); border-radius: 2px; margin: 0 auto 20px; }
+  
+  /* NAV */
+  .nav { position: sticky; top: 0; z-index: 100; background: rgba(250,245,236,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--borde); padding: 0 16px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .nav-logo { font-size: 1.3rem; color: var(--cafe-dark); letter-spacing: 0.05em; text-transform: uppercase; }
+  .nav-actions { display: flex; align-items: center; gap: 6px; }
+  .nav-btn { position: relative; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1.5px solid var(--borde); background: var(--blanco); cursor: pointer; transition: var(--transition); font-size: 1.15rem; }
+  .nav-btn:hover { background: var(--beige-dark); border-color: var(--cafe); }
+  .badge-count { position: absolute; top: -4px; right: -4px; background: var(--cafe); color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 0.68rem; display: flex; align-items: center; justify-content: center; }
+
+  /* HERO */
+  .hero { padding: 32px 16px 24px; text-align: center; background: linear-gradient(180deg, var(--beige-dark) 0%, var(--beige-light) 100%); }
+  .hero h1 { color: var(--cafe-dark); margin-bottom: 8px; }
+  .hero p { color: var(--texto-suave); font-size: 0.95rem; }
+
+  /* BUSCADOR */
+  .search-wrap { padding: 16px; position: relative; }
+  .search-wrap input { padding-left: 42px; background: var(--blanco); }
+  .search-icon { position: absolute; left: 28px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: var(--texto-muy-suave); pointer-events: none; }
+
+  /* FILTROS */
+  .filtros { display: flex; gap: 8px; padding: 0 16px 16px; overflow-x: auto; scrollbar-width: none; }
+  .filtros::-webkit-scrollbar { display: none; }
+  .filtro-btn { flex-shrink: 0; padding: 7px 14px; border-radius: 20px; border: 1.5px solid var(--borde-fuerte); background: var(--blanco); color: var(--cafe); font-family: inherit; font-size: 0.82rem; cursor: pointer; transition: var(--transition); white-space: nowrap; }
+  .filtro-btn.active, .filtro-btn:hover { background: var(--cafe); color: var(--beige-light); border-color: var(--cafe); }
+
+  /* GRID PRODUCTOS */
+  .productos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 0 14px 100px; }
+  .producto-card { cursor: pointer; }
+  .producto-img { width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--beige-dark); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+  .producto-img img { width: 100%; height: 100%; object-fit: cover; }
+  .producto-info { padding: 12px; }
+  .producto-nombre { font-size: 0.9rem; color: var(--texto); margin-bottom: 2px; }
+  .producto-precio { font-size: 1.1rem; color: var(--cafe-dark); }
+  .producto-extra { font-size: 0.75rem; color: var(--aviso); margin-top: 4px; background: #F0E4C0; border-radius: 4px; padding: 3px 7px; display: inline-block; }
+  .add-btn { width: 30px; height: 30px; border-radius: 50%; background: var(--cafe); color: #fff; border: none; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); margin-top: 8px; }
+  .add-btn:hover { background: var(--cafe-dark); transform: scale(1.1); }
+
+  /* CARRITO FLOTANTE */
+  .carrito-fab { position: fixed; bottom: 24px; right: 20px; z-index: 90; background: var(--cafe); color: #fff; border: none; border-radius: 28px; padding: 14px 22px; font-family: inherit; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 6px 24px rgba(90,62,40,0.35); transition: var(--transition); }
+  .carrito-fab:hover { background: var(--cafe-dark); transform: translateY(-2px); }
+  .carrito-fab.hidden { opacity: 0; pointer-events: none; transform: translateY(20px); }
+
+  /* TOAST */
+  .toast { position: fixed; top: 72px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--cafe-dark); color: var(--beige-light); padding: 11px 20px; border-radius: 30px; font-size: 0.88rem; z-index: 999; opacity: 0; transition: all 0.3s ease; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* SECCIONES MODALES */
+  .modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .modal-title { font-size: 1.2rem; color: var(--cafe-dark); }
+  .back-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--cafe); padding: 4px; }
+  .divider { height: 1px; background: var(--borde); margin: 16px 0; }
+
+  /* CARRITO ITEMS */
+  .carrito-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--borde); }
+  .carrito-item-img { width: 52px; height: 52px; border-radius: 8px; background: var(--beige-dark); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; overflow: hidden; }
+  .carrito-item-img img { width: 100%; height: 100%; object-fit: cover; }
+  .carrito-item-info { flex: 1; }
+  .carrito-item-nombre { font-size: 0.9rem; }
+  .carrito-item-precio { font-size: 0.85rem; color: var(--cafe); }
+  .cantidad-ctrl { display: flex; align-items: center; gap: 8px; }
+  .cant-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--borde-fuerte); background: var(--blanco); cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+  .cant-btn:hover { background: var(--beige-dark); }
+
+  /* PERFIL */
+  .perfil-header { text-align: center; padding: 12px 0 20px; }
+  .perfil-avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--beige-dark); margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: var(--cafe-dark); border: 2px solid var(--cafe-light); }
+  .perfil-nombre { font-size: 1.1rem; color: var(--cafe-dark); }
+  .perfil-tel { font-size: 0.85rem; color: var(--texto-suave); }
+
+  /* PEDIDOS USUARIO */
+  .pedido-card-mini { border-left: 3px solid var(--cafe); padding: 12px 14px; border-radius: 0 10px 10px 0; background: var(--crema); margin-bottom: 10px; cursor: pointer; transition: var(--transition); }
+  .pedido-card-mini:hover { background: var(--beige-dark); }
+  .estado-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+  .estado-creado { background: #B0967A; }
+  .estado-confirmado { background: #1A4A7A; }
+  .estado-listo { background: #2A5C35; }
+  .estado-entregado { background: #6A6A6A; }
+
+  /* ADMIN */
+  .admin-nav { display: flex; gap: 6px; padding: 12px 0 16px; overflow-x: auto; scrollbar-width: none; }
+  .admin-nav::-webkit-scrollbar { display: none; }
+  .admin-tab { flex-shrink: 0; padding: 9px 18px; border-radius: 20px; border: 1.5px solid var(--borde-fuerte); background: transparent; color: var(--cafe); font-family: inherit; font-size: 0.88rem; cursor: pointer; transition: var(--transition); }
+  .admin-tab.active { background: var(--cafe-dark); color: var(--beige-light); border-color: var(--cafe-dark); }
+  .admin-resumen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .resumen-card { background: var(--crema); border-radius: 10px; border: 1px solid var(--borde); padding: 12px 10px; text-align: center; }
+  .resumen-num { font-size: 1.6rem; color: var(--cafe-dark); }
+  .resumen-label { font-size: 0.72rem; color: var(--texto-suave); text-transform: uppercase; letter-spacing: 0.05em; }
+  .admin-pedido-card { border: 1px solid var(--borde); border-radius: 12px; background: var(--blanco); padding: 14px; margin-bottom: 10px; cursor: pointer; transition: var(--transition); }
+  .admin-pedido-card:hover { border-color: var(--cafe); box-shadow: var(--shadow-sm); }
+  .admin-pedido-id { font-size: 1.3rem; color: var(--cafe-dark); font-weight: 600; }
+  .admin-subsec { display: flex; gap: 6px; margin-bottom: 14px; }
+  .subsec-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1.5px solid var(--borde); background: transparent; color: var(--cafe); font-family: inherit; font-size: 0.8rem; cursor: pointer; transition: var(--transition); text-align: center; }
+  .subsec-btn.active { background: var(--cafe); color: #fff; border-color: var(--cafe); }
+  .wa-btn { background: #25D366; color: #fff; border-color: #25D366; display: flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; border: none; font-family: inherit; font-size: 0.85rem; cursor: pointer; transition: var(--transition); }
+  .wa-btn:hover { background: #1eaa52; }
+  .producto-check { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 8px; cursor: pointer; transition: var(--transition); }
+  .producto-check:hover { background: var(--beige-dark); }
+  .usuario-row { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--borde); }
+  .usuario-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--beige-dark); display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--cafe-dark); flex-shrink: 0; }
+  .form-group { margin-bottom: 14px; }
+  .img-preview { width: 80px; height: 80px; border-radius: 10px; background: var(--beige-dark); display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 2px dashed var(--borde-fuerte); cursor: pointer; margin-bottom: 8px; }
+
+  /* ANIMACIONES */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  .fade-in { animation: fadeIn 0.35s ease forwards; }
+  .pop { animation: pop 0.3s ease; }
+  
+  /* LOADING */
+  .loading { display: flex; align-items: center; justify-content: center; height: 200px; }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--beige-dark); border-top-color: var(--cafe); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* CONFIRMACION */
+  .confirm-box { background: var(--crema); border-radius: 12px; padding: 16px; margin: 12px 0; border: 1px solid var(--borde); }
+  .confirm-box p { font-size: 0.9rem; color: var(--texto-suave); line-height: 1.6; }
+  .mostrar-mas { background: none; border: none; color: var(--cafe); font-family: inherit; font-size: 0.85rem; cursor: pointer; text-decoration: underline; margin-top: 6px; }
+  .detalle-extra { display: none; margin-top: 8px; }
+  .detalle-extra.visible { display: block; }
+
+  /* ESTADO INFO */
+  .estado-info-btn { background: none; border: none; color: var(--cafe-light); font-size: 0.8rem; cursor: pointer; margin-left: 4px; }
+  .estado-info-popup { background: var(--beige-dark); border-radius: 8px; padding: 10px 12px; font-size: 0.82rem; color: var(--texto-suave); margin-top: 6px; display: none; }
+  .estado-info-popup.visible { display: block; animation: fadeIn 0.2s ease; }
+
+  /* EDITAR PEDIDO AVISO */
+  .editar-aviso { background: #D4EDD8; color: #2A5C35; border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 40px 20px; color: var(--texto-muy-suave); }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+  /* PÁGINAS */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; animation: fadeIn 0.3s ease; }
+
+  /* VISTAS ADMIN */
+  .admin-view { display: none; }
+  .admin-view.active { display: block; animation: fadeIn 0.3s ease; }
+
+  /* TEXTAREA */
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* SWITCH SCROLL TABS */
+  .tabs-wrap { overflow-x: auto; scrollbar-width: none; }
+  .tabs-wrap::-webkit-scrollbar { display: none; }
+</style>
 </head>
 <body>
-  <div id="app" class="app"></div>
 
-  <button class="cart-fab" id="cartFab" aria-label="Abrir carrito">
-    <span style="font-size:1.3rem">🧺</span>
-    <span class="cart-count" id="cartCount">0</span>
-  </button>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
-  <div class="sheet" id="cartSheet" aria-hidden="true">
-    <div class="sheet-panel">
-      <div class="sheet-head">
-        <div>
-          <h3 style="margin:0">Carrito</h3>
-          <div class="small" id="cartSubtitle">0 productos</div>
-        </div>
-        <button class="icon-btn" data-close="cartSheet">✕</button>
+<!-- ============ PÁGINA TIENDA ============ -->
+<div class="page active" id="page-tienda">
+  <nav class="nav">
+    <div class="nav-logo">🥐 MDJ</div>
+    <div style="flex:1; max-width: 300px;">
+      <div style="position:relative;">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--texto-muy-suave);pointer-events:none;">🔍</span>
+        <input type="text" id="nav-search" placeholder="Buscar productos..." style="padding-left:36px;height:38px;font-size:0.85rem;" oninput="filtrarProductos()">
       </div>
-      <div class="sheet-content" id="cartContent"></div>
     </div>
+    <div class="nav-actions">
+      <button class="nav-btn" onclick="abrirCarrito()" title="Carrito">
+        🛒<span class="badge-count" id="carrito-count" style="display:none">0</span>
+      </button>
+      <button class="nav-btn" onclick="abrirLogin()" title="Mi cuenta" id="btn-usuario">
+        👤
+      </button>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <h1>Panadería MDJ</h1>
+    <p>Pan fresco y productos de tienda, listos para recoger</p>
   </div>
 
-  <div class="modal" id="modal">
-    <div class="modal-panel">
-      <div class="modal-head">
-        <h3 style="margin:0" id="modalTitle">Título</h3>
-        <button class="icon-btn" id="modalClose">✕</button>
-      </div>
-      <div class="modal-content" id="modalContent"></div>
-    </div>
+  <div class="filtros tabs-wrap" id="filtros-container">
+    <button class="filtro-btn active" onclick="setFiltro('todos',this)">Todos</button>
+    <button class="filtro-btn" onclick="setOrden('precio-asc',this)">⬆️ Precio</button>
+    <button class="filtro-btn" onclick="setOrden('precio-desc',this)">⬇️ Precio</button>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <div class="productos-grid" id="productos-grid">
+    <div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div>
+  </div>
+</div>
 
-  <!--
-INSTRUCCIONES RAPIDAS PARA SUPABASE 😮‍💨
+<!-- ============ MODAL PRODUCTO ============ -->
+<div class="modal-overlay" id="modal-producto" onclick="cerrarModal('modal-producto',event)">
+  <div class="modal" id="modal-producto-inner">
+    <div class="modal-handle"></div>
+    <div id="producto-detalle-content"></div>
+  </div>
+</div>
 
-1. crear cuenta en https://supabase.com
-2. crear proyecto nuevo
-3. ir a SQL Editor
-4. pegar las tablas que están más abajo en este archivo
-5. ir a Project Settings > API
-6. copiar:
-   - Project URL
-   - anon public key
-7. reemplazar:
-   SUPABASE_URL_AQUI
-   SUPABASE_ANON_KEY_AQUI
-8. subir este archivo a GitHub Pages o Firebase Hosting
+<!-- ============ MODAL CARRITO ============ -->
+<div class="modal-overlay" id="modal-carrito" onclick="cerrarModal('modal-carrito',event)">
+  <div class="modal" id="modal-carrito-inner">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h2 class="modal-title">🛒 Su carrito</h2>
+    </div>
+    <div id="carrito-lista"></div>
+    <div id="carrito-total" style="margin-top:16px;"></div>
+    <div id="carrito-acciones" style="margin-top:14px;"></div>
+  </div>
+</div>
 
-CDN SUPABASE:
--->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- ============ MODAL LOGIN ============ -->
+<div class="modal-overlay" id="modal-login" onclick="cerrarModal('modal-login',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="login-content">
+      <div class="modal-header">
+        <h2 class="modal-title">👤 Iniciar sesión</h2>
+      </div>
+      <div class="form-group">
+        <label>Nombre *</label>
+        <input type="text" id="login-nombre" placeholder="Su nombre">
+      </div>
+      <div class="form-group">
+        <label>Apellido (opcional)</label>
+        <input type="text" id="login-apellido" placeholder="Su apellido">
+      </div>
+      <div class="form-group">
+        <label>Teléfono (8 dígitos) *</label>
+        <input type="tel" id="login-tel" placeholder="0000 0000" maxlength="9" oninput="formatTel(this)">
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:6px" onclick="hacerLogin()">Ingresar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL PERFIL ============ -->
+<div class="modal-overlay" id="modal-perfil" onclick="cerrarModal('modal-perfil',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="perfil-content"></div>
+  </div>
+</div>
+
+<!-- ============ MODAL CONFIRMAR PEDIDO ============ -->
+<div class="modal-overlay" id="modal-confirmar-pedido" onclick="cerrarModal('modal-confirmar-pedido',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h2 class="modal-title">📋 Confirmar orden</h2>
+    </div>
+    <div class="confirm-box">
+      <p id="terminos-cortos">Al confirmar, nos llegará su orden y le avisaremos vía WhatsApp cuando esté lista para recoger.</p>
+      <button class="mostrar-mas" onclick="toggleTerminos()">Mostrar más</button>
+      <div class="detalle-extra" id="terminos-extra">
+        <p style="margin-top:8px;font-size:0.85rem;">Una vez le enviemos la confirmación de que su orden está lista, usted tendrá <strong>15 minutos</strong> para pasar a recogerla. Si no llega en ese tiempo, se registrará una advertencia en su cuenta. Con varias advertencias acumuladas, no podrá realizar nuevas órdenes.</p>
+      </div>
+    </div>
+    <div id="resumen-pedido-confirm" style="margin:14px 0;"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-confirmar-pedido')">Cancelar</button>
+      <button class="btn btn-primary" style="flex:2" onclick="confirmarPedido()">✅ Realizar orden</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL DETALLE PEDIDO USUARIO ============ -->
+<div class="modal-overlay" id="modal-detalle-pedido" onclick="cerrarModal('modal-detalle-pedido',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="detalle-pedido-content"></div>
+  </div>
+</div>
+
+<!-- ============ MODAL ADMIN: DETALLE PEDIDO ============ -->
+<div class="modal-overlay" id="modal-admin-pedido" onclick="cerrarModal('modal-admin-pedido',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="admin-pedido-detalle-content"></div>
+  </div>
+</div>
+
+<!-- ============ MODAL ADMIN: MENSAJE WA ============ -->
+<div class="modal-overlay" id="modal-wa-confirm" onclick="cerrarModal('modal-wa-confirm',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2 class="modal-title" style="margin-bottom:14px">📲 Enviar mensaje</h2>
+    <div class="form-group">
+      <label>Mensaje a enviar</label>
+      <textarea id="wa-mensaje-edit" rows="4"></textarea>
+    </div>
+    <p style="font-size:0.85rem;color:var(--texto-suave);margin-bottom:14px">Se enviará al número: <strong id="wa-numero-display"></strong></p>
+    <div style="display:flex;gap:10px;">
+      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-wa-confirm')">Cancelar</button>
+      <button class="wa-btn" style="flex:2;justify-content:center" onclick="confirmarEnvioWA()">✅ Confirmar y abrir WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL ADMIN: PRODUCTOS NO DISPONIBLES ============ -->
+<div class="modal-overlay" id="modal-prod-nodisponible" onclick="cerrarModal('modal-prod-nodisponible',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2 class="modal-title" style="margin-bottom:14px">🚫 Productos no disponibles</h2>
+    <p style="font-size:0.85rem;color:var(--texto-suave);margin-bottom:12px">Seleccione los productos que no están disponibles:</p>
+    <div id="prod-nodisponible-lista"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:14px" onclick="armarMsgNoDisponible()">Continuar con mensaje</button>
+  </div>
+</div>
+
+<!-- ============ MODAL USUARIO ADMIN ============ -->
+<div class="modal-overlay" id="modal-admin-usuario" onclick="cerrarModal('modal-admin-usuario',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="admin-usuario-detalle"></div>
+  </div>
+</div>
+
+<!-- ============ ADMIN PAGE (inline al pie) ============ -->
+<div class="page" id="page-admin">
+  <nav class="nav">
+    <div class="nav-logo">⚙️ Admin MDJ</div>
+    <button class="btn btn-sm" onclick="salirAdmin()">Salir</button>
+  </nav>
+  <div style="padding:16px">
+    <div class="admin-nav tabs-wrap">
+      <button class="admin-tab active" onclick="adminTab('pedidos',this)">📋 Órdenes</button>
+      <button class="admin-tab" onclick="adminTab('productos',this)">🥐 Productos</button>
+      <button class="admin-tab" onclick="adminTab('usuarios',this)">👥 Usuarios</button>
+      <button class="admin-tab" onclick="adminTab('config',this)">⚙️ Configuración</button>
+    </div>
+
+    <!-- VISTA PEDIDOS -->
+    <div class="admin-view active" id="admin-pedidos">
+      <div class="admin-resumen" id="admin-resumen"></div>
+      <div class="admin-subsec">
+        <button class="subsec-btn active" onclick="setPedidoSec('pendiente',this)">⏳ Pendientes</button>
+        <button class="subsec-btn" onclick="setPedidoSec('confirmado',this)">✅ Confirmadas</button>
+        <button class="subsec-btn" onclick="setPedidoSec('listo',this)">🎉 Listas</button>
+      </div>
+      <div id="admin-pedidos-lista"></div>
+    </div>
+
+    <!-- VISTA PRODUCTOS ADMIN -->
+    <div class="admin-view" id="admin-productos">
+      <button class="btn btn-primary" style="margin-bottom:14px" onclick="abrirFormProducto(null)">➕ Agregar producto</button>
+      <div id="admin-productos-lista"></div>
+    </div>
+
+    <!-- VISTA USUARIOS -->
+    <div class="admin-view" id="admin-usuarios">
+      <div id="admin-usuarios-lista"></div>
+    </div>
+
+    <!-- VISTA CONFIG -->
+    <div class="admin-view" id="admin-config">
+      <div id="admin-config-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL FORM PRODUCTO ============ -->
+<div class="modal-overlay" id="modal-form-producto" onclick="cerrarModal('modal-form-producto',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2 class="modal-title" id="form-producto-titulo" style="margin-bottom:16px">Agregar producto</h2>
+    <input type="hidden" id="fp-id">
+    <div class="form-group">
+      <label>Nombre *</label>
+      <input type="text" id="fp-nombre" placeholder="Ej: Pan de mantequilla">
+    </div>
+    <div class="form-group">
+      <label>Categoría *</label>
+      <input type="text" id="fp-categoria" list="categorias-lista" placeholder="Ej: Pan dulce">
+      <datalist id="categorias-lista"></datalist>
+    </div>
+    <div class="form-group">
+      <label>Precio (Q) *</label>
+      <input type="number" id="fp-precio" placeholder="0.00" min="0" step="0.25">
+    </div>
+    <div class="form-group">
+      <label>URL de imagen</label>
+      <input type="text" id="fp-imagen" placeholder="https://...">
+    </div>
+    <div class="form-group">
+      <label>Extra (disponibilidad, horario, etc.)</label>
+      <textarea id="fp-extra" placeholder="Ej: Disponible solo los fines de semana" rows="2"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:6px">
+      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-form-producto')">Cancelar</button>
+      <button class="btn btn-primary" style="flex:2" onclick="guardarProducto()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAB CARRITO -->
+<button class="carrito-fab hidden" id="carrito-fab" onclick="abrirCarrito()">
+  🛒 Ver carrito · <span id="fab-total">Q0.00</span>
+</button>
+
 <script>
-    const SUPABASE_URL = 'https://wdpjelyzzhykyljtigzj.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkcGplbHl6emh5a3lsanRpZ3pqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MDU2MDksImV4cCI6MjA5NDM4MTYwOX0.1DLN2l0ieQI6NUp4EQrdwb2hbkJ4e5JVxPCVPv2MYMk';
-
-    const supabaseClient = (
-      SUPABASE_URL !== 'https://wdpjelyzzhykyljtigzj.supabase.co' &&
-      SUPABASE_ANON_KEY !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkcGplbHl6emh5a3lsanRpZ3pqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MDU2MDksImV4cCI6MjA5NDM4MTYwOX0.1DLN2l0ieQI6NUp4EQrdwb2hbkJ4e5JVxPCVPv2MYMk'
-    )
-      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-      : null;
-
-    async function dbGet(table) {
-      if (!supabaseClient) return null;
-      const { data, error } = await supabaseClient.from(table).select('*');
-      if (error) {
-        console.error(error);
-        return null;
-      }
-      return data;
+// ========== ESTADO GLOBAL ==========
+let DB = {
+  productos: [
+    { id:1, nombre:'Pan francés', categoria:'Pan', precio:1.50, imagen:'', extra:'' },
+    { id:2, nombre:'Pan dulce de azúcar', categoria:'Pan dulce', precio:2.50, imagen:'', extra:'Solo disponible de lunes a viernes' },
+    { id:3, nombre:'Semita de piña', categoria:'Pan dulce', precio:3.00, imagen:'', extra:'' },
+    { id:4, nombre:'Coca-Cola 350ml', categoria:'Bebidas', precio:8.00, imagen:'', extra:'' },
+    { id:5, nombre:'Torta de chocolate', categoria:'Repostería', precio:5.00, imagen:'Solo disponible fines de semana', extra:'Solo disponible fines de semana' },
+    { id:6, nombre:'Arroz en bolsa', categoria:'Tienda', precio:12.00, imagen:'', extra:'' },
+    { id:7, nombre:'Pan de mantequilla', categoria:'Pan', precio:2.00, imagen:'', extra:'' },
+    { id:8, nombre:'Rosquillas', categoria:'Pan dulce', precio:1.75, imagen:'', extra:'' },
+  ],
+  usuarios: [
+    { id:1, nombre:'Carlos', apellido:'Pérez', telefono:'55551234', created_at:'2024-01-15', pedidos:2, advertencias:0, direccion:'Zona 10, Guatemala' }
+  ],
+  pedidos: [
+    { id:'1042', usuario_id:1, usuario_tel:'55551234', productos:[{id:1,nombre:'Pan francés',precio:1.50,cantidad:3},{id:4,nombre:'Coca-Cola 350ml',precio:8.00,cantidad:2}], total:20.50, estado:'pendiente', created_at: new Date(Date.now()-3600000).toISOString() },
+    { id:'2081', usuario_id:1, usuario_tel:'55551234', productos:[{id:2,nombre:'Pan dulce de azúcar',precio:2.50,cantidad:4}], total:10.00, estado:'confirmado', created_at: new Date(Date.now()-7200000).toISOString() },
+  ],
+  config: {
+    telefono_tienda: '58965725',
+    terminos_extra: 'Una vez le enviemos la confirmación de que su orden está lista, usted tendrá 15 minutos para pasar a recogerla.',
+    estados_info: {
+      'pendiente': 'Su orden fue recibida. Estamos revisando su solicitud.',
+      'confirmado': 'Su orden está confirmada y en preparación.',
+      'listo': 'Su orden está lista. Puede pasar a recogerla.',
+      'entregado': 'Su orden fue entregada. ¡Gracias por su compra!'
     }
+  },
+  nextPedidoId: 3000
+};
 
-    async function dbInsert(table, values) {
-      if (!supabaseClient) return null;
-      const { data, error } = await supabaseClient.from(table).insert(values).select();
-      if (error) {
-        console.error(error);
-        return null;
-      }
-      return data;
-    }
+let carrito = [];
+let usuarioActual = null;
+let filtroActivo = 'todos';
+let ordenActivo = null;
+let pedidoSeccion = 'pendiente';
+let waContext = {};
+let pedidoAdminActual = null;
+let productoFormMode = null;
 
-    async function dbUpdate(table, values, field, match) {
-      if (!supabaseClient) return null;
-      const { data, error } = await supabaseClient
-        .from(table)
-        .update(values)
-        .eq(field, match)
-        .select();
-      if (error) {
-        console.error(error);
-        return null;
-      }
-      return data;
-    }
+const EMOJIS_CATEGORIA = {'Pan':'🍞','Pan dulce':'🥐','Bebidas':'🥤','Repostería':'🎂','Tienda':'🛍️'};
+const getEmoji = (cat) => EMOJIS_CATEGORIA[cat] || '🥖';
 
-    async function dbDelete(table, field, match) {
-      if (!supabaseClient) return null;
-      const { error } = await supabaseClient
-        .from(table)
-        .delete()
-        .eq(field, match);
-      if (error) {
-        console.error(error);
-      }
-    }
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded', () => {
+  renderProductos();
+  renderFiltrosCategorias();
+});
 
-    async function syncFromSupabase() {
-      if (!supabaseClient) return;
+// ========== UTILIDADES ==========
+function showToast(msg, duration=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
 
-      const products = await dbGet('products');
-      const users = await dbGet('users');
-      const orders = await dbGet('orders');
+function abrirModalById(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
 
-      if (products) state.products = products.map(p => ({
-        id: p.id,
-        name: p.name,
-        category: p.category,
-        price: p.price,
-        image: p.image,
-        details: p.details,
-        extra: p.extra || ''
-      }));
+function cerrarModalById(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
 
-      if (users) state.users = users.map(u => ({
-        phone: u.phone,
-        name: u.name,
-        lastName: u.last_name || '',
-        address: u.address || '',
-        createdAt: u.created_at,
-        warnings: u.warnings || 0
-      }));
+function cerrarModal(id, e) {
+  if (e.target === document.getElementById(id)) cerrarModalById(id);
+}
 
-      if (orders) state.orders = orders.map(o => ({
-        id: o.order_code,
-        userPhone: o.user_phone,
-        userName: o.user_name,
-        userLastName: o.user_last_name,
-        address: o.address,
-        createdAt: o.created_at,
-        status: o.status,
-        items: o.items,
-        total: o.total,
-        note: o.note || '',
-        edited: true,
-        warningsApplied: false
-      }));
+function formatTel(input) {
+  let v = input.value.replace(/\D/g,'');
+  if (v.length > 4) v = v.slice(0,4)+' '+v.slice(4,8);
+  input.value = v;
+}
 
-      render();
-    }
+function formatQ(n) { return 'Q'+Number(n).toFixed(2); }
 
-    /*
-    SQL PARA SUPABASE 😭🙏
+function generateId() {
+  DB.nextPedidoId++;
+  return String(DB.nextPedidoId % 9000 + 1000);
+}
 
-    create table users (
-      id bigint generated always as identity primary key,
-      name text not null,
-      last_name text,
-      phone text unique not null,
-      address text,
-      warnings integer default 0,
-      created_at timestamptz default now()
-    );
+function getCategoriasUnicas() {
+  return [...new Set(DB.productos.map(p=>p.categoria))];
+}
 
-    create table products (
-      id bigint generated always as identity primary key,
-      name text not null,
-      category text not null,
-      price numeric not null,
-      image text not null,
-      details text not null,
-      extra text,
-      created_at timestamptz default now()
-    );
+// ========== PRODUCTOS ==========
+function renderFiltrosCategorias() {
+  const cont = document.getElementById('filtros-container');
+  const cats = getCategoriasUnicas();
+  const btns = Array.from(cont.querySelectorAll('.filtro-btn'));
+  cats.forEach(cat => {
+    if (cont.querySelector(`[data-cat="${cat}"]`)) return;
+    const b = document.createElement('button');
+    b.className = 'filtro-btn';
+    b.setAttribute('data-cat', cat);
+    b.textContent = getEmoji(cat)+' '+cat;
+    b.onclick = function(){ setFiltro(cat, this); };
+    cont.appendChild(b);
+  });
+  // actualizar datalist
+  const dl = document.getElementById('categorias-lista');
+  if (dl) { dl.innerHTML = ''; cats.forEach(c => { const o = document.createElement('option'); o.value=c; dl.appendChild(o); }); }
+}
 
-    create table orders (
-      id bigint generated always as identity primary key,
-      order_code integer unique not null,
-      user_phone text not null,
-      user_name text not null,
-      user_last_name text,
-      address text,
-      status text not null,
-      items jsonb not null,
-      total numeric not null,
-      note text,
-      created_at timestamptz default now()
-    );
+function setFiltro(cat, btn) {
+  filtroActivo = cat;
+  ordenActivo = null;
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProductos();
+}
 
-    */
-    const STORAGE_KEY = 'mdj_store_v1';
-    const DEFAULTS = {
-      storePhone: '58965767',
-      adminSecret: { name: 'MDJ', lastName: 'Bakery', phone: '85498549' },
-      currentUserPhone: '',
-      currentPage: 'shop',
-      shopFilter: { search: '', category: 'all', sort: 'featured' },
-      adminTab: 'orders',
-      adminOrderFilter: 'all',
-      cart: [],
-      users: [
-        { phone: '12345678', name: 'Ana', lastName: 'López', address: 'Zona 1, Guatemala', createdAt: new Date(Date.now() - 86400000 * 3).toISOString(), warnings: 0 },
-      ],
-      categories: ['Panadería', 'Bebidas', 'Abarrotes', 'Lácteos', 'Dulces', 'Limpieza'],
-      products: [
-        { id: 1, name: 'Concha de vainilla', category: 'Panadería', price: 8, image: 'https://images.unsplash.com/photo-1509440159598-8b9f9fa6f0e1?auto=format&fit=crop&w=900&q=80', details: 'Pan dulce suave con cobertura delicada.', extra: 'Fresco por la mañana.' },
-        { id: 2, name: 'Café de la casa', category: 'Bebidas', price: 12, image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=80', details: 'Café caliente, ideal para acompañar el pan.', extra: 'Disponible desde las 6:00 a.m.' },
-        { id: 3, name: 'Leche entera', category: 'Lácteos', price: 18, image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=900&q=80', details: 'Presentación familiar.', extra: '' },
-        { id: 4, name: 'Jugo de naranja', category: 'Bebidas', price: 14, image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=900&q=80', details: 'Refrescante y natural.', extra: 'Solo fines de semana.' },
-        { id: 5, name: 'Pan francés', category: 'Panadería', price: 3, image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&w=900&q=80', details: 'Ideal para desayunos.', extra: '' },
-        { id: 6, name: 'Galletas de mantequilla', category: 'Dulces', price: 10, image: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=80', details: 'Empaque sencillo, sabor casero.', extra: '' },
-      ],
-      orders: [],
-      settings: {
-        statusInfo: {
-          created: 'Su pedido fue recibido y está en cola.',
-          confirmed: 'El pedido ya fue revisado por el personal.',
-          ready: 'El pedido ya está listo para recoger.',
-          delivered: 'El pedido fue entregado correctamente.'
-        },
-        termsShort: 'Al confirmar su pedido, le avisaremos por WhatsApp cuando esté listo.',
-        termsLong: 'Una vez confirmado como listo, usted tendrá 15 minutos para pasar por su pedido. De no presentarse, se acumulará una advertencia en su cuenta.',
-        messages: {
-          ready: '¡Hola! su pedido con el ID {id} ya está listo y puede pasar a recogerlo al local físico.',
-          unavailable: '¡Hola! un producto de su pedido no está disponible en este momento. Producto(s): {items}. ¿Le gustaría reemplazarlo o cancelarlo?',
-          confirmed: '¡Hola! su pedido con el ID {id} fue confirmado.',
-          delivered: '¡Hola! su pedido con el ID {id} fue marcado como entregado. Gracias por comprar con nosotros.'
-        }
-      },
-      nextProductId: 7,
-      nextOrderId: 9804,
-      nextUserId: 1,
-    };
+function setOrden(orden, btn) {
+  ordenActivo = orden;
+  filtroActivo = 'todos';
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProductos();
+}
 
-    const deepClone = obj => JSON.parse(JSON.stringify(obj));
-    let state = loadState();
+function filtrarProductos() {
+  renderProductos();
+}
 
-    function loadState() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) return deepClone(DEFAULTS);
-      try {
-        const parsed = JSON.parse(saved);
-        return {
-          ...deepClone(DEFAULTS),
-          ...parsed,
-          shopFilter: { ...DEFAULTS.shopFilter, ...(parsed.shopFilter || {}) },
-          settings: {
-            ...deepClone(DEFAULTS.settings),
-            ...(parsed.settings || {}),
-            messages: { ...deepClone(DEFAULTS.settings.messages), ...((parsed.settings && parsed.settings.messages) || {}) },
-            statusInfo: { ...deepClone(DEFAULTS.settings.statusInfo), ...((parsed.settings && parsed.settings.statusInfo) || {}) }
-          }
-        };
-      } catch {
-        return deepClone(DEFAULTS);
-      }
-    }
+function renderProductos() {
+  const grid = document.getElementById('productos-grid');
+  const busqueda = (document.getElementById('nav-search')||{}).value?.toLowerCase()||'';
+  let prods = [...DB.productos];
+  if (filtroActivo && filtroActivo !== 'todos') prods = prods.filter(p=>p.categoria===filtroActivo);
+  if (busqueda) prods = prods.filter(p=>p.nombre.toLowerCase().includes(busqueda)||p.categoria.toLowerCase().includes(busqueda));
+  if (ordenActivo === 'precio-asc') prods.sort((a,b)=>a.precio-b.precio);
+  if (ordenActivo === 'precio-desc') prods.sort((a,b)=>b.precio-a.precio);
 
-    function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      render();
-    }
+  if (!prods.length) { grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🔍</div><p>Sin resultados</p></div>'; return; }
 
-    function money(n) {
-      return 'Q' + Number(n || 0).toFixed(2).replace('.00', '');
-    }
+  grid.innerHTML = prods.map(p => `
+    <div class="card producto-card fade-in" onclick="verProducto(${p.id})">
+      <div class="producto-img">${p.imagen ? `<img src="${p.imagen}" alt="${p.nombre}" onerror="this.parentNode.innerHTML='${getEmoji(p.categoria)}'">` : getEmoji(p.categoria)}</div>
+      <div class="producto-info">
+        <div class="producto-nombre">${p.nombre}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div class="producto-precio">${formatQ(p.precio)}</div>
+          <button class="add-btn" onclick="event.stopPropagation();agregarCarrito(${p.id})" aria-label="Agregar">+</button>
+        </div>
+        ${p.extra ? `<div class="producto-extra">ℹ️ ${p.extra}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
 
-    function escapeHtml(str) {
-      return String(str ?? '').replace(/[&<>'"]/g, s => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-      }[s]));
-    }
+function verProducto(id) {
+  const p = DB.productos.find(x=>x.id===id);
+  if (!p) return;
+  const inCart = carrito.find(c=>c.id===id);
+  document.getElementById('producto-detalle-content').innerHTML = `
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:4rem;margin-bottom:8px">${p.imagen ? `<img src="${p.imagen}" style="width:140px;height:140px;border-radius:12px;object-fit:cover" onerror="this.outerHTML='${getEmoji(p.categoria)}'">` : getEmoji(p.categoria)}</div>
+      <h2 style="color:var(--cafe-dark)">${p.nombre}</h2>
+      <div style="font-size:1.4rem;color:var(--cafe);margin:6px 0">${formatQ(p.precio)}</div>
+      <span class="badge badge-beige">${p.categoria}</span>
+      ${p.extra ? `<div style="margin-top:10px" class="badge badge-aviso">ℹ️ ${p.extra}</div>` : ''}
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-producto')">Cerrar</button>
+      <button class="btn btn-primary" style="flex:2" onclick="agregarCarrito(${p.id});cerrarModalById('modal-producto')">
+        🛒 ${inCart ? 'Agregar otro' : 'Agregar al carrito'}
+      </button>
+    </div>
+  `;
+  abrirModalById('modal-producto');
+}
 
-    function phoneClean(v) { return String(v || '').replace(/\D/g, '').slice(0, 8); }
-    function phoneDisplay(v) { const x = phoneClean(v); return x.length === 8 ? x.replace(/(\d{4})(\d{4})/, '$1 $2') : x; }
-    function nowISO() { return new Date().toISOString(); }
-    function shortDate(iso) { return new Intl.DateTimeFormat('es-GT', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(iso)); }
-    function orderTotal(items) { return items.reduce((sum, it) => sum + (it.price * it.qty), 0); }
-    function orderCount() { return state.orders.length; }
-    function currentUser() { return state.users.find(u => u.phone === state.currentUserPhone) || null; }
-    function isAdmin() { return state.currentUserPhone === state.adminSecret.phone; }
+// ========== CARRITO ==========
+function agregarCarrito(id) {
+  const p = DB.productos.find(x=>x.id===id);
+  if (!p) return;
+  const ex = carrito.find(c=>c.id===id);
+  if (ex) ex.cantidad++; else carrito.push({...p, cantidad:1});
+  actualizarCarritoUI();
+  showToast('✅ '+p.nombre+' agregado');
+}
 
-    function toast(msg) {
-      const el = document.getElementById('toast');
-      el.textContent = msg;
-      el.classList.add('show');
-      clearTimeout(toast._t);
-      toast._t = setTimeout(() => el.classList.remove('show'), 2400);
-    }
+function quitarCarrito(id) {
+  const ex = carrito.find(c=>c.id===id);
+  if (!ex) return;
+  if (ex.cantidad > 1) ex.cantidad--; else carrito = carrito.filter(c=>c.id!==id);
+  actualizarCarritoUI();
+  renderCarritoModal();
+}
 
-    function setModal(title, contentHtml) {
-      document.getElementById('modalTitle').textContent = title;
-      document.getElementById('modalContent').innerHTML = contentHtml;
-      document.getElementById('modal').classList.add('open');
-    }
+function actualizarCarritoUI() {
+  const total = carrito.reduce((s,c)=>s+c.precio*c.cantidad,0);
+  const count = carrito.reduce((s,c)=>s+c.cantidad,0);
+  const countEl = document.getElementById('carrito-count');
+  const fab = document.getElementById('carrito-fab');
+  document.getElementById('fab-total').textContent = formatQ(total);
+  if (count > 0) {
+    countEl.style.display='flex'; countEl.textContent=count;
+    fab.classList.remove('hidden');
+  } else {
+    countEl.style.display='none';
+    fab.classList.add('hidden');
+  }
+}
 
-    function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function abrirCarrito() {
+  renderCarritoModal();
+  abrirModalById('modal-carrito');
+}
 
-    function openCart() {
-      document.getElementById('cartSheet').classList.add('open');
-    }
+function renderCarritoModal() {
+  const lista = document.getElementById('carrito-lista');
+  const totalEl = document.getElementById('carrito-total');
+  const accEl = document.getElementById('carrito-acciones');
+  if (!carrito.length) {
+    lista.innerHTML='<div class="empty"><div class="empty-icon">🛒</div><p>Su carrito está vacío</p></div>';
+    totalEl.innerHTML=''; accEl.innerHTML=''; return;
+  }
+  lista.innerHTML = carrito.map(c=>`
+    <div class="carrito-item">
+      <div class="carrito-item-img">${c.imagen?`<img src="${c.imagen}" onerror="this.outerHTML='${getEmoji(c.categoria)}'">`:getEmoji(c.categoria)}</div>
+      <div class="carrito-item-info">
+        <div class="carrito-item-nombre">${c.nombre}</div>
+        <div class="carrito-item-precio">${formatQ(c.precio)} c/u</div>
+      </div>
+      <div class="cantidad-ctrl">
+        <button class="cant-btn" onclick="quitarCarrito(${c.id})">−</button>
+        <span style="font-size:1rem;min-width:20px;text-align:center">${c.cantidad}</span>
+        <button class="cant-btn" onclick="agregarCarrito(${c.id})">+</button>
+      </div>
+    </div>
+  `).join('');
+  const total = carrito.reduce((s,c)=>s+c.precio*c.cantidad,0);
+  totalEl.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0"><span style="color:var(--texto-suave)">Total</span><span style="font-size:1.3rem;color:var(--cafe-dark)">${formatQ(total)}</span></div>`;
+  accEl.innerHTML=`<button class="btn btn-primary" style="width:100%" onclick="irARealizarPedido()">Realizar orden →</button>`;
+}
 
-    function closeSheet(id) {
-      document.getElementById(id).classList.remove('open');
-    }
+function irARealizarPedido() {
+  if (!usuarioActual) {
+    cerrarModalById('modal-carrito');
+    showToast('Por favor inicie sesión primero');
+    setTimeout(()=>abrirLogin(),500);
+    return;
+  }
+  cerrarModalById('modal-carrito');
+  mostrarConfirmacionPedido();
+}
 
-    function addToCart(productId) {
-      const product = state.products.find(p => p.id === productId);
-      if (!product) return;
-      const existing = state.cart.find(i => i.id === productId);
-      if (existing) existing.qty += 1;
-      else state.cart.push({ id: product.id, name: product.name, price: product.price, image: product.image, qty: 1, category: product.category });
-      saveState();
-      toast('Agregado al carrito');
-      openCart();
-    }
+function mostrarConfirmacionPedido() {
+  const total = carrito.reduce((s,c)=>s+c.precio*c.cantidad,0);
+  const resumen = document.getElementById('resumen-pedido-confirm');
+  resumen.innerHTML = `
+    <div style="background:var(--crema);border-radius:10px;padding:12px;border:1px solid var(--borde)">
+      ${carrito.map(c=>`<div style="display:flex;justify-content:space-between;font-size:0.88rem;padding:4px 0"><span>${c.nombre} ×${c.cantidad}</span><span>${formatQ(c.precio*c.cantidad)}</span></div>`).join('')}
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between"><strong>Total</strong><strong style="color:var(--cafe-dark)">${formatQ(total)}</strong></div>
+    </div>
+  `;
+  abrirModalById('modal-confirmar-pedido');
+}
 
-    function updateCartQty(id, delta) {
-      const item = state.cart.find(i => i.id === id);
-      if (!item) return;
-      item.qty += delta;
-      if (item.qty <= 0) state.cart = state.cart.filter(i => i.id !== id);
-      saveState();
-    }
+function toggleTerminos() {
+  const el = document.getElementById('terminos-extra');
+  el.classList.toggle('visible');
+  document.querySelector('.mostrar-mas').textContent = el.classList.contains('visible') ? 'Mostrar menos' : 'Mostrar más';
+}
 
-    function clearCart() {
-      state.cart = [];
-      saveState();
-    }
+function confirmarPedido() {
+  if (!usuarioActual || !carrito.length) return;
+  const total = carrito.reduce((s,c)=>s+c.precio*c.cantidad,0);
+  const id = generateId();
+  const nuevoPedido = {
+    id, usuario_id: usuarioActual.id,
+    usuario_tel: usuarioActual.telefono,
+    productos: carrito.map(c=>({id:c.id,nombre:c.nombre,precio:c.precio,cantidad:c.cantidad})),
+    total, estado:'pendiente',
+    created_at: new Date().toISOString()
+  };
+  DB.pedidos.push(nuevoPedido);
+  carrito = [];
+  actualizarCarritoUI();
+  cerrarModalById('modal-confirmar-pedido');
 
-    function registerOrLogin({ name, lastName, phone, address = '' }) {
-      phone = phoneClean(phone);
-      if (phone.length !== 8) {
-        toast('El teléfono debe tener 8 dígitos');
-        return;
-      }
-      if (phone === state.adminSecret.phone && name.trim() === state.adminSecret.name && lastName.trim() === state.adminSecret.lastName) {
-        state.currentUserPhone = phone;
-        saveState();
-        toast('Entró al panel admin');
-        return;
-      }
-      const existing = state.users.find(u => u.phone === phone);
-      if (existing) {
-        state.currentUserPhone = phone;
-        saveState();
-        toast(`Bienvenido de nuevo, ${existing.name}`);
-        return;
-      }
-      state.users.push({ phone, name: name.trim(), lastName: lastName.trim(), address: address.trim(), createdAt: nowISO(), warnings: 0 });
-      state.currentUserPhone = phone;
-      saveState();
-      toast('Cuenta creada correctamente');
-    }
+  // Abrir WhatsApp
+  const tel = DB.config.telefono_tienda;
+  const msg = encodeURIComponent(`¡Hola! He realizado una orden con el ID #${id}`);
+  window.open(`https://wa.me/502${tel}?text=${msg}`, '_blank');
+  showToast('🎉 ¡Orden #'+id+' creada!', 3500);
+}
 
-    function createOrder() {
-      const user = currentUser();
-      if (!user) {
-        toast('Debe iniciar sesión para realizar pedidos');
-        return;
-      }
-      if (!state.cart.length) {
-        toast('El carrito está vacío');
-        return;
-      }
-      const items = deepClone(state.cart);
-      const id = state.nextOrderId++;
-      const order = {
-        id,
-        userPhone: user.phone,
-        userName: user.name,
-        userLastName: user.lastName,
-        address: user.address || '',
-        createdAt: nowISO(),
-        status: 'created',
-        items,
-        total: orderTotal(items),
-        note: '',
-        edited: true,
-        warningsApplied: false,
-      };
-      state.orders.unshift(order);
-      clearCart();
-      saveState();
-      toast(`Pedido creado: ${id}`);
-      const msg = `¡Hola! he realizado un pedido con el ID ${id}`;
-      openWhatsApp(state.storePhone, msg);
-      markOrderReceived(id);
-    }
+// ========== LOGIN / USUARIO ==========
+function abrirLogin() {
+  if (usuarioActual) { abrirPerfil(); return; }
+  abrirModalById('modal-login');
+}
 
-    function openWhatsApp(phone, text) {
-      const url = `https://wa.me/502${phoneClean(phone)}?text=${encodeURIComponent(text)}`;
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }
+function hacerLogin() {
+  const nombre = document.getElementById('login-nombre').value.trim();
+  const apellido = document.getElementById('login-apellido').value.trim();
+  const tel = document.getElementById('login-tel').value.replace(/\D/g,'');
+  if (!nombre) { showToast('El nombre es obligatorio'); return; }
+  if (tel.length !== 8) { showToast('El teléfono debe tener 8 dígitos'); return; }
 
-    function markOrderReceived(orderId) {
-      const order = state.orders.find(o => o.id === orderId);
-      if (!order) return;
-      order.status = 'created';
-      saveState();
-    }
+  // Check admin
+  if (nombre==='MDJ' && apellido==='Bakery' && tel==='85498549') {
+    cerrarModalById('modal-login');
+    entrarAdmin();
+    return;
+  }
 
-    function updateOrderStatus(orderId, status) {
-      const order = state.orders.find(o => o.id === orderId);
-      if (!order) return;
-      order.status = status;
-      saveState();
-    }
+  let user = DB.usuarios.find(u=>u.telefono===tel);
+  let esNuevo = false;
+  if (user) {
+    showToast('👋 Bienvenido de vuelta, '+user.nombre+'!');
+  } else {
+    user = { id: DB.usuarios.length+1, nombre, apellido, telefono:tel, created_at:new Date().toISOString().split('T')[0], pedidos:0, advertencias:0, direccion:'' };
+    DB.usuarios.push(user);
+    esNuevo = true;
+    showToast('🎉 ¡Bienvenido, '+nombre+'! Cuenta creada.');
+  }
+  usuarioActual = user;
+  document.getElementById('btn-usuario').textContent = '👤';
+  cerrarModalById('modal-login');
+  if (!esNuevo) abrirPerfil();
+}
 
-    function formatStatus(status) {
-      return ({ created: 'Pedido creado y recibido', confirmed: 'Pedido confirmado', ready: 'Pedido listo', delivered: 'Pedido entregado' }[status] || status);
-    }
+function abrirPerfil() {
+  if (!usuarioActual) { abrirLogin(); return; }
+  renderPerfil();
+  abrirModalById('modal-perfil');
+}
 
-    function statusTag(status) {
-      if (status === 'confirmed') return '<span class="tag warn">confirmado</span>';
-      if (status === 'ready') return '<span class="tag ok">listo</span>';
-      if (status === 'delivered') return '<span class="tag ok">entregado</span>';
-      return '<span class="tag">recibido</span>';
-    }
+function renderPerfil() {
+  const u = usuarioActual;
+  const pedidosUsuario = DB.pedidos.filter(p=>p.usuario_tel===u.telefono);
+  const pedidoActivo = pedidosUsuario.find(p=>p.estado!=='entregado');
+  document.getElementById('perfil-content').innerHTML = `
+    <div class="perfil-header">
+      <div class="perfil-avatar">${u.nombre[0]}${u.apellido?u.apellido[0]:''}</div>
+      <div class="perfil-nombre">${u.nombre} ${u.apellido||''}</div>
+      <div class="perfil-tel">📞 ${u.telefono.slice(0,4)+' '+u.telefono.slice(4)}</div>
+      <button class="btn btn-xs" style="margin-top:8px" onclick="editarPerfil()">✏️ Editar perfil</button>
+    </div>
+    <div class="divider"></div>
+    ${pedidoActivo ? `
+      <div style="margin-bottom:16px">
+        <h3 style="margin-bottom:10px;color:var(--cafe-dark)">📋 Orden activa</h3>
+        ${pedidoActivo.estado==='pendiente'?'<div class="editar-aviso">✏️ Aún puede editar su orden</div>':''}
+        <div class="pedido-card-mini" onclick="verDetallePedido('${pedidoActivo.id}')">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:1.2rem;color:var(--cafe-dark)">#${pedidoActivo.id}</span>
+            <span>${getEstadoBadge(pedidoActivo.estado)}</span>
+          </div>
+          <div style="font-size:0.85rem;color:var(--texto-suave);margin-top:4px">${pedidoActivo.productos.length} producto(s) · ${formatQ(pedidoActivo.total)}</div>
+        </div>
+      </div>
+    ` : ''}
+    <h3 style="margin-bottom:10px;color:var(--cafe-dark)">🕐 Historial de órdenes</h3>
+    ${pedidosUsuario.filter(p=>p.id!==pedidoActivo?.id).length ? 
+      pedidosUsuario.filter(p=>p.id!==pedidoActivo?.id).map(p=>`
+        <div class="pedido-card-mini" onclick="verDetallePedido('${p.id}')">
+          <div style="display:flex;justify-content:space-between">
+            <span style="color:var(--cafe-dark)">#${p.id}</span>
+            <span>${getEstadoBadge(p.estado)}</span>
+          </div>
+          <div style="font-size:0.82rem;color:var(--texto-suave);margin-top:3px">${formatQ(p.total)}</div>
+        </div>
+      `).join('')
+    : '<p style="color:var(--texto-muy-suave);font-size:0.88rem">Sin órdenes anteriores</p>'}
+    <div class="divider"></div>
+    <button class="btn" style="width:100%" onclick="cerrarSesion()">Cerrar sesión</button>
+  `;
+}
 
-    function filteredProducts() {
-      const { search, category, sort } = state.shopFilter;
-      let list = [...state.products];
-      const term = search.trim().toLowerCase();
-      if (term) {
-        list = list.filter(p => [p.name, p.category, p.details, p.extra].join(' ').toLowerCase().includes(term));
-      }
-      if (category !== 'all') list = list.filter(p => p.category === category);
-      if (sort === 'priceAsc') list.sort((a, b) => a.price - b.price);
-      if (sort === 'priceDesc') list.sort((a, b) => b.price - a.price);
-      if (sort === 'nameAsc') list.sort((a, b) => a.name.localeCompare(b.name, 'es'));
-      if (sort === 'featured') list.sort((a, b) => a.id - b.id);
-      return list;
-    }
+function editarPerfil() {
+  const u = usuarioActual;
+  document.getElementById('perfil-content').innerHTML = `
+    <div class="modal-header">
+      <button class="back-btn" onclick="renderPerfil()">←</button>
+      <h2 class="modal-title">Editar perfil</h2>
+    </div>
+    <div class="form-group"><label>Nombre *</label><input type="text" id="edit-nombre" value="${u.nombre}"></div>
+    <div class="form-group"><label>Apellido</label><input type="text" id="edit-apellido" value="${u.apellido||''}"></div>
+    <div class="form-group"><label>Dirección</label><input type="text" id="edit-dir" value="${u.direccion||''}"></div>
+    <button class="btn btn-primary" style="width:100%" onclick="guardarEditPerfil()">💾 Guardar</button>
+  `;
+}
 
-    function visibleOrdersForAdmin() {
-      let list = [...state.orders];
-      const f = state.adminOrderFilter;
-      if (f !== 'all') list = list.filter(o => o.status === f);
-      return list.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    }
+function guardarEditPerfil() {
+  const n = document.getElementById('edit-nombre').value.trim();
+  if (!n) { showToast('El nombre es obligatorio'); return; }
+  usuarioActual.nombre = n;
+  usuarioActual.apellido = document.getElementById('edit-apellido').value.trim();
+  usuarioActual.direccion = document.getElementById('edit-dir').value.trim();
+  const uDB = DB.usuarios.find(u=>u.id===usuarioActual.id);
+  if (uDB) { uDB.nombre=n; uDB.apellido=usuarioActual.apellido; uDB.direccion=usuarioActual.direccion; }
+  showToast('✅ Perfil actualizado');
+  renderPerfil();
+}
 
-    function userOrders() {
-      const user = currentUser();
-      if (!user) return [];
-      return state.orders.filter(o => o.userPhone === user.phone).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    }
+function cerrarSesion() {
+  usuarioActual = null;
+  cerrarModalById('modal-perfil');
+  showToast('Sesión cerrada');
+}
 
-    function openLoginModal() {
-      const user = currentUser();
-      setModal('Ingresar a su cuenta', `
-        <form id="loginForm" class="grid-2">
+function getEstadoBadge(estado) {
+  const map = {
+    pendiente: '<span class="badge badge-aviso">⏳ Recibida</span>',
+    confirmado: '<span class="badge badge-info">✅ Confirmada</span>',
+    listo: '<span class="badge badge-exito">🎉 Lista</span>',
+    entregado: '<span class="badge" style="background:#eee;color:#666">📦 Entregada</span>'
+  };
+  return map[estado]||estado;
+}
+
+function verDetallePedido(pedidoId) {
+  const p = DB.pedidos.find(x=>x.id===pedidoId);
+  if (!p) return;
+  const estadoInfo = DB.config.estados_info[p.estado]||'';
+  const puedeEditar = p.estado === 'pendiente';
+  document.getElementById('detalle-pedido-content').innerHTML = `
+    <div class="modal-header">
+      <h2 class="modal-title">Orden #${p.id}</h2>
+      ${getEstadoBadge(p.estado)}
+      <button onclick="toggleEstadoInfo('estinfo_${p.id}')" class="estado-info-btn" title="¿Qué significa este estado?">❓</button>
+    </div>
+    <div class="estado-info-popup" id="estinfo_${p.id}">${estadoInfo}</div>
+    ${puedeEditar ? '<div class="editar-aviso">✏️ Aún puede modificar su orden</div>' : ''}
+    <div style="margin:14px 0">
+      ${p.productos.map(pr=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--borde)">
+          <span style="font-size:1.4rem">${getEmoji(DB.productos.find(x=>x.id===pr.id)?.categoria||'')}</span>
+          <div style="flex:1">
+            <div style="font-size:0.9rem">${pr.nombre}</div>
+            <div style="font-size:0.82rem;color:var(--texto-suave)">${formatQ(pr.precio)} × ${pr.cantidad}</div>
+          </div>
+          <div style="font-size:0.9rem;color:var(--cafe-dark)">${formatQ(pr.precio*pr.cantidad)}</div>
+          ${puedeEditar?`
+            <div style="display:flex;gap:4px">
+              <button class="cant-btn" onclick="editarCantidadPedido('${p.id}',${pr.id},-1)">−</button>
+              <button class="cant-btn" onclick="editarCantidadPedido('${p.id}',${pr.id},1)">+</button>
+            </div>
+          `:''}
+        </div>
+      `).join('')}
+      <div style="display:flex;justify-content:space-between;padding:12px 0"><strong>Total</strong><strong style="color:var(--cafe-dark)">${formatQ(p.total)}</strong></div>
+    </div>
+    <button class="btn" style="width:100%" onclick="cerrarModalById('modal-detalle-pedido')">Cerrar</button>
+  `;
+  abrirModalById('modal-detalle-pedido');
+}
+
+function toggleEstadoInfo(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('visible');
+}
+
+function editarCantidadPedido(pedidoId, prodId, delta) {
+  const p = DB.pedidos.find(x=>x.id===pedidoId);
+  if (!p || p.estado!=='pendiente') return;
+  const pr = p.productos.find(x=>x.id===prodId);
+  if (!pr) return;
+  pr.cantidad = Math.max(0, pr.cantidad+delta);
+  if (pr.cantidad===0) p.productos = p.productos.filter(x=>x.id!==prodId);
+  if (!p.productos.length) { cerrarModalById('modal-detalle-pedido'); showToast('Orden cancelada'); DB.pedidos=DB.pedidos.filter(x=>x.id!==pedidoId); return; }
+  p.total = p.productos.reduce((s,x)=>s+x.precio*x.cantidad,0);
+  verDetallePedido(pedidoId);
+}
+
+// ========== ADMIN ==========
+function entrarAdmin() {
+  document.getElementById('page-tienda').classList.remove('active');
+  document.getElementById('page-admin').classList.add('active');
+  renderAdminPedidos();
+}
+
+function salirAdmin() {
+  document.getElementById('page-admin').classList.remove('active');
+  document.getElementById('page-tienda').classList.add('active');
+  usuarioActual = null;
+}
+
+function adminTab(vista, btn) {
+  document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.admin-view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('admin-'+vista).classList.add('active');
+  if (vista==='pedidos') renderAdminPedidos();
+  if (vista==='productos') renderAdminProductos();
+  if (vista==='usuarios') renderAdminUsuarios();
+  if (vista==='config') renderAdminConfig();
+}
+
+function setPedidoSec(sec, btn) {
+  pedidoSeccion = sec;
+  document.querySelectorAll('.subsec-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderListaPedidos();
+}
+
+function renderAdminPedidos() {
+  const total = DB.pedidos.length;
+  const pend = DB.pedidos.filter(p=>p.estado==='pendiente').length;
+  const usersUnicos = [...new Set(DB.pedidos.map(p=>p.usuario_tel))].length;
+  document.getElementById('admin-resumen').innerHTML = `
+    <div class="resumen-card"><div class="resumen-num">${total}</div><div class="resumen-label">Órdenes</div></div>
+    <div class="resumen-card"><div class="resumen-num">${pend}</div><div class="resumen-label">Pendientes</div></div>
+    <div class="resumen-card"><div class="resumen-num">${usersUnicos}</div><div class="resumen-label">Clientes</div></div>
+  `;
+  renderListaPedidos();
+}
+
+function renderListaPedidos() {
+  const lista = document.getElementById('admin-pedidos-lista');
+  const pedidos = DB.pedidos.filter(p=>p.estado===pedidoSeccion).sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+  if (!pedidos.length) { lista.innerHTML='<div class="empty"><div class="empty-icon">📋</div><p>Sin órdenes en esta sección</p></div>'; return; }
+  lista.innerHTML = pedidos.map(p=>{
+    const user = DB.usuarios.find(u=>u.telefono===p.usuario_tel);
+    return `
+      <div class="admin-pedido-card" onclick="verAdminPedido('${p.id}')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
           <div>
-            <label class="small">Nombre</label>
-            <input class="field" name="name" required value="${escapeHtml(user?.name || '')}" placeholder="Nombre">
+            <span class="admin-pedido-id">#${p.id}</span>
+            <span style="font-size:0.85rem;color:var(--texto-suave);margin-left:8px">${user?user.nombre+' '+(user.apellido||''):'Desconocido'}</span>
           </div>
-          <div>
-            <label class="small">Apellido</label>
-            <input class="field" name="lastName" value="${escapeHtml(user?.lastName || '')}" placeholder="Apellido">
-          </div>
-          <div>
-            <label class="small">Teléfono (8 dígitos)</label>
-            <input class="field" name="phone" inputmode="numeric" maxlength="8" required value="${escapeHtml(phoneClean(user?.phone || ''))}" placeholder="12345678">
-          </div>
-          <div>
-            <label class="small">Dirección</label>
-            <input class="field" name="address" value="${escapeHtml(user?.address || '')}" placeholder="Dirección de casa">
-          </div>
-          <div style="grid-column:1/-1" class="switch-line">
-            <button class="btn btn-primary" type="submit">Guardar acceso</button>
-            <button class="btn btn-secondary" type="button" id="logoutBtn">Cerrar sesión</button>
-          </div>
-        </form>
-      `);
-      document.getElementById('loginForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const fd = new FormData(e.currentTarget);
-        registerOrLogin({
-          name: fd.get('name') || '',
-          lastName: fd.get('lastName') || '',
-          phone: fd.get('phone') || '',
-          address: fd.get('address') || ''
-        });
-        closeModal();
-      });
-      document.getElementById('logoutBtn').addEventListener('click', () => {
-        state.currentUserPhone = '';
-        saveState();
-        closeModal();
-        toast('Sesión cerrada');
-      });
-    }
-
-    function openCheckoutModal() {
-      const user = currentUser();
-      if (!user) {
-        toast('Debe iniciar sesión para pedir');
-        return openLoginModal();
-      }
-      if (!state.cart.length) {
-        toast('El carrito está vacío');
-        return;
-      }
-      const total = money(orderTotal(state.cart));
-      const details = state.cart.map(i => `<div class="row-between"><span>${escapeHtml(i.name)} x${i.qty}</span><strong>${money(i.price * i.qty)}</strong></div>`).join('');
-      setModal('Confirmar pedido', `
-        <div class="notice">
-          <strong>Resumen</strong>
-          <div class="small">${details}</div>
-          <div class="divider"></div>
-          <div class="row-between"><span>Total</span><strong>${total}</strong></div>
+          <span style="font-size:1rem;color:var(--cafe-dark);font-weight:500">${formatQ(p.total)}</span>
         </div>
-        <div class="notice">
-          <strong>Importante</strong>
-          <div class="small">${escapeHtml(state.settings.termsShort)}</div>
-          <details>
-            <summary style="cursor:pointer; font-weight:700; margin-top:6px">Mostrar más</summary>
-            <p class="small">${escapeHtml(state.settings.termsLong)}</p>
-          </details>
+        <div style="display:flex;gap:10px;font-size:0.8rem;color:var(--texto-suave)">
+          <span>🛍️ ${p.productos.length} producto(s)</span>
+          <span>🕐 ${formatHora(p.created_at)}</span>
         </div>
-        <div class="switch-line">
-          <button class="btn btn-primary" id="confirmOrderBtn">Realizar pedido</button>
-          <button class="btn btn-secondary" data-close-modal>Cancelar</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function formatHora(iso) {
+  const d = new Date(iso);
+  return d.toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit'});
+}
+
+function verAdminPedido(pedidoId) {
+  pedidoAdminActual = pedidoId;
+  const p = DB.pedidos.find(x=>x.id===pedidoId);
+  if (!p) return;
+  const user = DB.usuarios.find(u=>u.telefono===p.usuario_tel);
+  document.getElementById('admin-pedido-detalle-content').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span class="admin-pedido-id">#${p.id}</span>
+      ${getEstadoBadge(p.estado)}
+    </div>
+    <div style="background:var(--crema);border-radius:10px;padding:12px;margin-bottom:14px;cursor:pointer" onclick="verAdminUsuario('${p.usuario_tel}')">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--beige-dark);display:flex;align-items:center;justify-content:center;color:var(--cafe-dark)">${user?user.nombre[0]:'?'}</div>
+        <div>
+          <div style="font-size:0.9rem">${user?user.nombre+' '+(user.apellido||''):'Desconocido'}</div>
+          <div style="font-size:0.82rem;color:var(--cafe)">📞 ${p.usuario_tel.slice(0,4)+' '+p.usuario_tel.slice(4)} →</div>
         </div>
-      `);
-      document.getElementById('confirmOrderBtn').addEventListener('click', () => {
-        closeModal();
-        createOrder();
-      });
-    }
-
-    function openProductEditor(product = null) {
-      const p = product || { id: null, name: '', category: state.categories[0] || '', price: '', image: '', details: '', extra: '' };
-      const existingCats = state.categories.map(c => `<option value="${escapeHtml(c)}" ${p.category === c ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('');
-      setModal(product ? 'Editar producto' : 'Agregar producto', `
-        <form id="productForm" class="grid-2">
-          <div>
-            <label class="small">Nombre</label>
-            <input class="field" name="name" required value="${escapeHtml(p.name)}" placeholder="Nombre del producto">
+      </div>
+    </div>
+    <div style="margin-bottom:14px">
+      ${p.productos.map(pr=>`
+        <div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--borde)">
+          <span style="font-size:1.3rem">${getEmoji(DB.productos.find(x=>x.id===pr.id)?.categoria||'')}</span>
+          <div style="flex:1">
+            <div style="font-size:0.9rem">${pr.nombre}</div>
+            <div style="font-size:0.8rem;color:var(--texto-suave)">${formatQ(pr.precio)} × ${pr.cantidad}</div>
           </div>
-          <div>
-            <label class="small">Precio</label>
-            <input class="field" name="price" type="number" min="0" step="0.01" required value="${escapeHtml(p.price)}" placeholder="0">
-          </div>
-          <div>
-            <label class="small">Categoría</label>
-            <input class="field" name="categoryNew" list="categoriesList" value="${escapeHtml(p.category)}" placeholder="Nueva o existente">
-            <datalist id="categoriesList">${state.categories.map(c => `<option value="${escapeHtml(c)}"></option>`).join('')}</datalist>
-          </div>
-          <div>
-            <label class="small">Imagen</label>
-            <input class="field" name="image" value="${escapeHtml(p.image)}" placeholder="URL de imagen">
-          </div>
-          <div style="grid-column:1/-1">
-            <label class="small">Detalles</label>
-            <textarea class="textarea" name="details" rows="3" required placeholder="Detalles">${escapeHtml(p.details)}</textarea>
-          </div>
-          <div style="grid-column:1/-1">
-            <label class="small">Extra opcional</label>
-            <input class="field" name="extra" value="${escapeHtml(p.extra)}" placeholder="Solo si hace falta">
-          </div>
-          <div style="grid-column:1/-1" class="switch-line">
-            <button class="btn btn-primary" type="submit">Guardar</button>
-            <button class="btn btn-secondary" type="button" data-close-modal>Cancelar</button>
-          </div>
-        </form>
-      `);
-      document.getElementById('productForm').addEventListener('submit', e => {
-        e.preventDefault();
-        const fd = new FormData(e.currentTarget);
-        const category = String(fd.get('categoryNew') || '').trim() || 'General';
-        if (!state.categories.includes(category)) state.categories.push(category);
-        const data = {
-          name: String(fd.get('name') || '').trim(),
-          price: Number(fd.get('price') || 0),
-          category,
-          image: String(fd.get('image') || '').trim() || 'https://via.placeholder.com/900x900?text=Panaderia+MDJ',
-          details: String(fd.get('details') || '').trim(),
-          extra: String(fd.get('extra') || '').trim()
-        };
-        if (product) {
-          Object.assign(product, data);
-        } else {
-          state.products.unshift({ id: state.nextProductId++, ...data });
-        }
-        saveState();
-        closeModal();
-        toast('Producto guardado');
-      });
-    }
-
-    function openOrderDetail(order) {
-      const items = order.items.map(i => `
-        <div class="cart-item">
-          <div class="cart-item-row">
-            <strong>${escapeHtml(i.name)}</strong>
-            <span>${money(i.price * i.qty)}</span>
-          </div>
-          <div class="small">Cantidad: ${i.qty} · ${escapeHtml(i.category || '')}</div>
-          <img src="${escapeHtml(i.image)}" alt="${escapeHtml(i.name)}" style="border-radius:14px; aspect-ratio:1.8; object-fit:cover; width:100%">
-        </div>`).join('');
-      setModal(`Pedido #${order.id}`, `
-        <div class="notice">
-          <div class="row-between">
-            <div>
-              <strong>${escapeHtml(order.userName)} ${escapeHtml(order.userLastName || '')}</strong>
-              <div class="small">${phoneDisplay(order.userPhone)}</div>
-            </div>
-            ${statusTag(order.status)}
-          </div>
-          <div class="small">Fecha: ${shortDate(order.createdAt)}</div>
-          <div class="small">Dirección: ${escapeHtml(order.address || 'No registrada')}</div>
-          <div class="row-between"><span>Total</span><strong>${money(order.total)}</strong></div>
+          <div style="color:var(--cafe-dark)">${formatQ(pr.precio*pr.cantidad)}</div>
         </div>
-        ${items}
-        <div class="switch-line">
-          <button class="btn btn-secondary" data-close-modal>Cerrar</button>
-        </div>
-      `);
-    }
+      `).join('')}
+      <div style="display:flex;justify-content:space-between;padding:10px 0"><strong>Total</strong><strong style="color:var(--cafe-dark)">${formatQ(p.total)}</strong></div>
+    </div>
+    <p style="font-size:0.82rem;color:var(--texto-suave);margin-bottom:12px">Acciones rápidas:</p>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="wa-btn" onclick="prepararMsgListo('${p.id}')">📲 Orden lista para recoger</button>
+      <button class="wa-btn" onclick="prepararMsgConfirmado('${p.id}')">📲 Confirmar orden recibida</button>
+      <button class="wa-btn" onclick="prepararMsgNoDisponible('${p.id}')">📲 Productos no disponibles</button>
+    </div>
+    <div class="divider"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${p.estado!=='confirmado'?`<button class="btn btn-sm" onclick="cambiarEstadoPedido('${p.id}','confirmado')">✅ Confirmar</button>`:''}
+      ${p.estado!=='listo'?`<button class="btn btn-sm" onclick="cambiarEstadoPedido('${p.id}','listo')">🎉 Marcar lista</button>`:''}
+      ${p.estado!=='entregado'?`<button class="btn btn-sm" onclick="cambiarEstadoPedido('${p.id}','entregado')">📦 Entregada</button>`:''}
+    </div>
+  `;
+  abrirModalById('modal-admin-pedido');
+}
 
-    function openAdminOrderActions(order) {
-      const availableItems = order.items.map((i, idx) => `
-        <label class="cart-item" style="cursor:pointer">
-          <div class="switch-line">
-            <input type="checkbox" data-item="${idx}">
-            <strong>${escapeHtml(i.name)}</strong>
-          </div>
-          <div class="small">${i.qty} x ${money(i.price)}</div>
-        </label>
-      `).join('');
-      const customMsg = state.settings.messages.ready.replace('{id}', order.id);
-      setModal(`Acciones pedido #${order.id}`, `
-        <div class="notice">
-          <div class="row-between"><strong>${escapeHtml(order.userName)} ${escapeHtml(order.userLastName || '')}</strong><span>${phoneDisplay(order.userPhone)}</span></div>
-          <div class="small">Total: ${money(order.total)} · ${order.items.length} productos</div>
-          <div class="small">Estado actual: ${formatStatus(order.status)}</div>
-        </div>
-        <div class="grid-2">
-          <div class="notice">
-            <strong>Productos no disponibles</strong>
-            <div class="small">Marque los productos afectados y edite el mensaje antes de abrir WhatsApp.</div>
-            <div style="display:grid; gap:8px; margin-top:8px">${availableItems}</div>
-            <textarea class="textarea" id="unavailableMsg" rows="4">${escapeHtml(state.settings.messages.unavailable.replace('{items}', ''))}</textarea>
-            <button class="btn btn-danger" id="sendUnavailable">Confirmar estado y enviar mensaje</button>
-          </div>
-          <div class="notice">
-            <strong>Pedido listo</strong>
-            <textarea class="textarea" id="readyMsg" rows="4">${escapeHtml(customMsg)}</textarea>
-            <button class="btn btn-ok" id="sendReady">Confirmar estado y enviar mensaje</button>
-          </div>
-        </div>
-        <div class="grid-2">
-          <button class="btn btn-secondary" id="setConfirmed">Marcar confirmado</button>
-          <button class="btn btn-secondary" id="setDelivered">Marcar entregado</button>
-        </div>
-        <div class="switch-line"><button class="btn btn-secondary" data-close-modal>Cerrar</button></div>
-      `);
+function cambiarEstadoPedido(pedidoId, nuevoEstado) {
+  const p = DB.pedidos.find(x=>x.id===pedidoId);
+  if (p) p.estado = nuevoEstado;
+  cerrarModalById('modal-admin-pedido');
+  renderAdminPedidos();
+  showToast('Estado actualizado a: '+nuevoEstado);
+}
 
-      document.getElementById('setConfirmed').onclick = () => { updateOrderStatus(order.id, 'confirmed'); closeModal(); toast('Pedido confirmado'); };
-      document.getElementById('setDelivered').onclick = () => { updateOrderStatus(order.id, 'delivered'); closeModal(); toast('Pedido entregado'); };
-      document.getElementById('sendReady').onclick = () => {
-        const msg = document.getElementById('readyMsg').value.trim().replace('{id}', order.id);
-        updateOrderStatus(order.id, 'ready');
-        openWhatsApp(order.userPhone, msg);
-        closeModal();
-        toast('Mensaje listo para WhatsApp');
-      };
-      document.getElementById('sendUnavailable').onclick = () => {
-        const selected = [...document.querySelectorAll('[data-item]:checked')].map(ch => order.items[Number(ch.dataset.item)].name);
-        const itemsText = selected.length ? selected.join(', ') : 'uno o varios productos';
-        const raw = document.getElementById('unavailableMsg').value.trim();
-        const msg = raw.includes('{items}') ? raw.replace('{items}', itemsText) : `${raw}\nProductos afectados: ${itemsText}`;
-        updateOrderStatus(order.id, 'confirmed');
-        openWhatsApp(order.userPhone, msg);
-        closeModal();
-        toast('Mensaje preparado');
-      };
-    }
+function prepararMsgListo(pedidoId) {
+  const p = DB.pedidos.find(x=>x.id===pedidoId);
+  if (!p) return;
+  waContext = { pedidoId, nuevoEstado:'listo' };
+  document.getElementById('wa-mensaje-edit').value = `¡Hola! Su orden con el ID #${p.id} está lista y puede pasar a recogerla en el local. Recuerde que tiene 15 minutos desde este mensaje. ¡Le esperamos! 🥐`;
+  document.getElementById('wa-numero-display').textContent = p.usuario_tel.slice(0,4)+' '+p.usuario_tel.slice(4);
+  cerrarModalById('modal-admin-pedido');
+  abrirModalById('modal-wa-confirm');
+}
 
-    function renderShop() {
-      const products = filteredProducts();
-      const categories = ['all', ...state.categories];
-      const user = currentUser();
-      const html = `
-        <div class="topbar glass">
-          <div class="brand-row">
-            <div class="brand">
-              <div class="brand-mark">MDJ</div>
-              <div style="min-width:0">
-                <h1>Panadería MDJ</h1>
-                <p>${user ? `Hola, ${escapeHtml(user.name)} · ${phoneDisplay(user.phone)}` : 'comprá desde casa sin complicarte la existencia'}</p>
-              </div>
-            </div>
-            <button class="icon-btn" id="userBtn" aria-label="Usuario">👤</button>
-          </div>
-          <div class="search-wrap">
-            <input class="search" id="searchInput" placeholder="Buscar pan, producto o categoría..." value="${escapeHtml(state.shopFilter.search)}">
-            <button class="btn btn-primary" id="openCartBtn">Carrito</button>
-          </div>
-          <div class="chips" id="categoryChips">
-            ${categories.map(c => `<button class="chip ${state.shopFilter.category === c ? 'active' : ''}" data-cat="${escapeHtml(c)}">${c === 'all' ? 'Todo' : escapeHtml(c)}</button>`).join('')}
-          </div>
-          <div class="filters">
-            <select class="select" id="sortSelect">
-              <option value="featured" ${state.shopFilter.sort === 'featured' ? 'selected' : ''}>Destacados</option>
-              <option value="priceAsc" ${state.shopFilter.sort === 'priceAsc' ? 'selected' : ''}>De más barato a más caro</option>
-              <option value="priceDesc" ${state.shopFilter.sort === 'priceDesc' ? 'selected' : ''}>De más caro a más barato</option>
-              <option value="nameAsc" ${state.shopFilter.sort === 'nameAsc' ? 'selected' : ''}>Nombre A-Z</option>
-            </select>
-            <button class="btn btn-secondary" id="profileBtn">Perfil</button>
-          </div>
-        </div>
+function prepararMsgConfirmado(pedidoId) {
+  const p = DB.pedidos.find(x=>x.id===pedidoId);
+  if (!p) return;
+  waContext = { pedidoId, nuevoEstado:'confirmado' };
+  document.getElementById('wa-mensaje-edit').value = `¡Hola! Hemos recibido y confirmado su orden con el ID #${p.id}. En breve comenzamos a prepararla. 😊`;
+  document.getElementById('wa-numero-display').textContent = p.usuario_tel.slice(0,4)+' '+p.usuario_tel.slice(4);
+  cerrarModalById('modal-admin-pedido');
+  abrirModalById('modal-wa-confirm');
+}
 
-        <div class="hero">
-          <div class="hero-card">
-            <div class="hero-inner">
-              <div>
-                <div class="eyebrow">🍞 tienda en línea · beige cálido · mobile first</div>
-                <h2>Pedidos desde casa, sin perder el encanto de la panadería.</h2>
-                <p>Una experiencia suave, rápida y clara para que su clientela compre pan, café y productos de barrio desde el celular.</p>
-                <div class="hero-actions">
-                  <button class="btn btn-primary" id="goProducts">Ver productos</button>
-                  <button class="btn btn-secondary" id="goCheckout">Realizar pedido</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="hero-card">
-            <div class="hero-visual">
-              <div class="hero-plate"><span>☕</span></div>
-            </div>
-          </div>
-        </div>
+function prepararMsgNoDisponible(pedidoId) {
+  const p = DB.pedidos.find(x=>x.id===pedidoId);
+  if (!p) return;
+  waContext = { pedidoId };
+  document.getElementById('prod-nodisponible-lista').innerHTML = p.productos.map(pr=>`
+    <label class="producto-check">
+      <input type="checkbox" value="${pr.id}" style="width:auto;margin:0">
+      <span style="font-size:0.9rem">${pr.nombre}</span>
+    </label>
+  `).join('');
+  cerrarModalById('modal-admin-pedido');
+  abrirModalById('modal-prod-nodisponible');
+}
 
-        <div class="section">
-          <div class="section-head">
-            <h3>Productos</h3>
-            <small>${products.length} resultados</small>
-          </div>
-          <div class="products-grid" id="productsGrid">
-            ${products.map(renderProductCard).join('') || '<div class="notice" style="grid-column:1/-1">No hay productos con esos filtros.</div>'}
-          </div>
-        </div>
-      `;
-      document.getElementById('app').innerHTML = html;
-      bindShopEvents();
-    }
+function armarMsgNoDisponible() {
+  const checks = document.querySelectorAll('#prod-nodisponible-lista input:checked');
+  const seleccionados = Array.from(checks).map(c=>{
+    const p = DB.pedidos.find(x=>x.id===waContext.pedidoId);
+    const pr = p.productos.find(x=>x.id==c.value);
+    return pr?.nombre||'';
+  }).filter(Boolean);
+  if (!seleccionados.length) { showToast('Seleccione al menos un producto'); return; }
+  const p = DB.pedidos.find(x=>x.id===waContext.pedidoId);
+  waContext.nuevoEstado = null;
+  document.getElementById('wa-mensaje-edit').value = `¡Hola! Lamentablemente, uno o más productos de su orden #${p.id} no están disponibles en este momento:\n- ${seleccionados.join('\n- ')}\n¿Desea proceder con el resto de la orden o prefiere cancelarla?`;
+  document.getElementById('wa-numero-display').textContent = p.usuario_tel.slice(0,4)+' '+p.usuario_tel.slice(4);
+  cerrarModalById('modal-prod-nodisponible');
+  abrirModalById('modal-wa-confirm');
+}
 
-    function renderProductCard(p) {
-      const extra = p.extra ? `<div class="small">${escapeHtml(p.extra)}</div>` : '';
-      return `
-        <article class="product-card">
-          <div class="product-media">
-            <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}">
-            <div class="badge">${escapeHtml(p.category)}</div>
-            <div class="badge badge-right">#${p.id}</div>
-          </div>
-          <div class="product-body">
-            <h4 class="product-title">${escapeHtml(p.name)}</h4>
-            <div class="meta"><span>${escapeHtml(p.details)}</span></div>
-            ${extra}
-            <div class="row-between">
-              <strong class="price">${money(p.price)}</strong>
-            </div>
-            <div class="product-actions">
-              <button class="btn btn-primary" data-add="${p.id}">Agregar</button>
-              <button class="btn btn-secondary" data-view="${p.id}">Ver</button>
-            </div>
-          </div>
-        </article>
-      `;
-    }
+function confirmarEnvioWA() {
+  const p = DB.pedidos.find(x=>x.id===waContext.pedidoId);
+  if (!p) return;
+  const msg = document.getElementById('wa-mensaje-edit').value;
+  const tel = '502'+p.usuario_tel;
+  window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`, '_blank');
+  if (waContext.nuevoEstado) {
+    p.estado = waContext.nuevoEstado;
+    renderAdminPedidos();
+  }
+  cerrarModalById('modal-wa-confirm');
+  showToast('WhatsApp abierto ✅');
+}
 
-    function bindShopEvents() {
-      const searchInput = document.getElementById('searchInput');
-      const sortSelect = document.getElementById('sortSelect');
-      if (searchInput) searchInput.oninput = e => { state.shopFilter.search = e.target.value; saveSilent(); };
-      if (sortSelect) sortSelect.onchange = e => { state.shopFilter.sort = e.target.value; saveSilent(); };
-      document.querySelectorAll('[data-cat]').forEach(btn => btn.onclick = () => {
-        state.shopFilter.category = btn.dataset.cat;
-        saveSilent();
-      });
-      document.querySelectorAll('[data-add]').forEach(btn => btn.onclick = () => addToCart(Number(btn.dataset.add)));
-      document.querySelectorAll('[data-view]').forEach(btn => btn.onclick = () => {
-        const p = state.products.find(x => x.id === Number(btn.dataset.view));
-        if (!p) return;
-        setModal(p.name, `
-          <div class="notice">
-            <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" style="width:100%; aspect-ratio:1.2; object-fit:cover; border-radius:18px">
-            <div class="row-between" style="margin-top:10px"><strong>${escapeHtml(p.name)}</strong><strong>${money(p.price)}</strong></div>
-            <div class="small">Categoría: ${escapeHtml(p.category)}</div>
-            <p class="small">${escapeHtml(p.details)}</p>
-            ${p.extra ? `<div class="tag">${escapeHtml(p.extra)}</div>` : ''}
-          </div>
-          <div class="switch-line"><button class="btn btn-primary" id="modalAddBtn">Agregar al carrito</button><button class="btn btn-secondary" data-close-modal>Cerrar</button></div>
-        `);
-        document.getElementById('modalAddBtn').onclick = () => { addToCart(p.id); closeModal(); };
-      });
-      const userBtn = document.getElementById('userBtn'); if (userBtn) userBtn.onclick = openLoginModal;
-      const profileBtn = document.getElementById('profileBtn'); if (profileBtn) profileBtn.onclick = renderProfileModal;
-      const goProducts = document.getElementById('goProducts'); if (goProducts) goProducts.onclick = () => document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      const goCheckout = document.getElementById('goCheckout'); if (goCheckout) goCheckout.onclick = openCheckoutModal;
-      const openCartBtn = document.getElementById('openCartBtn'); if (openCartBtn) openCartBtn.onclick = openCart;
-    }
+function verAdminUsuario(tel) {
+  const u = DB.usuarios.find(x=>x.telefono===tel);
+  if (!u) return;
+  const pedidos = DB.pedidos.filter(p=>p.usuario_tel===tel);
+  document.getElementById('admin-usuario-detalle').innerHTML = `
+    <div class="perfil-header">
+      <div class="perfil-avatar">${u.nombre[0]}${u.apellido?u.apellido[0]:''}</div>
+      <div class="perfil-nombre">${u.nombre} ${u.apellido||''}</div>
+      <div class="perfil-tel">📞 ${u.telefono.slice(0,4)+' '+u.telefono.slice(4)}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0">
+      <div class="resumen-card"><div class="resumen-num">${pedidos.length}</div><div class="resumen-label">Órdenes</div></div>
+      <div class="resumen-card"><div class="resumen-num">${u.advertencias||0}</div><div class="resumen-label">Advertencias</div></div>
+    </div>
+    <div class="divider"></div>
+    <p style="font-size:0.82rem;color:var(--texto-suave);margin-bottom:6px">Registro: ${u.created_at}</p>
+    ${u.direccion?`<p style="font-size:0.85rem;margin-bottom:8px">📍 ${u.direccion}</p>`:''}
+    <h3 style="margin:12px 0 8px;color:var(--cafe-dark)">Historial de órdenes</h3>
+    ${pedidos.map(p=>`<div class="pedido-card-mini"><div style="display:flex;justify-content:space-between"><span>#${p.id}</span><span>${getEstadoBadge(p.estado)}</span></div><div style="font-size:0.82rem;color:var(--texto-suave)">${formatQ(p.total)}</div></div>`).join('')||'<p style="color:var(--texto-muy-suave);font-size:0.85rem">Sin órdenes</p>'}
+    <button class="btn btn-danger btn-sm" style="margin-top:12px" onclick="agregarAdvertencia('${tel}')">⚠️ Agregar advertencia</button>
+  `;
+  cerrarModalById('modal-admin-pedido');
+  abrirModalById('modal-admin-usuario');
+}
 
-    function renderProfileModal() {
-      const user = currentUser();
-      if (!user) return openLoginModal();
-      const orders = userOrders();
-      setModal('Perfil del cliente', `
-        <div class="grid-2">
-          <div class="notice">
-            <strong>${escapeHtml(user.name)} ${escapeHtml(user.lastName || '')}</strong>
-            <div class="small">${phoneDisplay(user.phone)}</div>
-            <div class="small">Registrado: ${shortDate(user.createdAt)}</div>
-            <div class="small">Dirección: ${escapeHtml(user.address || 'No registrada')}</div>
-            <div class="small">Advertencias: ${user.warnings || 0}</div>
-            <button class="btn btn-primary" id="editProfileBtn">Editar datos</button>
-          </div>
-          <div class="notice">
-            <strong>Pedido activo / historial</strong>
-            <div class="small">Pedidos anteriores y su estado.</div>
-            ${orders.length ? orders.map(o => `
-              <div class="history-item" style="margin-top:8px">
-                <div class="row-between"><strong>#${o.id}</strong>${statusTag(o.status)}</div>
-                <div class="small">${shortDate(o.createdAt)}</div>
-                <div class="small">${o.items.length} productos · ${money(o.total)}</div>
-                <button class="btn btn-secondary" data-open-order="${o.id}">Ver</button>
-              </div>`).join('') : '<div class="small" style="margin-top:8px">Todavía no tiene pedidos.</div>'}
-          </div>
-        </div>
-        <div class="switch-line"><button class="btn btn-secondary" data-close-modal>Cerrar</button></div>
-      `);
-      document.getElementById('editProfileBtn').onclick = () => {
-        closeModal();
-        openLoginModal();
-      };
-      document.querySelectorAll('[data-open-order]').forEach(btn => btn.onclick = () => {
-        const order = state.orders.find(o => o.id === Number(btn.dataset.openOrder));
-        if (order) openOrderDetail(order);
-      });
-    }
+function agregarAdvertencia(tel) {
+  const u = DB.usuarios.find(x=>x.telefono===tel);
+  if (u) { u.advertencias=(u.advertencias||0)+1; showToast('Advertencia registrada'); verAdminUsuario(tel); }
+}
 
-    function renderAdmin() {
-      const stats = {
-        users: state.users.length,
-        products: state.products.length,
-        orders: state.orders.length,
-        pending: state.orders.filter(o => o.status === 'created').length,
-        confirmed: state.orders.filter(o => o.status === 'confirmed').length,
-        ready: state.orders.filter(o => o.status === 'ready').length,
-      };
-      const activeOrders = visibleOrdersForAdmin();
-      const userRows = state.users.map(u => `
-        <div class="admin-user">
-          <div class="row-between">
-            <strong>${escapeHtml(u.name)} ${escapeHtml(u.lastName || '')}</strong>
-            <span class="tag">${phoneDisplay(u.phone)}</span>
-          </div>
-          <div class="small">Registrado: ${shortDate(u.createdAt)}</div>
-          <div class="small">Dirección: ${escapeHtml(u.address || 'No registrada')}</div>
-          <div class="small">Advertencias: ${u.warnings || 0}</div>
-          <button class="btn btn-secondary" data-phone-user="${u.phone}">Ver pedidos</button>
-        </div>
-      `).join('');
+// ========== ADMIN PRODUCTOS ==========
+function renderAdminProductos() {
+  const lista = document.getElementById('admin-productos-lista');
+  lista.innerHTML = DB.productos.map(p=>`
+    <div class="admin-pedido-card" style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:1.8rem">${p.imagen?`<img src="${p.imagen}" style="width:40px;height:40px;border-radius:8px;object-fit:cover" onerror="this.outerHTML='${getEmoji(p.categoria)}'">`:getEmoji(p.categoria)}</span>
+      <div style="flex:1">
+        <div style="font-size:0.9rem">${p.nombre}</div>
+        <div style="font-size:0.82rem;color:var(--texto-suave)">${p.categoria} · ${formatQ(p.precio)}</div>
+        ${p.extra?`<div style="font-size:0.75rem;color:var(--aviso)">ℹ️ ${p.extra}</div>`:''}
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-xs" onclick="abrirFormProducto(${p.id})">✏️</button>
+        <button class="btn btn-xs btn-danger" onclick="eliminarProducto(${p.id})">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
 
-      const productsHtml = state.products.map(p => `
-        <div class="panel-card">
-          <div class="product-media"><img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}"><div class="badge">#${p.id}</div></div>
-          <div class="panel-body">
-            <strong>${escapeHtml(p.name)}</strong>
-            <div class="small">${escapeHtml(p.category)} · ${money(p.price)}</div>
-            <div class="small">${escapeHtml(p.details)}</div>
-            ${p.extra ? `<div class="tag">${escapeHtml(p.extra)}</div>` : ''}
-            <div class="panel-actions">
-              <button class="btn btn-primary" data-edit-product="${p.id}">Editar</button>
-              <button class="btn btn-secondary" data-del-product="${p.id}">Borrar</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
+function abrirFormProducto(id) {
+  productoFormMode = id;
+  if (id) {
+    const p = DB.productos.find(x=>x.id===id);
+    document.getElementById('form-producto-titulo').textContent = 'Editar producto';
+    document.getElementById('fp-id').value = id;
+    document.getElementById('fp-nombre').value = p.nombre;
+    document.getElementById('fp-categoria').value = p.categoria;
+    document.getElementById('fp-precio').value = p.precio;
+    document.getElementById('fp-imagen').value = p.imagen||'';
+    document.getElementById('fp-extra').value = p.extra||'';
+  } else {
+    document.getElementById('form-producto-titulo').textContent = 'Agregar producto';
+    document.getElementById('fp-id').value='';
+    document.getElementById('fp-nombre').value='';
+    document.getElementById('fp-categoria').value='';
+    document.getElementById('fp-precio').value='';
+    document.getElementById('fp-imagen').value='';
+    document.getElementById('fp-extra').value='';
+  }
+  // Actualizar datalist
+  const dl = document.getElementById('categorias-lista');
+  dl.innerHTML='';
+  getCategoriasUnicas().forEach(c=>{const o=document.createElement('option');o.value=c;dl.appendChild(o);});
+  abrirModalById('modal-form-producto');
+}
 
-      const ordersHtml = activeOrders.map(order => `
-        <div class="order-card" data-open-order-detail="${order.id}">
-          <div class="order-body">
-            <div class="order-row">
-              <div>
-                <h4 class="order-title">${escapeHtml(order.userName)} ${escapeHtml(order.userLastName || '')}</h4>
-                <div class="small">ID #${order.id} · ${phoneDisplay(order.userPhone)}</div>
-              </div>
-              ${statusTag(order.status)}
-            </div>
-            <div class="small">${order.items.length} productos · ${money(order.total)}</div>
-            <div class="small">${shortDate(order.createdAt)}</div>
-            <div class="order-actions">
-              <button class="btn btn-secondary" data-status-change="${order.id}|confirmed">Confirmar</button>
-              <button class="btn btn-ok" data-status-change="${order.id}|ready">Listo</button>
-              <button class="btn btn-secondary" data-status-change="${order.id}|delivered">Entregado</button>
-            </div>
-            <div class="order-actions">
-              <button class="btn btn-primary" data-admin-actions="${order.id}">WhatsApp / acciones</button>
-              <button class="btn btn-secondary" data-go-phone="${order.userPhone}">Ir al usuario</button>
-            </div>
-          </div>
-        </div>
-      `).join('') || '<div class="notice">No hay pedidos en este estado.</div>';
+function guardarProducto() {
+  const nombre = document.getElementById('fp-nombre').value.trim();
+  const categoria = document.getElementById('fp-categoria').value.trim();
+  const precio = parseFloat(document.getElementById('fp-precio').value);
+  const imagen = document.getElementById('fp-imagen').value.trim();
+  const extra = document.getElementById('fp-extra').value.trim();
+  if (!nombre||!categoria||isNaN(precio)) { showToast('Complete los campos obligatorios'); return; }
 
-      const html = `
-        <div class="topbar glass">
-          <div class="brand-row">
-            <div class="brand">
-              <div class="brand-mark">MDJ</div>
-              <div>
-                <h1>Panel de administración</h1>
-                <p>Pedidos primero, porque alguien aquí sí sabe priorizar.</p>
-              </div>
-            </div>
-            <button class="icon-btn" id="backShopBtn">🏪</button>
-          </div>
-          <div class="grid-3">
-            <div class="notice"><strong>${stats.orders}</strong><div class="small">Pedidos</div></div>
-            <div class="notice"><strong>${stats.users}</strong><div class="small">Usuarios</div></div>
-            <div class="notice"><strong>${stats.products}</strong><div class="small">Productos</div></div>
-          </div>
-          <div class="grid-3">
-            <div class="notice"><strong>${stats.pending}</strong><div class="small">Pendientes</div></div>
-            <div class="notice"><strong>${stats.confirmed}</strong><div class="small">Confirmados</div></div>
-            <div class="notice"><strong>${stats.ready}</strong><div class="small">Listos</div></div>
-          </div>
-        </div>
+  if (productoFormMode) {
+    const p = DB.productos.find(x=>x.id===productoFormMode);
+    if (p) { p.nombre=nombre; p.categoria=categoria; p.precio=precio; p.imagen=imagen; p.extra=extra; }
+    showToast('✅ Producto actualizado');
+  } else {
+    const newId = Math.max(...DB.productos.map(p=>p.id))+1;
+    DB.productos.push({ id:newId, nombre, categoria, precio, imagen, extra });
+    showToast('✅ Producto agregado');
+  }
+  cerrarModalById('modal-form-producto');
+  renderAdminProductos();
+  renderFiltrosCategorias();
+  renderProductos();
+}
 
-        <div class="admin-layout">
-          <div class="tabs-main glass" style="border-radius:26px; padding:12px;">
-            <button class="mini-tab ${state.adminTab === 'orders' ? 'active' : ''}" data-admin-tab="orders">Pedidos</button>
-            <button class="mini-tab ${state.adminTab === 'products' ? 'active' : ''}" data-admin-tab="products">Productos</button>
-            <button class="mini-tab ${state.adminTab === 'users' ? 'active' : ''}" data-admin-tab="users">Usuarios</button>
-            <button class="mini-tab ${state.adminTab === 'settings' ? 'active' : ''}" data-admin-tab="settings">Configuración</button>
-          </div>
-          <div class="panel active" data-panel="${state.adminTab}">
-            <div id="ordersPanel" class="panel ${state.adminTab === 'orders' ? 'active' : ''}">
-              <div class="section-head">
-                <h3>Pedidos</h3>
-                <small>Ordenados por hora de creación</small>
-              </div>
-              <div class="status-filters">
-                <button class="status-pill ${state.adminOrderFilter === 'all' ? 'active' : ''}" data-order-filter="all">Todos</button>
-                <button class="status-pill ${state.adminOrderFilter === 'created' ? 'active' : ''}" data-order-filter="created">Pendientes</button>
-                <button class="status-pill ${state.adminOrderFilter === 'confirmed' ? 'active' : ''}" data-order-filter="confirmed">Confirmados</button>
-                <button class="status-pill ${state.adminOrderFilter === 'ready' ? 'active' : ''}" data-order-filter="ready">Listos</button>
-                <button class="status-pill ${state.adminOrderFilter === 'delivered' ? 'active' : ''}" data-order-filter="delivered">Entregados</button>
-              </div>
-              <div class="small">Toque el teléfono o el nombre para abrir detalles más rápido.</div>
-              <div class="section">${ordersHtml}</div>
-            </div>
+function eliminarProducto(id) {
+  if (!confirm('¿Eliminar este producto?')) return;
+  DB.productos = DB.productos.filter(p=>p.id!==id);
+  renderAdminProductos();
+  renderProductos();
+  showToast('Producto eliminado');
+}
 
-            <div id="productsPanel" class="panel ${state.adminTab === 'products' ? 'active' : ''}">
-              <div class="section-head">
-                <h3>Productos</h3>
-                <button class="btn btn-primary" id="addProductBtn">Agregar producto</button>
-              </div>
-              <div class="products-grid">${productsHtml}</div>
-            </div>
+// ========== ADMIN USUARIOS ==========
+function renderAdminUsuarios() {
+  const lista = document.getElementById('admin-usuarios-lista');
+  lista.innerHTML = `<p style="font-size:0.82rem;color:var(--texto-suave);margin-bottom:10px">${DB.usuarios.length} usuario(s) registrado(s)</p>`+DB.usuarios.map(u=>`
+    <div class="usuario-row" onclick="verAdminUsuario('${u.telefono}')" style="cursor:pointer">
+      <div class="usuario-avatar">${u.nombre[0]}${u.apellido?u.apellido[0]:''}</div>
+      <div style="flex:1">
+        <div style="font-size:0.9rem">${u.nombre} ${u.apellido||''}</div>
+        <div style="font-size:0.8rem;color:var(--cafe)">📞 ${u.telefono.slice(0,4)+' '+u.telefono.slice(4)}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:0.78rem;color:var(--texto-muy-suave)">${u.created_at}</div>
+        ${u.advertencias?`<span class="badge badge-peligro">⚠️ ${u.advertencias}</span>`:''}
+      </div>
+    </div>
+  `).join('');
+}
 
-            <div id="usersPanel" class="panel ${state.adminTab === 'users' ? 'active' : ''}">
-              <div class="section-head">
-                <h3>Usuarios</h3>
-                <small>Registro, pedidos y datos básicos</small>
-              </div>
-              <div class="section">${userRows}</div>
-            </div>
+// ========== ADMIN CONFIG ==========
+function renderAdminConfig() {
+  const cfg = DB.config;
+  document.getElementById('admin-config-content').innerHTML = `
+    <div class="form-group"><label>Teléfono de la tienda</label><input type="text" id="cfg-tel" value="${cfg.telefono_tienda}" maxlength="9"></div>
+    <div class="form-group"><label>Términos adicionales (detalle)</label><textarea id="cfg-terminos">${cfg.terminos_extra}</textarea></div>
+    <div class="divider"></div>
+    <h3 style="margin-bottom:12px;color:var(--cafe-dark)">Descripción de estados</h3>
+    ${Object.entries(cfg.estados_info).map(([k,v])=>`
+      <div class="form-group"><label>${k}</label><input type="text" id="cfg-estado-${k}" value="${v}"></div>
+    `).join('')}
+    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="guardarConfig()">💾 Guardar configuración</button>
+  `;
+}
 
-            <div id="settingsPanel" class="panel ${state.adminTab === 'settings' ? 'active' : ''}">
-              <div class="section-head">
-                <h3>Configuración</h3>
-                <small>Mensajes, teléfono de la tienda y textos visibles</small>
-              </div>
-              <div class="grid-2">
-                <div class="notice">
-                  <strong>Teléfono de la tienda</strong>
-                  <input class="field" id="storePhoneField" value="${escapeHtml(phoneDisplay(state.storePhone))}">
-                </div>
-                <div class="notice">
-                  <strong>Mensaje corto de confirmación</strong>
-                  <textarea class="textarea" id="termsShortField" rows="3">${escapeHtml(state.settings.termsShort)}</textarea>
-                </div>
-                <div class="notice">
-                  <strong>Mensaje largo / términos</strong>
-                  <textarea class="textarea" id="termsLongField" rows="4">${escapeHtml(state.settings.termsLong)}</textarea>
-                </div>
-                <div class="notice">
-                  <strong>Estado: creado</strong>
-                  <textarea class="textarea" id="statusCreatedField" rows="3">${escapeHtml(state.settings.statusInfo.created)}</textarea>
-                </div>
-                <div class="notice">
-                  <strong>Estado: confirmado</strong>
-                  <textarea class="textarea" id="statusConfirmedField" rows="3">${escapeHtml(state.settings.statusInfo.confirmed)}</textarea>
-                </div>
-                <div class="notice">
-                  <strong>Estado: listo</strong>
-                  <textarea class="textarea" id="statusReadyField" rows="3">${escapeHtml(state.settings.statusInfo.ready)}</textarea>
-                </div>
-                <div class="notice">
-                  <strong>Estado: entregado</strong>
-                  <textarea class="textarea" id="statusDeliveredField" rows="3">${escapeHtml(state.settings.statusInfo.delivered)}</textarea>
-                </div>
-                <div class="notice">
-                  <strong>Mensaje pedido listo</strong>
-                  <textarea class="textarea" id="msgReadyField" rows="3">${escapeHtml(state.settings.messages.ready)}</textarea>
-                </div>
-                <div class="notice">
-                  <strong>Mensaje producto no disponible</strong>
-                  <textarea class="textarea" id="msgUnavailableField" rows="3">${escapeHtml(state.settings.messages.unavailable)}</textarea>
-                </div>
-              </div>
-              <div class="switch-line">
-                <button class="btn btn-primary" id="saveSettingsBtn">Guardar cambios</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-      document.getElementById('app').innerHTML = html;
-      bindAdminEvents();
-    }
-
-    function bindAdminEvents() {
-      document.querySelectorAll('[data-admin-tab]').forEach(btn => btn.onclick = () => {
-        state.adminTab = btn.dataset.adminTab;
-        saveSilent();
-      });
-      document.querySelectorAll('[data-order-filter]').forEach(btn => btn.onclick = () => {
-        state.adminOrderFilter = btn.dataset.orderFilter;
-        saveSilent();
-      });
-      document.getElementById('backShopBtn').onclick = () => {
-        state.currentUserPhone = '';
-        state.adminTab = 'orders';
-        saveState();
-      };
-      document.getElementById('addProductBtn')?.addEventListener('click', () => openProductEditor());
-      document.querySelectorAll('[data-edit-product]').forEach(btn => btn.onclick = () => {
-        const product = state.products.find(p => p.id === Number(btn.dataset.editProduct));
-        if (product) openProductEditor(product);
-      });
-      document.querySelectorAll('[data-del-product]').forEach(btn => btn.onclick = () => {
-        const id = Number(btn.dataset.delProduct);
-        state.products = state.products.filter(p => p.id !== id);
-        saveState();
-        toast('Producto eliminado');
-      });
-      document.querySelectorAll('[data-open-order-detail]').forEach(card => card.onclick = () => {
-        const order = state.orders.find(o => o.id === Number(card.dataset.openOrderDetail));
-        if (order) openOrderDetail(order);
-      });
-      document.querySelectorAll('[data-admin-actions]').forEach(btn => btn.onclick = () => {
-        const order = state.orders.find(o => o.id === Number(btn.dataset.adminActions));
-        if (order) openAdminOrderActions(order);
-      });
-      document.querySelectorAll('[data-status-change]').forEach(btn => btn.onclick = () => {
-        const [id, status] = btn.dataset.statusChange.split('|');
-        updateOrderStatus(Number(id), status);
-        toast(`Estado cambiado a ${formatStatus(status)}`);
-      });
-      document.querySelectorAll('[data-go-phone]').forEach(btn => btn.onclick = () => {
-        const phone = btn.dataset.goPhone;
-        state.adminTab = 'users';
-        state.currentUserPhone = phone;
-        saveState();
-        toast('Abriendo usuario');
-      });
-      document.querySelectorAll('[data-phone-user]').forEach(btn => btn.onclick = () => {
-        const phone = btn.dataset.phoneUser;
-        const user = state.users.find(u => u.phone === phone);
-        const orders = state.orders.filter(o => o.userPhone === phone);
-        setModal('Usuario y pedidos', `
-          <div class="notice">
-            <strong>${escapeHtml(user?.name || '')} ${escapeHtml(user?.lastName || '')}</strong>
-            <div class="small">Teléfono: ${phoneDisplay(phone)}</div>
-            <div class="small">Dirección: ${escapeHtml(user?.address || 'No registrada')}</div>
-            <div class="small">Registrado: ${user ? shortDate(user.createdAt) : 'Sin datos'}</div>
-          </div>
-          ${orders.map(o => `<div class="notice"><div class="row-between"><strong>#${o.id}</strong>${statusTag(o.status)}</div><div class="small">${shortDate(o.createdAt)} · ${money(o.total)}</div></div>`).join('') || '<div class="notice">Sin pedidos.</div>'}
-          <div class="switch-line"><button class="btn btn-secondary" data-close-modal>Cerrar</button></div>
-        `);
-      });
-      document.getElementById('saveSettingsBtn').onclick = () => {
-        state.storePhone = phoneClean(document.getElementById('storePhoneField').value) || state.storePhone;
-        state.settings.termsShort = document.getElementById('termsShortField').value;
-        state.settings.termsLong = document.getElementById('termsLongField').value;
-        state.settings.statusInfo.created = document.getElementById('statusCreatedField').value;
-        state.settings.statusInfo.confirmed = document.getElementById('statusConfirmedField').value;
-        state.settings.statusInfo.ready = document.getElementById('statusReadyField').value;
-        state.settings.statusInfo.delivered = document.getElementById('statusDeliveredField').value;
-        state.settings.messages.ready = document.getElementById('msgReadyField').value;
-        state.settings.messages.unavailable = document.getElementById('msgUnavailableField').value;
-        saveState();
-        toast('Configuración guardada');
-      };
-    }
-
-    function renderCart() {
-      const content = document.getElementById('cartContent');
-      const total = money(orderTotal(state.cart));
-      document.getElementById('cartSubtitle').textContent = `${state.cart.length} productos`;
-      document.getElementById('cartCount').textContent = state.cart.reduce((n, i) => n + i.qty, 0);
-      content.innerHTML = state.cart.length ? `
-        ${state.cart.map(i => `
-          <div class="cart-item">
-            <div class="cart-item-row">
-              <div>
-                <strong>${escapeHtml(i.name)}</strong>
-                <div class="small">${escapeHtml(i.category)}</div>
-              </div>
-              <strong>${money(i.price * i.qty)}</strong>
-            </div>
-            <div class="cart-item-row">
-              <div class="qty">
-                <button data-qty-minus="${i.id}">−</button>
-                <span>${i.qty}</span>
-                <button data-qty-plus="${i.id}">+</button>
-              </div>
-              <button class="btn btn-secondary" data-remove="${i.id}">Quitar</button>
-            </div>
-          </div>
-        `).join('')}
-        <div class="notice">
-          <div class="row-between"><strong>Total</strong><strong>${total}</strong></div>
-          <div class="small">${currentUser() ? 'Su cuenta está lista para pedir.' : 'Debe iniciar sesión para completar el pedido.'}</div>
-        </div>
-        <div class="switch-line">
-          <button class="btn btn-primary" id="checkoutBtn">Realizar pedido</button>
-          <button class="btn btn-secondary" id="clearCartBtn">Vaciar carrito</button>
-        </div>
-      ` : '<div class="notice">Su carrito está vacío. El universo aún no se ha alineado.</div>';
-      content.querySelectorAll('[data-qty-minus]').forEach(btn => btn.onclick = () => updateCartQty(Number(btn.dataset.qtyMinus), -1));
-      content.querySelectorAll('[data-qty-plus]').forEach(btn => btn.onclick = () => updateCartQty(Number(btn.dataset.qtyPlus), 1));
-      content.querySelectorAll('[data-remove]').forEach(btn => btn.onclick = () => {
-        state.cart = state.cart.filter(i => i.id !== Number(btn.dataset.remove));
-        saveState();
-      });
-      document.getElementById('checkoutBtn')?.addEventListener('click', openCheckoutModal);
-      document.getElementById('clearCartBtn')?.addEventListener('click', () => { clearCart(); toast('Carrito vaciado'); });
-    }
-
-    function render() {
-      document.getElementById('app').innerHTML = '';
-      if (isAdmin()) renderAdmin(); else renderShop();
-      renderCart();
-      wireGlobalEvents();
-      syncFab();
-    }
-
-    function syncFab() {
-      document.getElementById('cartCount').textContent = state.cart.reduce((n, i) => n + i.qty, 0);
-    }
-
-    function saveSilent() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      render();
-    }
-
-    function wireGlobalEvents() {
-      document.getElementById('cartFab').onclick = openCart;
-      document.querySelectorAll('[data-close="cartSheet"]').forEach(btn => btn.onclick = () => closeSheet('cartSheet'));
-      document.getElementById('modalClose').onclick = closeModal;
-      document.querySelectorAll('[data-close-modal]').forEach(btn => btn.onclick = closeModal);
-      document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
-      document.getElementById('cartSheet').onclick = e => { if (e.target.id === 'cartSheet') closeSheet('cartSheet'); };
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeSheet('cartSheet'); } });
-    }
-
-    function boot() {
-      if (!state.currentUserPhone && location.hash === '#admin') {
-        toast('Inicie sesión con el login secreto para entrar al admin');
-      }
-      render();
-    }
-
-    boot();
-  </script>
+function guardarConfig() {
+  DB.config.telefono_tienda = document.getElementById('cfg-tel').value.replace(/\D/g,'');
+  DB.config.terminos_extra = document.getElementById('cfg-terminos').value;
+  Object.keys(DB.config.estados_info).forEach(k=>{
+    const el = document.getElementById('cfg-estado-'+k);
+    if (el) DB.config.estados_info[k] = el.value;
+  });
+  showToast('✅ Configuración guardada');
+}
+</script>
 </body>
 </html>
