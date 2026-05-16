@@ -252,6 +252,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- Audio de confirmación (generado por Web Audio API) -->
 <script>
 function playConfirmSound(){
@@ -525,42 +526,17 @@ function playReadySound(){
 
 <script>
 // ===== DATOS =====
-let DB={
-  productos:[
-    {id:1,nombre:'Pan francés',categoria:'Pan',precio:1.50,imagen:'',detalles:'Pan clásico horneado diariamente. Corteza crujiente y miga suave.',extra:''},
-    {id:2,nombre:'Pan dulce de azúcar',categoria:'Pan dulce',precio:2.50,imagen:'',detalles:'Pan suave con cubierta de azúcar granulada. Ideal con café.',extra:'Solo disponible de lunes a viernes'},
-    {id:3,nombre:'Semita de piña',categoria:'Pan dulce',precio:3.00,imagen:'',detalles:'Rellena con mermelada de piña artesanal. Masa esponjosa y dulce.',extra:''},
-    {id:4,nombre:'Coca-Cola 350ml',categoria:'Bebidas',precio:8.00,imagen:'',detalles:'Refresco frío disponible en el local.',extra:''},
-    {id:5,nombre:'Torta de chocolate',categoria:'Repostería',precio:15.00,imagen:'',detalles:'Torta húmeda de chocolate con ganache. Porción individual.',extra:'Solo disponible fines de semana'},
-    {id:6,nombre:'Arroz en bolsa 1lb',categoria:'Tienda',precio:12.00,imagen:'',detalles:'Arroz blanco de primera calidad, bolsa de 1 libra.',extra:''},
-    {id:7,nombre:'Pan de mantequilla',categoria:'Pan',precio:2.00,imagen:'',detalles:'Pan suave con toque de mantequilla. Receta tradicional.',extra:''},
-    {id:8,nombre:'Rosquillas',categoria:'Pan dulce',precio:1.75,imagen:'',detalles:'Horneadas, crujientes por fuera y suaves por dentro.',extra:''},
-  ],
-  usuarios:[
-    {id:1,nombre:'Carlos',apellido:'Pérez',telefono:'55551234',created_at:'2024-01-15',advertencias:[],bloqueado:false,msg_bloqueo:'',direccion:'Zona 10, Guatemala',maps_link:''},
-  ],
-  pedidos:[
-    {id:'1042',usuario_id:1,usuario_tel:'55551234',productos:[{id:1,nombre:'Pan francés',precio:1.50,cantidad:3},{id:4,nombre:'Coca-Cola 350ml',precio:8.00,cantidad:2}],total:20.50,estado:'pendiente',nota:'',hora_recogida:'',msg_cancelacion:'',created_at:new Date(Date.now()-3600000).toISOString()},
-    {id:'2081',usuario_id:1,usuario_tel:'55551234',productos:[{id:2,nombre:'Pan dulce de azúcar',precio:2.50,cantidad:4}],total:10.00,estado:'confirmado',nota:'Sin azúcar extra',hora_recogida:'10:30',msg_cancelacion:'',created_at:new Date(Date.now()-7200000).toISOString()},
-    {id:'3005',usuario_id:1,usuario_tel:'55551234',productos:[{id:7,nombre:'Pan de mantequilla',precio:2.00,cantidad:2}],total:4.00,estado:'entregado',nota:'',hora_recogida:'',msg_cancelacion:'',created_at:new Date(Date.now()-86400000).toISOString()},
-  ],
-  config:{
-    telefono_tienda:'58965725',
-    terminos_extra:'Una vez le enviemos la confirmación de que su orden está lista, usted tendrá 15 minutos para pasar a recogerla. Si no llega en ese tiempo, se registrará una advertencia en su cuenta. Con varias advertencias acumuladas, no podrá realizar nuevas órdenes.',
-    estados_info:{
-      pendiente:'Su orden fue recibida. Estamos revisando los detalles.',
-      confirmado:'Su orden está confirmada y en preparación.',
-      listo:'Su orden está lista. Puede pasar a recogerla al local.',
-      entregado:'Orden completada. ¡Gracias por su compra!',
-      cancelado:'Su orden fue cancelada.'
-    }
-  },
-  nextId:4000
-};
+const { createClient } = supabase;
+const SUPABASE_URL = 'https://knrtkmysjxugfqrxkczw.supabase.co';      // 👈 reemplazá esto
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtucnRrbXlzanh1Z2ZxcnhrY3p3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTM4NTAsImV4cCI6MjA5NDUyOTg1MH0.zDD-KRXMfXxtdCsbuNSL7JNopI__1X_An5BUphjQ3IA'; // 👈 y esto
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let carrito=[],usuarioActual=null,filtroActivo='todos',ordenActivo=null;
 let pedidoSeccion='pendiente',waContext={},productoFormMode=null;
 let advTelPendiente=null; // teléfono del usuario al que se añade advertencia
+
+// DB en memoria — caché local cargado desde Supabase al iniciar
+let DB={productos:[],pedidos:[],usuarios:[],config:{telefono_tienda:'',terminos_extra:'',estados_info:{pendiente:'',confirmado:'',listo:'',entregado:'',cancelado:''}},nextId:0};
 
 const CAT_ICONS={Pan:'ti-bread','Pan dulce':'ti-croissant',Bebidas:'ti-bottle',Repostería:'ti-cake',Tienda:'ti-basket'};
 const getCatIcon=c=>CAT_ICONS[c]||'ti-shopping-bag';
@@ -576,7 +552,7 @@ function formatQ(n){return'Q'+Number(n).toFixed(2);}
 function formatHora(iso){return new Date(iso).toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit'});}
 function formatFecha(iso){return new Date(iso).toLocaleDateString('es-GT',{day:'2-digit',month:'short',year:'numeric'});}
 function getCategoriasUnicas(){return[...new Set(DB.productos.map(p=>p.categoria))];}
-function generatePedidoId(){DB.nextId++;return String(1000+(DB.nextId%9000));}
+async function generatePedidoId(){DB.nextId++;await sb.from('config').update({valor:String(DB.nextId)}).eq('clave','next_id');return String(1000+(DB.nextId%9000));}
 function getNombreUsuario(tel){const u=DB.usuarios.find(x=>x.telefono===tel);return u?u.nombre:'cliente';}
 function getAdvCount(u){return Array.isArray(u.advertencias)?u.advertencias.length:u.advertencias||0;}
 
@@ -615,7 +591,32 @@ function mostrarConfirmDialog(titulo,texto,labelOk,fnOk,peligro=false){
 }
 
 // ===== INIT =====
-document.addEventListener('DOMContentLoaded',()=>{renderProductos();renderFiltrosCategorias();actualizarTerminosUI();});
+document.addEventListener('DOMContentLoaded',async()=>{
+  await loadDB();
+  renderProductos();renderFiltrosCategorias();actualizarTerminosUI();
+});
+
+// ===== CARGAR DATOS DESDE SUPABASE =====
+async function loadDB(){
+  try{
+    const[{data:prods,error:e1},{data:users,error:e2},{data:peds,error:e3},{data:cfgs,error:e4}]=await Promise.all([
+      sb.from('productos').select('*').order('id'),
+      sb.from('usuarios').select('*').order('id'),
+      sb.from('pedidos').select('*').order('created_at',{ascending:false}),
+      sb.from('config').select('*')
+    ]);
+    if(e1||e2||e3||e4){console.error('Error Supabase:',e1||e2||e3||e4);showToast('Error al conectar con la base de datos');return;}
+    DB.productos=prods||[];
+    DB.usuarios=(users||[]).map(u=>({...u,advertencias:Array.isArray(u.advertencias)?u.advertencias:(u.advertencias?JSON.parse(u.advertencias):[])}));
+    DB.pedidos=(peds||[]).map(p=>({...p,productos:Array.isArray(p.productos)?p.productos:(p.productos?JSON.parse(p.productos):[])}));
+    if(cfgs){cfgs.forEach(r=>{
+      if(r.clave==='telefono_tienda')DB.config.telefono_tienda=r.valor;
+      else if(r.clave==='terminos_extra')DB.config.terminos_extra=r.valor;
+      else if(r.clave==='next_id')DB.nextId=parseInt(r.valor)||0;
+      else if(r.clave.startsWith('estado_'))DB.config.estados_info[r.clave.slice(7)]=r.valor;
+    });}
+  }catch(e){console.error('loadDB error:',e);showToast('Error al conectar con Supabase');}
+}
 
 // ===== FILTROS / PRODUCTOS =====
 function renderFiltrosCategorias(){
@@ -743,13 +744,16 @@ function mostrarConfirmacionPedido(){
   abrirModalById('modal-confirmar-pedido');
 }
 function toggleTerminos(){const el=document.getElementById('terminos-extra');const btn=document.querySelector('.mostrar-mas');el.classList.toggle('visible');btn.textContent=el.classList.contains('visible')?'Ocultar':'Mostrar términos completos';}
-function confirmarPedido(){
+async function confirmarPedido(){
   if(!usuarioActual||!carrito.length)return;
   const total=carrito.reduce((s,c)=>s+c.precio*c.cantidad,0);
-  const id=generatePedidoId();
+  const id=await generatePedidoId();
   const nota=(document.getElementById('nota-pedido')||{}).value?.trim()||'';
   const hora=(document.getElementById('hora-recogida')||{}).value||'';
-  const nuevoPedido={id,usuario_id:usuarioActual.id,usuario_tel:usuarioActual.telefono,productos:carrito.map(c=>({id:c.id,nombre:c.nombre,precio:c.precio,cantidad:c.cantidad})),total,estado:'pendiente',nota,hora_recogida:hora,msg_cancelacion:'',created_at:new Date().toISOString()};
+  const productosArr=carrito.map(c=>({id:c.id,nombre:c.nombre,precio:c.precio,cantidad:c.cantidad}));
+  const nuevoPedido={id,usuario_id:usuarioActual.id,usuario_tel:usuarioActual.telefono,productos:productosArr,total,estado:'pendiente',nota,hora_recogida:hora,msg_cancelacion:'',created_at:new Date().toISOString()};
+  const{error}=await sb.from('pedidos').insert({...nuevoPedido,productos:productosArr});
+  if(error){showToast('Error al guardar pedido');console.error(error);return;}
   DB.pedidos.push(nuevoPedido);
   carrito=[];actualizarCarritoUI();cerrarModalById('modal-confirmar-pedido');
   playConfirmSound();
@@ -777,7 +781,7 @@ function mostrarPostPedido(p){
 
 // ===== LOGIN / USUARIO =====
 function abrirLogin(){if(usuarioActual){abrirPerfil();return;}abrirModalById('modal-login');}
-function hacerLogin(){
+async function hacerLogin(){
   const nombre=document.getElementById('login-nombre').value.trim();
   const apellido=document.getElementById('login-apellido').value.trim();
   const tel=document.getElementById('login-tel').value.replace(/\D/g,'');
@@ -786,7 +790,14 @@ function hacerLogin(){
   if(nombre==='MDJ'&&apellido==='Bakery'&&tel==='85498549'){cerrarModalById('modal-login');entrarAdmin();return;}
   let user=DB.usuarios.find(u=>u.telefono===tel);
   if(user){showToast('¡Bienvenido de vuelta, '+user.nombre+'!');}
-  else{user={id:DB.usuarios.length+1,nombre,apellido,telefono:tel,created_at:new Date().toISOString().split('T')[0],advertencias:[],bloqueado:false,msg_bloqueo:'',direccion:'',maps_link:''};DB.usuarios.push(user);showToast('¡Bienvenido! Su cuenta fue creada.');}
+  else{
+    const nuevoUser={nombre,apellido,telefono:tel,created_at:new Date().toISOString().split('T')[0],advertencias:[],bloqueado:false,msg_bloqueo:'',direccion:'',maps_link:''};
+    const{data,error}=await sb.from('usuarios').insert(nuevoUser).select().single();
+    if(error){showToast('Error al crear cuenta. Intente de nuevo.');console.error(error);return;}
+    user=data;
+    DB.usuarios.push(user);
+    showToast('¡Bienvenido! Su cuenta fue creada.');
+  }
   usuarioActual=user;cerrarModalById('modal-login');abrirPerfil();
 }
 function abrirPerfil(){if(!usuarioActual){abrirLogin();return;}renderPerfil();abrirModalById('modal-perfil');}
@@ -853,11 +864,13 @@ function editarPerfil(){
     <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="guardarEditPerfil()"><i class="ti ti-device-floppy"></i> Guardar</button>
   `;
 }
-function guardarEditPerfil(){
+async function guardarEditPerfil(){
   const n=document.getElementById('edit-nombre').value.trim();if(!n){showToast('El nombre es obligatorio');return;}
-  usuarioActual.nombre=n;usuarioActual.apellido=document.getElementById('edit-apellido').value.trim();
-  usuarioActual.direccion=document.getElementById('edit-dir').value.trim();usuarioActual.maps_link=document.getElementById('edit-maps').value.trim();
-  const uDB=DB.usuarios.find(u=>u.id===usuarioActual.id);if(uDB)Object.assign(uDB,{nombre:usuarioActual.nombre,apellido:usuarioActual.apellido,direccion:usuarioActual.direccion,maps_link:usuarioActual.maps_link});
+  const updates={nombre:n,apellido:document.getElementById('edit-apellido').value.trim(),direccion:document.getElementById('edit-dir').value.trim(),maps_link:document.getElementById('edit-maps').value.trim()};
+  const{error}=await sb.from('usuarios').update(updates).eq('id',usuarioActual.id);
+  if(error){showToast('Error al guardar perfil');console.error(error);return;}
+  Object.assign(usuarioActual,updates);
+  const uDB=DB.usuarios.find(u=>u.id===usuarioActual.id);if(uDB)Object.assign(uDB,updates);
   showToast('Perfil actualizado');renderPerfil();
 }
 function verDetallePedido(pedidoId){
@@ -892,24 +905,31 @@ function verDetallePedido(pedidoId){
   `;
   abrirModalById('modal-detalle-pedido');
 }
-function cancelarPedidoUsuario(pedidoId){
+async function cancelarPedidoUsuario(pedidoId){
   const p=DB.pedidos.find(x=>x.id===pedidoId);if(!p||p.estado!=='pendiente')return;
   const tel=DB.config.telefono_tienda;
   const msg=`¡Hola! Me gustaría cancelar mi orden con el ID #${pedidoId}. Por favor confirmen la cancelación. Gracias.`;
-  p.estado='cancelado';
+  const{error}=await sb.from('pedidos').update({estado:'cancelado'}).eq('id',pedidoId);
+  if(!error)p.estado='cancelado';
   cerrarModalById('modal-detalle-pedido');
   renderPerfil();
   window.open(`https://wa.me/502${tel}?text=${encodeURIComponent(msg)}`,'_blank');
   showToast('Orden cancelada — se abrió WhatsApp',3000);
 }
 function toggleEstadoInfo(id){const el=document.getElementById(id);if(el)el.classList.toggle('visible');}
-function editarCantPedido(pid,prodId,delta){
+async function editarCantPedido(pid,prodId,delta){
   const p=DB.pedidos.find(x=>x.id===pid);if(!p||p.estado!=='pendiente')return;
   const pr=p.productos.find(x=>x.id===prodId);if(!pr)return;
   pr.cantidad=Math.max(0,pr.cantidad+delta);
   if(pr.cantidad===0)p.productos=p.productos.filter(x=>x.id!==prodId);
-  if(!p.productos.length){DB.pedidos=DB.pedidos.filter(x=>x.id!==pid);cerrarModalById('modal-detalle-pedido');showToast('Orden cancelada');renderPerfil();return;}
-  p.total=p.productos.reduce((s,x)=>s+x.precio*x.cantidad,0);verDetallePedido(pid);
+  if(!p.productos.length){
+    await sb.from('pedidos').update({estado:'cancelado'}).eq('id',pid);
+    p.estado='cancelado';
+    cerrarModalById('modal-detalle-pedido');showToast('Orden cancelada');renderPerfil();return;
+  }
+  p.total=p.productos.reduce((s,x)=>s+x.precio*x.cantidad,0);
+  await sb.from('pedidos').update({productos:p.productos,total:p.total}).eq('id',pid);
+  verDetallePedido(pid);
 }
 
 // ===== ADMIN =====
@@ -1026,8 +1046,9 @@ function renderAccionesAdmin(p){
   return html;
 }
 
-function accionConfirmar(pedidoId){
+async function accionConfirmar(pedidoId){
   const p=DB.pedidos.find(x=>x.id===pedidoId);if(!p)return;
+  await sb.from('pedidos').update({estado:'confirmado'}).eq('id',pedidoId);
   p.estado='confirmado';cerrarModalById('modal-admin-pedido');renderAdminPedidos();showToast('Orden #'+pedidoId+' confirmada');
 }
 function accionPedido(pedidoId,nuevoEstado){
@@ -1072,16 +1093,18 @@ function accionCancelar(pedidoId){
   document.getElementById('wa-numero-display').textContent=p.usuario_tel.slice(0,4)+' '+p.usuario_tel.slice(4);
   abrirModalById('modal-wa-confirm');
 }
-function accionEntregado(pedidoId){
+async function accionEntregado(pedidoId){
   const p=DB.pedidos.find(x=>x.id===pedidoId);if(!p)return;
+  await sb.from('pedidos').update({estado:'entregado'}).eq('id',pedidoId);
   p.estado='entregado';cerrarModalById('modal-admin-pedido');renderAdminPedidos();showToast('Orden marcada como entregada');
 }
-function confirmarEnvioWA(){
+async function confirmarEnvioWA(){
   const p=DB.pedidos.find(x=>x.id===waContext.pedidoId);if(!p)return;
   const msg=document.getElementById('wa-mensaje-edit').value;
-  if(waContext.nuevoEstado)p.estado=waContext.nuevoEstado;
-  if(waContext.prodNoDisponibles?.length)p.productos=p.productos.map(pr=>({...pr,noDisponible:waContext.prodNoDisponibles.includes(pr.id)?true:pr.noDisponible}));
-  // Sonido si pasa a "listo"
+  const upd={};
+  if(waContext.nuevoEstado){p.estado=waContext.nuevoEstado;upd.estado=waContext.nuevoEstado;}
+  if(waContext.prodNoDisponibles?.length){p.productos=p.productos.map(pr=>({...pr,noDisponible:waContext.prodNoDisponibles.includes(pr.id)?true:pr.noDisponible}));upd.productos=p.productos;}
+  if(Object.keys(upd).length)await sb.from('pedidos').update(upd).eq('id',waContext.pedidoId);
   if(waContext.nuevoEstado==='listo')playReadySound();
   window.open(`https://wa.me/502${p.usuario_tel}?text=${encodeURIComponent(msg)}`,'_blank');
   cerrarModalById('modal-wa-confirm');cerrarModalById('modal-admin-pedido');
@@ -1155,31 +1178,36 @@ function abrirModalAdvertencia(tel){
   const input=document.getElementById('adv-nota-input');if(input)input.value='';
   abrirModalById('modal-advertencia-nota');
 }
-function confirmarAdvertencia(){
+async function confirmarAdvertencia(){
   const u=DB.usuarios.find(x=>x.telefono===advTelPendiente);if(!u)return;
   if(!Array.isArray(u.advertencias))u.advertencias=[];
   const nota=(document.getElementById('adv-nota-input')||{}).value?.trim()||'';
   u.advertencias.push({nota,fecha:new Date().toISOString()});
+  await sb.from('usuarios').update({advertencias:u.advertencias}).eq('telefono',advTelPendiente);
   cerrarModalById('modal-advertencia-nota');
   showToast('Advertencia agregada');
   verAdminUsuario(advTelPendiente);
 }
-function quitarAdvertencia(tel){
+async function quitarAdvertencia(tel){
   const u=DB.usuarios.find(x=>x.telefono===tel);if(!u)return;
   if(!Array.isArray(u.advertencias))u.advertencias=[];
   if(u.advertencias.length>0)u.advertencias.pop();
+  await sb.from('usuarios').update({advertencias:u.advertencias}).eq('telefono',tel);
   showToast('Advertencia eliminada');verAdminUsuario(tel);
 }
 function abrirFormBloqueo(tel){const f=document.getElementById('form-bloqueo-'+tel);if(f)f.style.display=f.style.display==='none'?'block':'none';}
-function bloquearUsuario(tel){
+async function bloquearUsuario(tel){
   const u=DB.usuarios.find(x=>x.telefono===tel);if(!u)return;
   u.bloqueado=true;u.msg_bloqueo=(document.getElementById('msg-bloqueo-'+tel)||{}).value?.trim()||'';
+  await sb.from('usuarios').update({bloqueado:true,msg_bloqueo:u.msg_bloqueo}).eq('telefono',tel);
   showToast('Cuenta bloqueada');verAdminUsuario(tel);
 }
 function pedirDesbloquear(tel){
-  mostrarConfirmDialog('¿Desbloquear cuenta?','El usuario podrá volver a realizar pedidos.','Desbloquear',()=>{
+  mostrarConfirmDialog('¿Desbloquear cuenta?','El usuario podrá volver a realizar pedidos.','Desbloquear',async()=>{
     const u=DB.usuarios.find(x=>x.telefono===tel);if(!u)return;
-    u.bloqueado=false;showToast('Cuenta desbloqueada');verAdminUsuario(tel);
+    u.bloqueado=false;
+    await sb.from('usuarios').update({bloqueado:false}).eq('telefono',tel);
+    showToast('Cuenta desbloqueada');verAdminUsuario(tel);
   },false);
 }
 
@@ -1284,7 +1312,7 @@ function abrirFormProducto(id){
   document.getElementById('cat-dropdown-list').classList.remove('open');document.getElementById('cat-btn').classList.remove('open');
   abrirModalById('modal-form-producto');
 }
-function guardarProducto(){
+async function guardarProducto(){
   const nombre=document.getElementById('fp-nombre').value.trim();
   const categoria=document.getElementById('fp-categoria').value.trim();
   const precio=parseFloat(document.getElementById('fp-precio').value);
@@ -1292,11 +1320,19 @@ function guardarProducto(){
   const detalles=document.getElementById('fp-detalles').value.trim();
   const extra=document.getElementById('fp-extra').value.trim();
   if(!nombre||!categoria||isNaN(precio)){showToast('Complete los campos obligatorios');return;}
-  if(productoFormMode){const p=DB.productos.find(x=>x.id===productoFormMode);if(p)Object.assign(p,{nombre,categoria,precio,imagen,detalles,extra});showToast('Producto actualizado');}
-  else{const newId=Math.max(0,...DB.productos.map(p=>p.id))+1;DB.productos.push({id:newId,nombre,categoria,precio,imagen,detalles,extra});showToast('Producto agregado');}
+  if(productoFormMode){
+    const{error}=await sb.from('productos').update({nombre,categoria,precio,imagen,detalles,extra}).eq('id',productoFormMode);
+    if(error){showToast('Error al actualizar producto');console.error(error);return;}
+    const p=DB.productos.find(x=>x.id===productoFormMode);if(p)Object.assign(p,{nombre,categoria,precio,imagen,detalles,extra});
+    showToast('Producto actualizado');
+  }else{
+    const{data,error}=await sb.from('productos').insert({nombre,categoria,precio,imagen,detalles,extra}).select().single();
+    if(error){showToast('Error al agregar producto');console.error(error);return;}
+    DB.productos.push(data);showToast('Producto agregado');
+  }
   cerrarModalById('modal-form-producto');renderAdminProductos();renderFiltrosCategorias();renderProductos();
 }
-function eliminarProducto(id){if(!confirm('¿Eliminar este producto?'))return;DB.productos=DB.productos.filter(p=>p.id!==id);renderAdminProductos();renderProductos();showToast('Producto eliminado');}
+async function eliminarProducto(id){if(!confirm('¿Eliminar este producto?'))return;const{error}=await sb.from('productos').delete().eq('id',id);if(error){showToast('Error al eliminar');console.error(error);return;}DB.productos=DB.productos.filter(p=>p.id!==id);renderAdminProductos();renderProductos();showToast('Producto eliminado');}
 
 // ===== ADMIN USUARIOS =====
 function renderAdminUsuarios(){
@@ -1332,10 +1368,16 @@ function renderAdminConfig(){
     <button class="btn btn-primary" style="width:100%;margin-top:6px" onclick="guardarConfig()"><i class="ti ti-device-floppy"></i> Guardar configuración</button>
   `;
 }
-function guardarConfig(){
+async function guardarConfig(){
   DB.config.telefono_tienda=document.getElementById('cfg-tel').value.replace(/\D/g,'');
   DB.config.terminos_extra=document.getElementById('cfg-terminos').value;
   Object.keys(DB.config.estados_info).forEach(k=>{const el=document.getElementById('cfg-estado-'+k);if(el)DB.config.estados_info[k]=el.value;});
+  const rows=[
+    {clave:'telefono_tienda',valor:DB.config.telefono_tienda},
+    {clave:'terminos_extra',valor:DB.config.terminos_extra},
+    ...Object.entries(DB.config.estados_info).map(([k,v])=>({clave:'estado_'+k,valor:v}))
+  ];
+  await sb.from('config').upsert(rows,{onConflict:'clave'});
   actualizarTerminosUI();showToast('Configuración guardada');
 }
 </script>
