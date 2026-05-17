@@ -1,0 +1,280 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#F7F0E4">
+<title>Panadería MDJ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js" defer></script>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<!-- BETA BANNER -->
+<div class="beta-banner"><i class="ti ti-flask" style="font-size:0.95rem"></i> Panadería MDJ está en <strong>versión beta</strong>. Pueden ocurrir errores o cambios sin previo aviso.</div>
+
+<!-- ===== TIENDA ===== -->
+<div class="page active" id="page-tienda">
+  <nav class="nav">
+    <div class="nav-logo">MDJ <span class="beta-tag">BETA</span></div>
+    <div class="nav-search"><i class="ti ti-search"></i><input type="text" id="nav-search" placeholder="Buscar productos…" oninput="renderProductos()"></div>
+    <div class="nav-actions">
+      <button class="btn-icon" onclick="abrirFavoritos()" aria-label="Favoritos" id="btn-favoritos" title="Favoritos">
+        <i class="ti ti-heart"></i>
+      </button>
+      <div style="position:relative">
+        <button class="btn-icon" onclick="abrirCarrito()" aria-label="Carrito">
+          <i class="ti ti-shopping-bag"></i>
+          <span class="badge-count" id="carrito-count" style="display:none">0</span>
+        </button>
+      </div>
+      <button class="btn-icon" onclick="abrirLogin()" aria-label="Mi cuenta"><i class="ti ti-user"></i></button>
+    </div>
+  </nav>
+  <div class="hero"><h1>Panadería MDJ</h1><p>Pan fresco y productos de tienda · Recoja en el local</p></div>
+  <div class="filtros" id="filtros-container">
+    <button class="filtro-btn active" onclick="setFiltro('todos',this)"><i class="ti ti-layout-grid"></i> Todos</button>
+    <button class="filtro-btn" id="btn-fav-filtro" onclick="setFiltro('favoritos',this)" style="display:none"><i class="ti ti-heart"></i> Favoritos</button>
+    <button class="filtro-btn" onclick="setOrden('precio-asc',this)"><i class="ti ti-sort-ascending-numbers"></i> Precio ↑</button>
+    <button class="filtro-btn" onclick="setOrden('precio-desc',this)"><i class="ti ti-sort-descending-numbers"></i> Precio ↓</button>
+  </div>
+  <div class="productos-grid" id="productos-grid"><div class="loading-full" style="grid-column:1/-1"><div class="spinner"></div></div></div>
+</div>
+
+<!-- ===== ADMIN ===== -->
+<div class="page" id="page-admin">
+  <nav class="nav"><div class="nav-logo">Panel MDJ</div><button class="btn btn-sm" onclick="pedirCerrarAdmin()"><i class="ti ti-logout"></i> Salir</button></nav>
+  <div style="padding:14px 14px 80px">
+    <div class="admin-nav">
+      <button class="admin-tab active" onclick="adminTab('pedidos',this)"><i class="ti ti-clipboard-list"></i> Órdenes</button>
+      <button class="admin-tab" onclick="adminTab('historial',this)"><i class="ti ti-history"></i> Historial</button>
+      <button class="admin-tab" onclick="adminTab('productos',this)"><i class="ti ti-bread"></i> Productos</button>
+      <button class="admin-tab" onclick="adminTab('usuarios',this)"><i class="ti ti-users"></i> Usuarios</button>
+      <button class="admin-tab" onclick="adminTab('config',this)"><i class="ti ti-settings"></i> Config.</button>
+    </div>
+    <div class="admin-view active" id="admin-pedidos">
+      <div class="admin-resumen" id="admin-resumen"></div>
+      <div class="admin-subsec">
+        <button class="subsec-btn active" onclick="setPedidoSec('pendiente',this)">Pendientes</button>
+        <button class="subsec-btn" onclick="setPedidoSec('confirmado',this)">Confirmadas</button>
+        <button class="subsec-btn" onclick="setPedidoSec('listo',this)">Listas</button>
+      </div>
+      <div id="admin-pedidos-lista"></div>
+    </div>
+    <div class="admin-view" id="admin-historial">
+      <div class="historial-search"><i class="ti ti-search"></i><input type="text" id="historial-search-input" placeholder="Buscar por ID, nombre o teléfono…" oninput="renderAdminHistorial()"></div>
+      <div id="admin-historial-lista"></div>
+    </div>
+    <div class="admin-view" id="admin-productos">
+      <button class="btn btn-primary" style="margin-bottom:11px;width:100%" onclick="abrirFormProducto(null)"><span class="btn-label"><i class="ti ti-plus"></i> Agregar producto</span><div class="btn-spinner"></div></button>
+      <div id="admin-productos-lista"></div>
+    </div>
+    <div class="admin-view" id="admin-usuarios"><div id="admin-usuarios-lista"></div></div>
+    <div class="admin-view" id="admin-config"><div id="admin-config-content"></div></div>
+  </div>
+</div>
+
+<!-- ===== MODALES TIENDA ===== -->
+<div class="modal-overlay" id="modal-producto" onclick="cerrarModal('modal-producto',event)">
+  <div class="modal"><div class="modal-handle"></div><div id="producto-detalle-content"></div></div>
+</div>
+<div class="modal-overlay" id="modal-carrito" onclick="cerrarModal('modal-carrito',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><i class="ti ti-shopping-bag" style="font-size:1.2rem;color:var(--cafe)"></i><h2 class="modal-title">Su carrito</h2></div>
+    <div id="carrito-lista"></div><div id="carrito-total"></div><div id="carrito-acciones" style="margin-top:10px"></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-favoritos" onclick="cerrarModal('modal-favoritos',event)">
+  <div class="modal"><div class="modal-handle"></div><div id="favoritos-content"></div></div>
+</div>
+<div class="modal-overlay" id="modal-login" onclick="cerrarModal('modal-login',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><i class="ti ti-user-circle" style="font-size:1.2rem;color:var(--cafe)"></i><h2 class="modal-title">Ingresar</h2></div>
+    <div class="form-group"><label>Nombre *</label><input type="text" id="login-nombre" placeholder="Su nombre"></div>
+    <div class="form-group"><label>Apellido (opcional)</label><input type="text" id="login-apellido" placeholder="Su apellido"></div>
+    <div class="form-group"><label>Teléfono — 8 dígitos *</label><input type="tel" id="login-tel" placeholder="0000 0000" maxlength="9" oninput="formatTel(this)"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" id="btn-login" onclick="hacerLogin()"><span class="btn-label">Ingresar</span><div class="btn-spinner"></div></button>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-perfil" onclick="cerrarModal('modal-perfil',event)">
+  <div class="modal"><div class="modal-handle"></div><div id="perfil-content"></div></div>
+</div>
+<div class="modal-overlay" id="modal-confirmar-pedido" onclick="cerrarModal('modal-confirmar-pedido',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><i class="ti ti-receipt" style="font-size:1.2rem;color:var(--cafe)"></i><h2 class="modal-title">Revisar orden</h2></div>
+    <div class="confirm-box">
+      <p>Al confirmar su orden, nos llegará la solicitud y le avisaremos por WhatsApp cuando esté lista para recoger.</p>
+      <button class="mostrar-mas" onclick="toggleTerminos()">Mostrar términos completos</button>
+      <div class="detalle-extra" id="terminos-extra"><p id="terminos-extra-texto" style="margin-top:6px;font-size:0.84rem"></p></div>
+    </div>
+    <div id="resumen-pedido-confirm" style="margin:11px 0"></div>
+    <!-- Hora recogida custom -->
+    <div id="hora-recogida-section" class="form-group">
+      <label>Hora de recogida (opcional — solo hoy)</label>
+      <div id="hora-recogida-trigger" onclick="abrirTimePicker()" style="display:flex;align-items:center;gap:8px;padding:10px 13px;border:1.5px solid var(--borde-fuerte);border-radius:var(--r-sm);cursor:pointer;background:var(--blanco);transition:var(--tr);">
+        <i class="ti ti-clock" style="font-size:1rem;color:var(--cafe-light)"></i>
+        <span id="hora-display" style="font-size:0.92rem;color:var(--texto-muy-suave)">Sin hora programada</span>
+        <span id="hora-clear" onclick="event.stopPropagation();limpiarHora()" style="display:none;margin-left:auto;font-size:0.8rem;color:var(--cafe);text-decoration:underline;cursor:pointer">Quitar</span>
+      </div>
+    </div>
+    <!-- Nota -->
+    <div id="nota-section" class="form-group">
+      <label>Nota para la panadería (opcional)</label>
+      <textarea id="nota-pedido" placeholder="Ej: Sin sal, etc." rows="2"></textarea>
+    </div>
+    <!-- Domicilio -->
+    <div id="domicilio-section" class="form-group" style="background:var(--crema);border-radius:10px;padding:12px;border:1px solid var(--borde)">
+      <label style="margin-bottom:8px;display:flex;align-items:center;gap:6px;cursor:pointer">
+        <input type="checkbox" id="chk-domicilio" style="width:auto;margin:0;accent-color:var(--cafe)" onchange="toggleDomicilio()">
+        <span>Solicitar entrega a domicilio</span>
+      </label>
+      <div id="domicilio-fields" style="display:none;margin-top:8px">
+        <div class="form-group"><label>Dirección *</label><input type="text" id="dom-direccion" placeholder="Ej: Zona 10, Calle Principal"></div>
+        <div class="form-group"><label>Link de Google Maps *</label><input type="url" id="dom-maps" placeholder="https://maps.google.com/…"></div>
+      </div>
+    </div>
+    <p style="font-size:0.76rem;color:var(--texto-muy-suave);margin:10px 0;display:flex;align-items:center;gap:4px">
+      <i class="ti ti-brand-whatsapp" style="color:#25D366;font-size:1rem"></i>
+      Es necesario enviar un mensaje de WhatsApp para completar su orden.
+    </p>
+    <div style="display:flex;gap:8px">
+      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-confirmar-pedido')">Cancelar</button>
+      <button class="btn btn-wa" style="flex:2" id="btn-confirmar-pedido" onclick="confirmarPedido()"><span class="btn-label"><i class="ti ti-brand-whatsapp"></i> Enviar y confirmar</span><div class="btn-spinner"></div></button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-post-pedido">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="post-pedido">
+      <div class="post-pedido-icon"><i class="ti ti-circle-check"></i></div>
+      <h2>¡Orden enviada!</h2>
+      <p style="margin-bottom:4px">Revise WhatsApp para completar su solicitud.</p>
+      <div class="post-pedido-tabla" id="post-pedido-info"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="cerrarModalById('modal-post-pedido')">Listo</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-detalle-pedido" onclick="cerrarModal('modal-detalle-pedido',event)">
+  <div class="modal"><div class="modal-handle"></div><div id="detalle-pedido-content"></div></div>
+</div>
+<!-- Time picker -->
+<div class="modal-overlay center-modal z-top" id="modal-time-picker" onclick="cerrarModal('modal-time-picker',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><i class="ti ti-clock" style="font-size:1.2rem;color:var(--cafe)"></i><h2 class="modal-title">Hora de recogida</h2></div>
+    <div class="time-picker-wrap">
+      <div class="time-drum-wrap"><div class="time-drum-selected"></div><div class="time-drum" id="drum-horas"></div></div>
+      <span class="time-sep">:</span>
+      <div class="time-drum-wrap"><div class="time-drum-selected"></div><div class="time-drum" id="drum-minutos"></div></div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <button class="time-period-btn active" id="btn-am" onclick="setPeriod('AM')">AM</button>
+        <button class="time-period-btn" id="btn-pm" onclick="setPeriod('PM')">PM</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-time-picker')">Cancelar</button>
+      <button class="btn btn-primary" style="flex:2" onclick="confirmarHora()">Confirmar hora</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODALES ADMIN ===== -->
+<div class="modal-overlay" id="modal-admin-pedido" onclick="cerrarModal('modal-admin-pedido',event)">
+  <div class="modal"><div class="modal-handle"></div><div id="admin-pedido-detalle-content"></div></div>
+</div>
+<div class="modal-overlay z-top" id="modal-admin-producto-detalle" onclick="cerrarModal('modal-admin-producto-detalle',event)">
+  <div class="modal"><div class="modal-handle"></div><div id="admin-producto-detalle-content"></div></div>
+</div>
+<div class="modal-overlay z-top" id="modal-wa-confirm" onclick="cerrarModal('modal-wa-confirm',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><i class="ti ti-brand-whatsapp" style="font-size:1.2rem;color:#25D366"></i><h2 class="modal-title">Confirmar mensaje</h2></div>
+    <div class="form-group"><label>Mensaje — puede editarlo</label><textarea id="wa-mensaje-edit" rows="5"></textarea></div>
+    <p style="font-size:0.81rem;color:var(--texto-suave);margin-bottom:12px">Número: <strong id="wa-numero-display"></strong></p>
+    <div style="display:flex;gap:8px">
+      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-wa-confirm')">Cancelar</button>
+      <button class="btn btn-wa" style="flex:2" id="btn-enviar-wa" onclick="confirmarEnvioWA()"><span class="btn-label"><i class="ti ti-brand-whatsapp"></i> Enviar y confirmar</span><div class="btn-spinner"></div></button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay z-top" id="modal-prod-nodisponible" onclick="cerrarModal('modal-prod-nodisponible',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><i class="ti ti-package-off" style="font-size:1.2rem;color:var(--peligro)"></i><h2 class="modal-title">Productos no disponibles</h2></div>
+    <p style="font-size:0.84rem;color:var(--texto-suave);margin-bottom:10px">Seleccione los que no están disponibles:</p>
+    <div id="prod-nodisponible-lista"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="armarMsgNoDisponible()">Continuar con mensaje</button>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-admin-usuario" onclick="cerrarModal('modal-admin-usuario',event)">
+  <div class="modal"><div class="modal-handle"></div><div id="admin-usuario-detalle"></div></div>
+</div>
+<div class="modal-overlay" id="modal-form-producto" onclick="cerrarModal('modal-form-producto',event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2 class="modal-title" id="form-producto-titulo" style="margin-bottom:14px">Agregar producto</h2>
+    <input type="hidden" id="fp-id">
+    <div class="form-group"><label>Nombre *</label><input type="text" id="fp-nombre" placeholder="Ej: Pan de mantequilla"></div>
+    <div class="form-group">
+      <label>Categoría *</label>
+      <div class="cat-dropdown-wrap">
+        <button type="button" class="cat-input-btn" id="cat-btn" onclick="toggleCatDropdown()"><span id="cat-btn-text" style="color:var(--texto-muy-suave)">Seleccionar categoría</span><i class="ti ti-chevron-down"></i></button>
+        <div class="cat-dropdown-list" id="cat-dropdown-list">
+          <div id="cat-opciones-list"></div>
+          <div class="cat-nueva-wrap">
+            <input type="text" class="cat-nueva-input" id="cat-nueva-input" placeholder="Nueva categoría…">
+            <button class="cat-nueva-btn" onclick="crearCategoriaNueva()">+</button>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" id="fp-categoria">
+    </div>
+    <div class="form-group"><label>Sub-categoría (opcional)</label><input type="text" id="fp-subcategoria" placeholder="Ej: Pan dulce, Pan integral"></div>
+    <div class="form-group"><label>Precio (Q) *</label><input type="number" id="fp-precio" placeholder="0.00" min="0" step="0.25"></div>
+    <div class="form-group"><label>URL de imagen</label><input type="text" id="fp-imagen" placeholder="https://…"></div>
+    <div class="form-group"><label>Detalles del producto</label><textarea id="fp-detalles" placeholder="Ingredientes, descripción… (Enter = nueva línea)" rows="3"></textarea></div>
+    <div class="form-group"><label>Extra (disponibilidad manual)</label><textarea id="fp-extra" placeholder="Ej: Solo disponible fines de semana" rows="2"></textarea></div>
+    <!-- Bloqueo programado -->
+    <div class="divider"></div>
+    <div class="section-title" style="margin-bottom:8px">Bloqueo programado</div>
+    <div id="prog-bloqueo-lista"></div>
+    <button class="btn btn-sm" style="margin-bottom:4px;width:100%" onclick="agregarReglaProg('dias')"><i class="ti ti-calendar"></i> Bloquear en días específicos</button>
+    <button class="btn btn-sm" style="width:100%" onclick="agregarReglaProg('horas')"><i class="ti ti-clock"></i> Bloquear en rango de horas</button>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-form-producto')">Cancelar</button>
+      <button class="btn btn-primary" style="flex:2" id="btn-guardar-producto" onclick="guardarProducto()"><span class="btn-label"><i class="ti ti-device-floppy"></i> Guardar</span><div class="btn-spinner"></div></button>
+    </div>
+  </div>
+</div>
+<!-- Modal advertencia con nota -->
+<div class="modal-overlay center-modal z-top2" id="modal-advertencia-nota" onclick="cerrarModal('modal-advertencia-nota',event)">
+  <div class="modal">
+    <h2 class="modal-title" style="margin-bottom:10px">Agregar advertencia</h2>
+    <div class="form-group"><label>Nota interna (solo visible para admin)</label><textarea id="adv-nota-input" placeholder="Ej: No pasó a recoger su orden #1042" rows="2"></textarea></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-advertencia-nota')">Cancelar</button>
+      <button class="btn btn-danger" style="flex:2" id="btn-confirmar-adv" onclick="confirmarAdvertencia()"><span class="btn-label"><i class="ti ti-alert-triangle"></i> Agregar</span><div class="btn-spinner"></div></button>
+    </div>
+  </div>
+</div>
+<!-- Confirmación genérica -->
+<div class="modal-overlay center-modal z-top2" id="modal-confirm-dialog">
+  <div class="modal"><div id="confirm-dialog-content"></div></div>
+</div>
+
+<button class="carrito-fab hidden" id="carrito-fab" onclick="abrirCarrito()">
+  <i class="ti ti-shopping-bag"></i> <span id="fab-total">Q0.00</span>
+</button>
+</body>
+</html>
+
