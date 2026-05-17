@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -7,17 +7,267 @@
 <title>Panadería MDJ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
-<link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js" defer></script>
+<style>
+:root{
+  --beige:#F2E8D5;--beige-dark:#E2CFA8;--beige-light:#FAF6EF;
+  --cafe:#6B4C30;--cafe-dark:#4A3120;--cafe-light:#8C6845;
+  --blanco:#FEFCF8;--crema:#F7F0E4;
+  --texto:#2E1F10;--texto-s:#6B5340;--texto-ms:#A8896E;
+  --borde:rgba(107,76,48,.14);--bordeF:rgba(107,76,48,.28);
+  --exbg:#E6F4EC;--ex:#246B3A;
+  --pelbg:#FAEAEA;--pel:#8B2E2E;
+  --avbg:#FBF0DC;--av:#7A5A10;
+  --infbg:#E8F0FB;--inf:#1A3F7A;
+  --sh:0 2px 16px rgba(74,49,32,.08);--shs:0 1px 6px rgba(74,49,32,.06);
+  --r:16px;--rsm:10px;--rxs:6px;--rxl:24px;
+  --tr:all .22s cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--beige-light);color:var(--texto);min-height:100vh;overflow-x:hidden;font-size:15px;line-height:1.5;}
+h1{font-size:1.75rem;font-weight:600;letter-spacing:-.03em;}
+h2{font-size:1.2rem;font-weight:600;letter-spacing:-.02em;}
+p{line-height:1.6;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 20px;border-radius:var(--rsm);border:1.5px solid var(--bordeF);background:transparent;color:var(--cafe);font-family:inherit;font-size:.88rem;font-weight:500;cursor:pointer;transition:var(--tr);white-space:nowrap;position:relative;overflow:hidden;text-decoration:none;}
+.btn:hover{background:var(--beige-dark);border-color:var(--cafe);}
+.btn:active{transform:scale(.975);}
+.btn-primary{background:var(--cafe);color:var(--blanco);border-color:var(--cafe);}
+.btn-primary:hover{background:var(--cafe-dark);border-color:var(--cafe-dark);}
+.btn-danger{background:var(--pelbg);color:var(--pel);border-color:rgba(139,46,46,.25);}
+.btn-danger:hover{background:#f0d5d5;}
+.btn-wa{background:#25D366;color:#fff;border-color:#25D366;}
+.btn-wa:hover{background:#1db954;}
+.btn-sm{padding:7px 14px;font-size:.82rem;border-radius:var(--rxs);}
+.btn-xs{padding:5px 10px;font-size:.78rem;border-radius:var(--rxs);}
+.btn-icon{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--borde);background:var(--blanco);color:var(--cafe-light);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--tr);position:relative;}
+.btn-icon:hover{background:var(--beige);border-color:var(--cafe);color:var(--cafe);}
+.btn.ld{pointer-events:none;opacity:.75;}
+.btn.ld .lbl{opacity:0;}
+.bsp{display:none;position:absolute;width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+.btn-primary.ld .bsp,.btn-wa.ld .bsp{display:block;}
+.btn.ld .bsp{display:block;border-color:rgba(107,76,48,.3);border-top-color:var(--cafe);}
+input,select,textarea{font-family:inherit;font-size:.92rem;padding:11px 13px;border:1.5px solid var(--bordeF);border-radius:var(--rsm);background:var(--blanco);color:var(--texto);width:100%;transition:var(--tr);outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--cafe);box-shadow:0 0 0 3px rgba(107,76,48,.10);}
+input::placeholder,textarea::placeholder{color:var(--texto-ms);}
+label{display:block;font-size:.75rem;color:var(--texto-s);margin-bottom:5px;letter-spacing:.05em;text-transform:uppercase;font-weight:600;}
+textarea{resize:vertical;min-height:68px;}
+.card{background:var(--blanco);border-radius:var(--r);border:1px solid var(--borde);overflow:hidden;transition:var(--tr);}
+.card:hover{border-color:var(--bordeF);box-shadow:var(--sh);}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:.72rem;font-weight:600;}
+.b-n{background:var(--beige-dark);color:var(--cafe-dark);}
+.b-ok{background:var(--exbg);color:var(--ex);}
+.b-err{background:var(--pelbg);color:var(--pel);}
+.b-w{background:var(--avbg);color:var(--av);}
+.b-i{background:var(--infbg);color:var(--inf);}
+.b-or{background:#FDE8C8;color:#C05800;}
+/* MODALS */
+.ov{position:fixed;inset:0;background:rgba(20,10,2,.52);z-index:2000;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s ease;}
+.ov.open{opacity:1;pointer-events:all;}
+.modal{background:var(--blanco);border-radius:var(--rxl) var(--rxl) 0 0;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;transform:translateY(28px);transition:transform .28s cubic-bezier(.32,.72,0,1);padding:18px 18px 36px;}
+.ov.open .modal{transform:translateY(0);}
+.mhandle{width:32px;height:3.5px;background:var(--bordeF);border-radius:2px;margin:0 auto 14px;}
+.ov.zt{z-index:2200;}.ov.zt2{z-index:2400;}
+.ov.ctr{align-items:center;}
+.ov.ctr .modal{border-radius:var(--rxl);max-width:340px;padding:22px 18px 20px;}
+.toast{position:fixed;top:62px;left:50%;transform:translateX(-50%) translateY(-10px);background:var(--cafe-dark);color:var(--blanco);padding:9px 18px;border-radius:30px;font-size:.84rem;font-weight:500;z-index:9999;opacity:0;transition:all .22s ease;white-space:nowrap;pointer-events:none;box-shadow:0 4px 18px rgba(0,0,0,.22);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* NAV */
+.nav{position:sticky;top:0;z-index:1000;background:var(--blanco);border-bottom:1px solid var(--borde);padding:0 14px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.nav-logo{font-size:1.05rem;font-weight:700;color:var(--cafe-dark);display:flex;align-items:center;gap:6px;}
+.beta-tag{font-size:.56rem;font-weight:700;background:var(--avbg);color:var(--av);padding:2px 5px;border-radius:4px;letter-spacing:.05em;text-transform:uppercase;border:1px solid rgba(122,90,16,.2);}
+.nav-search{flex:1;position:relative;max-width:260px;}
+.nav-search input{padding-left:36px;height:36px;font-size:.83rem;border-radius:30px;}
+.nav-search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--texto-ms);pointer-events:none;}
+.nav-actions{display:flex;align-items:center;gap:5px;}
+.badge-count{position:absolute;top:-3px;right:-3px;background:var(--cafe);color:#fff;border-radius:50%;width:17px;height:17px;font-size:.64rem;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid var(--blanco);}
+/* BETA BANNER */
+.beta-banner{background:var(--avbg);border-bottom:1px solid rgba(122,90,16,.15);padding:6px 12px;font-size:.77rem;color:var(--av);display:flex;align-items:center;gap:6px;font-weight:500;flex-wrap:nowrap;}
+.beta-banner span.bt{flex:1;min-width:0;}
+.beta-banner-x{flex-shrink:0;background:none;border:none;color:var(--av);cursor:pointer;font-size:1rem;padding:2px;display:flex;align-items:center;opacity:.7;line-height:1;}
+.beta-banner-x:hover{opacity:1;}
+/* HERO */
+.hero{padding:22px 16px 14px;text-align:center;border-bottom:1px solid var(--borde);}
+.hero h1{color:var(--cafe-dark);}
+/* FILTERS */
+.filtros{display:flex;gap:6px;padding:10px 12px 4px;overflow-x:auto;scrollbar-width:none;}
+.filtros::-webkit-scrollbar{display:none;}
+.filtro-btn{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;border:1.5px solid var(--bordeF);background:var(--blanco);color:var(--cafe);font-family:inherit;font-size:.79rem;font-weight:500;cursor:pointer;transition:var(--tr);white-space:nowrap;}
+.filtro-btn.active,.filtro-btn:hover{background:var(--cafe);color:var(--blanco);border-color:var(--cafe);}
+.filtro-btn i{font-size:.9rem;}
+.subcat-bar{display:flex;gap:5px;padding:4px 12px 8px;overflow-x:auto;scrollbar-width:none;}
+.subcat-bar::-webkit-scrollbar{display:none;}
+.scpill{flex-shrink:0;padding:4px 11px;border-radius:14px;border:1px solid var(--bordeF);background:var(--blanco);color:var(--cafe);font-family:inherit;font-size:.74rem;cursor:pointer;transition:var(--tr);}
+.scpill.active{background:var(--cafe-light);color:#fff;border-color:var(--cafe-light);}
+/* GRID */
+.pgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:6px 10px 100px;}
+.pcard{cursor:pointer;}
+.pimg{width:100%;aspect-ratio:1;background:var(--beige);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.pimg img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease;}
+.pcard:hover .pimg img{transform:scale(1.04);}
+.pimg-icon{font-size:2.6rem;color:var(--cafe-light);}
+.ndov{position:absolute;inset:0;background:rgba(250,234,234,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--pel);text-align:center;padding:6px;gap:3px;}
+.pinfo{padding:9px 10px 11px;}
+.pname{font-size:.87rem;font-weight:500;}
+.pprice{font-size:1.05rem;font-weight:700;color:var(--cafe-dark);margin-top:3px;}
+.etag{display:inline-flex;align-items:center;gap:3px;font-size:.7rem;color:var(--av);margin-top:4px;background:var(--avbg);border-radius:4px;padding:2px 6px;}
+/* FAB */
+.fab{position:fixed;bottom:20px;right:14px;z-index:1500;background:var(--cafe);color:#fff;border:none;border-radius:30px;padding:12px 20px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(74,49,32,.3);transition:var(--tr);}
+.fab:hover{background:var(--cafe-dark);}
+.fab.hidden{opacity:0;pointer-events:none;transform:translateY(14px);}
+/* MODAL internals */
+.mhdr{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.mtitle{font-size:1.1rem;font-weight:600;color:var(--cafe-dark);flex:1;}
+.closebtn{background:none;border:none;cursor:pointer;color:var(--texto-ms);padding:2px;display:flex;align-items:center;}
+.closebtn:hover{color:var(--cafe);}
+.closebtn i{font-size:1.2rem;}
+.back-btn{background:none;border:none;cursor:pointer;color:var(--cafe-light);padding:2px;display:flex;align-items:center;}
+.back-btn i{font-size:1.2rem;}
+.divider{height:1px;background:var(--borde);margin:12px 0;}
+.stitle{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--texto-ms);margin-bottom:8px;}
+/* CARRITO */
+.ci{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--borde);}
+.ci-img{width:46px;height:46px;border-radius:9px;background:var(--beige);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
+.ci-img img{width:100%;height:100%;object-fit:cover;}
+.ci-img i{font-size:1.3rem;color:var(--cafe-light);}
+.ci-info{flex:1;min-width:0;}
+.ci-name{font-size:.85rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ci-price{font-size:.78rem;color:var(--texto-s);}
+.qctrl{display:flex;align-items:center;gap:6px;}
+.qbtn{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--bordeF);background:var(--blanco);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:var(--tr);color:var(--cafe);line-height:1;}
+.qbtn:hover{background:var(--beige-dark);}
+.qnum{font-size:.9rem;font-weight:700;min-width:18px;text-align:center;}
+/* PERFIL */
+.pavatar{width:58px;height:58px;border-radius:50%;background:var(--beige-dark);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:700;color:var(--cafe-dark);border:2px solid var(--bordeF);}
+.pnombre{font-size:1.05rem;font-weight:600;color:var(--cafe-dark);}
+.ptel{font-size:.82rem;color:var(--texto-s);margin-top:2px;display:flex;align-items:center;justify-content:center;gap:3px;}
+.pmini{border-left:3px solid var(--cafe-light);padding:10px 12px;border-radius:0 10px 10px 0;background:var(--crema);margin-bottom:7px;cursor:pointer;transition:var(--tr);}
+.pmini:hover{background:var(--beige-dark);border-left-color:var(--cafe);}
+.edit-aviso{background:var(--exbg);color:var(--ex);border-radius:8px;padding:7px 11px;font-size:.79rem;margin-bottom:9px;display:flex;align-items:center;gap:5px;font-weight:500;}
+/* ADMIN */
+.atabbar{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:12px;}
+.atabbar::-webkit-scrollbar{display:none;}
+.atab{flex-shrink:0;display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;border:1.5px solid var(--bordeF);background:transparent;color:var(--cafe);font-family:inherit;font-size:.82rem;font-weight:500;cursor:pointer;transition:var(--tr);}
+.atab i{font-size:.95rem;}
+.atab.active{background:var(--cafe-dark);color:var(--blanco);border-color:var(--cafe-dark);}
+.resum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.rcrd{background:var(--crema);border-radius:11px;border:1px solid var(--borde);padding:11px 7px;text-align:center;}
+.rcrd-n{font-size:1.55rem;font-weight:700;color:var(--cafe-dark);line-height:1;margin-bottom:3px;}
+.rcrd-l{font-size:.66rem;color:var(--texto-s);text-transform:uppercase;letter-spacing:.06em;font-weight:600;}
+.apcard{border:1px solid var(--borde);border-radius:12px;background:var(--blanco);padding:12px 13px;margin-bottom:7px;cursor:pointer;transition:var(--tr);}
+.apcard:hover{border-color:var(--cafe-light);box-shadow:var(--shs);}
+.apid{font-size:1.15rem;font-weight:700;color:var(--cafe-dark);}
+.subsec{display:flex;gap:5px;margin-bottom:11px;}
+.ssb{flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid var(--borde);background:transparent;color:var(--cafe);font-family:inherit;font-size:.76rem;font-weight:500;cursor:pointer;transition:var(--tr);text-align:center;}
+.ssb.active{background:var(--cafe);color:#fff;border-color:var(--cafe);}
+.urow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--borde);cursor:pointer;transition:var(--tr);}
+.urow:hover{opacity:.75;}
+.uav{width:35px;height:35px;border-radius:50%;background:var(--beige-dark);display:flex;align-items:center;justify-content:center;font-size:.88rem;font-weight:700;color:var(--cafe-dark);flex-shrink:0;transition:var(--tr);}
+.uav-w{background:#FDE8C8;color:#C05800;border:2px solid #F5A623;}
+.uav-b{background:var(--pelbg);color:var(--pel);border:2px solid rgba(139,46,46,.4);}
+.cbox{background:var(--crema);border-radius:10px;padding:13px;margin:10px 0;border:1px solid var(--borde);}
+.cbox p{font-size:.87rem;color:var(--texto-s);line-height:1.6;}
+.mas-btn{background:none;border:none;color:var(--cafe);font-family:inherit;font-size:.8rem;font-weight:500;cursor:pointer;text-decoration:underline;margin-top:5px;padding:0;}
+.det-x{display:none;margin-top:7px;}
+.det-x.vis{display:block;}
+.fg{margin-bottom:11px;}
+.empty{text-align:center;padding:32px 14px;color:var(--texto-ms);}
+.empty i{font-size:1.8rem;display:block;margin-bottom:7px;}
+.empty p{font-size:.86rem;}
+.ldwrap{display:flex;align-items:center;justify-content:center;height:160px;}
+.sp{width:28px;height:28px;border:2.5px solid var(--beige-dark);border-top-color:var(--cafe);border-radius:50%;animation:spin .72s linear infinite;}
+.page{display:none;min-height:100vh;}
+.page.active{display:block;animation:fup .22s ease;}
+.aview{display:none;}
+.aview.active{display:block;animation:fup .18s ease;}
+.abtn{width:100%;display:flex;align-items:center;gap:11px;padding:13px 14px;border-radius:var(--rsm);border:1.5px solid var(--bordeF);background:var(--blanco);color:var(--texto);font-family:inherit;font-size:.88rem;font-weight:500;cursor:pointer;transition:var(--tr);text-align:left;margin-bottom:7px;}
+.abtn:hover{background:var(--beige);border-color:var(--cafe);}
+.abtn i{font-size:1.15rem;flex-shrink:0;}
+.abtn.danger{color:var(--pel);border-color:rgba(139,46,46,.2);}
+.abtn.danger:hover{background:var(--pelbg);}
+.hitem{border:1px solid var(--borde);border-radius:11px;padding:10px 12px;margin-bottom:7px;background:var(--blanco);transition:var(--tr);}
+.hitem:hover{border-color:var(--bordeF);}
+.pcheck{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;cursor:pointer;transition:var(--tr);}
+.pcheck:hover{background:var(--beige);}
+.qchip{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;border-radius:9px;background:var(--cafe-dark);color:var(--blanco);font-size:1rem;font-weight:700;padding:0 8px;flex-shrink:0;}
+.aprow{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--borde);cursor:pointer;transition:var(--tr);border-radius:6px;}
+.aprow:hover{background:var(--beige);padding-left:4px;}
+.aprow:hover .aptap{opacity:1;}
+.aptap{font-size:.7rem;color:var(--texto-ms);opacity:0;transition:var(--tr);}
+.blk-bann{background:var(--pelbg);border:1px solid rgba(139,46,46,.25);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px;}
+.blk-bann i{font-size:1.2rem;color:var(--pel);flex-shrink:0;margin-top:1px;}
+.blk-bann p{font-size:.85rem;color:var(--pel);font-weight:500;}
+.post-order{padding:22px 14px;text-align:center;}
+.poi{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.poi i{font-size:1.9rem;}
+.poi-ok{background:var(--exbg);}
+.poi-ok i{color:var(--ex);}
+.poi-cancel{background:var(--pelbg);}
+.poi-cancel i{color:var(--pel);}
+.ptabla{background:var(--crema);border-radius:10px;padding:12px;border:1px solid var(--borde);margin:12px 0;text-align:left;}
+.hsrch{position:relative;margin-bottom:12px;}
+.hsrch input{padding-left:36px;}
+.hsrch i{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--texto-ms);pointer-events:none;}
+.hchip{display:inline-flex;align-items:center;gap:4px;font-size:.76rem;border-radius:6px;padding:2px 7px;font-weight:600;}
+.hchip-def{background:var(--infbg);color:var(--inf);}
+.hchip-cust{background:#FDE8C8;color:#C05800;}
+/* CAT DROPDOWN */
+.cdw{position:relative;}
+.cibtn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:11px 13px;border:1.5px solid var(--bordeF);border-radius:var(--rsm);background:var(--blanco);color:var(--texto);font-family:inherit;font-size:.92rem;cursor:pointer;transition:var(--tr);text-align:left;}
+.cibtn.open,.cibtn:focus{border-color:var(--cafe);box-shadow:0 0 0 3px rgba(107,76,48,.10);}
+.cibtn i{font-size:.9rem;color:var(--texto-ms);transition:transform .2s ease;flex-shrink:0;}
+.cibtn.open i{transform:rotate(180deg);}
+.cdlist{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--blanco);border:1.5px solid var(--bordeF);border-radius:var(--rsm);box-shadow:var(--sh);z-index:20;overflow:hidden;display:none;max-height:220px;overflow-y:auto;}
+.cdlist.open{display:block;animation:fup .15s ease;}
+.cdi{padding:11px 14px;font-size:.9rem;cursor:pointer;transition:var(--tr);}
+.cdi:hover,.cdi.sel{background:var(--beige);}
+.cdi.sel{font-weight:600;color:var(--cafe-dark);}
+.cdnew{padding:8px 10px;border-top:1px solid var(--borde);display:flex;gap:6px;align-items:center;}
+.cdni{flex:1;height:34px;font-size:.86rem;border-radius:6px;padding:0 10px;}
+.cdnbtn{flex-shrink:0;height:34px;padding:0 12px;border-radius:6px;border:1.5px solid var(--bordeF);background:var(--cafe);color:#fff;font-family:inherit;font-size:.82rem;cursor:pointer;}
+/* TIME PICKER */
+.tpwrap{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 0;}
+.drum-o{position:relative;width:70px;overflow:hidden;height:120px;border-radius:12px;border:1.5px solid var(--bordeF);background:var(--blanco);}
+.drum-o::before,.drum-o::after{content:'';position:absolute;left:0;right:0;height:38px;z-index:2;pointer-events:none;}
+.drum-o::before{top:0;background:linear-gradient(to bottom,var(--blanco) 10%,transparent);}
+.drum-o::after{bottom:0;background:linear-gradient(to top,var(--blanco) 10%,transparent);}
+.drum-sel{position:absolute;top:50%;left:0;right:0;height:40px;margin-top:-20px;border-top:1.5px solid var(--cafe);border-bottom:1.5px solid var(--cafe);pointer-events:none;z-index:3;}
+.drum{overflow-y:scroll;height:120px;scroll-snap-type:y mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.drum::-webkit-scrollbar{display:none;}
+.ditem{height:40px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;font-weight:600;color:var(--texto-ms);scroll-snap-align:center;transition:color .15s;}
+.ditem.sel{color:var(--cafe-dark);}
+.tsep{font-size:1.4rem;font-weight:700;color:var(--cafe-dark);}
+/* TOGGLE */
+.trow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--borde);}
+.trow:last-child{border-bottom:none;}
+.tlbl{font-size:.88rem;font-weight:500;color:var(--texto);}
+.tswitch{position:relative;width:42px;height:24px;flex-shrink:0;}
+.tswitch input{opacity:0;width:0;height:0;position:absolute;}
+.tslider{position:absolute;inset:0;background:var(--beige-dark);border-radius:12px;cursor:pointer;transition:var(--tr);border:1.5px solid var(--bordeF);}
+.tslider::before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:1px;left:1px;transition:var(--tr);}
+input:checked + .tslider{background:var(--cafe);border-color:var(--cafe);}
+input:checked + .tslider::before{transform:translateX(18px);}
+.fb-warn{background:var(--pelbg);border:1px solid rgba(139,46,46,.2);border-radius:8px;padding:10px 12px;font-size:.84rem;color:var(--pel);display:flex;align-items:center;gap:6px;margin-bottom:10px;font-weight:500;}
+.pb-row{display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid var(--borde);border-radius:10px;margin-bottom:8px;background:var(--crema);}
+.fav-btn-det{display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:var(--rsm);border:1.5px solid var(--bordeF);background:var(--blanco);color:var(--cafe);font-family:inherit;font-size:.88rem;font-weight:500;cursor:pointer;transition:var(--tr);width:100%;margin-top:8px;}
+.fav-btn-det:hover{background:var(--pelbg);color:var(--pel);border-color:rgba(139,46,46,.3);}
+.fav-btn-det.active{background:var(--pelbg);color:var(--pel);border-color:rgba(139,46,46,.3);}
+.fav-btn-det i{font-size:1.1rem;}
+@keyframes fup{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
+@keyframes spin{to{transform:rotate(360deg);}}
+.fin{animation:fup .22s ease forwards;}
+</style>
 </head>
 <body>
 <div class="toast" id="toast"></div>
 
 <!-- BETA BANNER -->
-<div class="beta-banner"><i class="ti ti-flask" style="font-size:0.95rem"></i> Panadería MDJ está en <strong>versión beta</strong>. Pueden ocurrir errores o cambios sin previo aviso.</div>
+<div class="beta-banner" id="beta-banner">
+  <i class="ti ti-flask" style="font-size:.95rem;flex-shrink:0"></i>
+  <span class="bt">Panadería MDJ está en <strong>versión beta</strong>. Pueden ocurrir errores o cambios.</span>
+  <button class="beta-banner-x" onclick="cerrarBeta()" title="Cerrar"><i class="ti ti-x"></i></button>
+</div>
 
 <!-- ===== TIENDA ===== -->
 <div class="page active" id="page-tienda">
@@ -25,256 +275,1444 @@
     <div class="nav-logo">MDJ <span class="beta-tag">BETA</span></div>
     <div class="nav-search"><i class="ti ti-search"></i><input type="text" id="nav-search" placeholder="Buscar productos…" oninput="renderProductos()"></div>
     <div class="nav-actions">
-      <button class="btn-icon" onclick="abrirFavoritos()" aria-label="Favoritos" id="btn-favoritos" title="Favoritos">
-        <i class="ti ti-heart"></i>
-      </button>
-      <div style="position:relative">
-        <button class="btn-icon" onclick="abrirCarrito()" aria-label="Carrito">
-          <i class="ti ti-shopping-bag"></i>
-          <span class="badge-count" id="carrito-count" style="display:none">0</span>
-        </button>
-      </div>
+      <button class="btn-icon" onclick="abrirFavoritos()" id="btn-fav-nav" title="Favoritos"><i class="ti ti-heart"></i></button>
       <button class="btn-icon" onclick="abrirLogin()" aria-label="Mi cuenta"><i class="ti ti-user"></i></button>
     </div>
   </nav>
-  <div class="hero"><h1>Panadería MDJ</h1><p>Pan fresco y productos de tienda · Recoja en el local</p></div>
+  <div class="hero"><h1>Panadería MDJ</h1></div>
   <div class="filtros" id="filtros-container">
     <button class="filtro-btn active" onclick="setFiltro('todos',this)"><i class="ti ti-layout-grid"></i> Todos</button>
-    <button class="filtro-btn" id="btn-fav-filtro" onclick="setFiltro('favoritos',this)" style="display:none"><i class="ti ti-heart"></i> Favoritos</button>
     <button class="filtro-btn" onclick="setOrden('precio-asc',this)"><i class="ti ti-sort-ascending-numbers"></i> Precio ↑</button>
     <button class="filtro-btn" onclick="setOrden('precio-desc',this)"><i class="ti ti-sort-descending-numbers"></i> Precio ↓</button>
   </div>
-  <div class="productos-grid" id="productos-grid"><div class="loading-full" style="grid-column:1/-1"><div class="spinner"></div></div></div>
+  <div class="subcat-bar" id="subcat-bar" style="display:none"></div>
+  <div class="pgrid" id="pgrid"><div class="ldwrap" style="grid-column:1/-1"><div class="sp"></div></div></div>
 </div>
 
 <!-- ===== ADMIN ===== -->
 <div class="page" id="page-admin">
-  <nav class="nav"><div class="nav-logo">Panel MDJ</div><button class="btn btn-sm" onclick="pedirCerrarAdmin()"><i class="ti ti-logout"></i> Salir</button></nav>
+  <nav class="nav">
+    <div class="nav-logo">Panel MDJ <span class="beta-tag">BETA</span></div>
+    <button class="btn btn-sm" onclick="pedirCerrarAdmin()"><i class="ti ti-logout"></i> Salir</button>
+  </nav>
   <div style="padding:14px 14px 80px">
-    <div class="admin-nav">
-      <button class="admin-tab active" onclick="adminTab('pedidos',this)"><i class="ti ti-clipboard-list"></i> Órdenes</button>
-      <button class="admin-tab" onclick="adminTab('historial',this)"><i class="ti ti-history"></i> Historial</button>
-      <button class="admin-tab" onclick="adminTab('productos',this)"><i class="ti ti-bread"></i> Productos</button>
-      <button class="admin-tab" onclick="adminTab('usuarios',this)"><i class="ti ti-users"></i> Usuarios</button>
-      <button class="admin-tab" onclick="adminTab('config',this)"><i class="ti ti-settings"></i> Config.</button>
+    <div class="atabbar">
+      <button class="atab active" onclick="adminTab('pedidos',this)"><i class="ti ti-clipboard-list"></i> Órdenes</button>
+      <button class="atab" onclick="adminTab('historial',this)"><i class="ti ti-history"></i> Historial</button>
+      <button class="atab" onclick="adminTab('productos',this)"><i class="ti ti-bread"></i> Productos</button>
+      <button class="atab" onclick="adminTab('usuarios',this)"><i class="ti ti-users"></i> Usuarios</button>
+      <button class="atab" onclick="adminTab('config',this)"><i class="ti ti-settings"></i> Config.</button>
     </div>
-    <div class="admin-view active" id="admin-pedidos">
-      <div class="admin-resumen" id="admin-resumen"></div>
-      <div class="admin-subsec">
-        <button class="subsec-btn active" onclick="setPedidoSec('pendiente',this)">Pendientes</button>
-        <button class="subsec-btn" onclick="setPedidoSec('confirmado',this)">Confirmadas</button>
-        <button class="subsec-btn" onclick="setPedidoSec('listo',this)">Listas</button>
+    <div class="aview active" id="admin-pedidos">
+      <div class="resum" id="admin-resum"></div>
+      <div class="subsec">
+        <button class="ssb active" onclick="setPedSec('pendiente',this)">Pendientes</button>
+        <button class="ssb" onclick="setPedSec('confirmado',this)">Confirmadas</button>
+        <button class="ssb" onclick="setPedSec('listo',this)">Listas</button>
       </div>
-      <div id="admin-pedidos-lista"></div>
+      <div id="admin-ped-lista"></div>
+      <button class="btn" style="width:100%;margin-top:10px" onclick="renderAdminPedidos()"><i class="ti ti-refresh"></i> Recargar órdenes</button>
     </div>
-    <div class="admin-view" id="admin-historial">
-      <div class="historial-search"><i class="ti ti-search"></i><input type="text" id="historial-search-input" placeholder="Buscar por ID, nombre o teléfono…" oninput="renderAdminHistorial()"></div>
-      <div id="admin-historial-lista"></div>
+    <div class="aview" id="admin-historial">
+      <div class="hsrch"><i class="ti ti-search"></i><input type="text" id="hist-search" placeholder="Buscar por ID, nombre o teléfono…" oninput="renderAdminHistorial()"></div>
+      <div id="admin-hist-lista"></div>
     </div>
-    <div class="admin-view" id="admin-productos">
-      <button class="btn btn-primary" style="margin-bottom:11px;width:100%" onclick="abrirFormProducto(null)"><span class="btn-label"><i class="ti ti-plus"></i> Agregar producto</span><div class="btn-spinner"></div></button>
-      <div id="admin-productos-lista"></div>
+    <div class="aview" id="admin-productos">
+      <button class="btn btn-primary" style="margin-bottom:11px;width:100%" onclick="abrirFormProd(null)"><span class="lbl"><i class="ti ti-plus"></i> Agregar producto</span><div class="bsp"></div></button>
+      <div id="admin-prod-lista"></div>
     </div>
-    <div class="admin-view" id="admin-usuarios"><div id="admin-usuarios-lista"></div></div>
-    <div class="admin-view" id="admin-config"><div id="admin-config-content"></div></div>
+    <div class="aview" id="admin-usuarios"><div id="admin-usr-lista"></div></div>
+    <div class="aview" id="admin-config"><div id="admin-cfg-content"></div></div>
   </div>
 </div>
 
 <!-- ===== MODALES TIENDA ===== -->
-<div class="modal-overlay" id="modal-producto" onclick="cerrarModal('modal-producto',event)">
-  <div class="modal"><div class="modal-handle"></div><div id="producto-detalle-content"></div></div>
+<!-- Producto detalle -->
+<div class="ov" id="ov-producto" onclick="cerrarOv('ov-producto',event)">
+  <div class="modal"><div class="mhandle"></div><div id="prod-det-content"></div></div>
 </div>
-<div class="modal-overlay" id="modal-carrito" onclick="cerrarModal('modal-carrito',event)">
+<!-- Carrito -->
+<div class="ov" id="ov-carrito" onclick="cerrarOv('ov-carrito',event)">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header"><i class="ti ti-shopping-bag" style="font-size:1.2rem;color:var(--cafe)"></i><h2 class="modal-title">Su carrito</h2></div>
-    <div id="carrito-lista"></div><div id="carrito-total"></div><div id="carrito-acciones" style="margin-top:10px"></div>
+    <div class="mhandle"></div>
+    <div class="mhdr">
+      <i class="ti ti-shopping-bag" style="font-size:1.2rem;color:var(--cafe)"></i>
+      <span class="mtitle">Su carrito</span>
+      <button class="closebtn" onclick="cerrarOvById('ov-carrito')"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="carrito-lista"></div><div id="carrito-total"></div><div id="carrito-acc" style="margin-top:10px"></div>
   </div>
 </div>
-<div class="modal-overlay" id="modal-favoritos" onclick="cerrarModal('modal-favoritos',event)">
-  <div class="modal"><div class="modal-handle"></div><div id="favoritos-content"></div></div>
-</div>
-<div class="modal-overlay" id="modal-login" onclick="cerrarModal('modal-login',event)">
+<!-- Favoritos -->
+<div class="ov zt" id="ov-favoritos" onclick="cerrarOv('ov-favoritos',event)">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header"><i class="ti ti-user-circle" style="font-size:1.2rem;color:var(--cafe)"></i><h2 class="modal-title">Ingresar</h2></div>
-    <div class="form-group"><label>Nombre *</label><input type="text" id="login-nombre" placeholder="Su nombre"></div>
-    <div class="form-group"><label>Apellido (opcional)</label><input type="text" id="login-apellido" placeholder="Su apellido"></div>
-    <div class="form-group"><label>Teléfono — 8 dígitos *</label><input type="tel" id="login-tel" placeholder="0000 0000" maxlength="9" oninput="formatTel(this)"></div>
-    <button class="btn btn-primary" style="width:100%;margin-top:4px" id="btn-login" onclick="hacerLogin()"><span class="btn-label">Ingresar</span><div class="btn-spinner"></div></button>
+    <div class="mhandle"></div>
+    <div class="mhdr">
+      <i class="ti ti-heart" style="font-size:1.2rem;color:var(--pel)"></i>
+      <span class="mtitle">Mis favoritos</span>
+      <button class="closebtn" onclick="cerrarOvById('ov-favoritos')"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="fav-content"></div>
   </div>
 </div>
-<div class="modal-overlay" id="modal-perfil" onclick="cerrarModal('modal-perfil',event)">
-  <div class="modal"><div class="modal-handle"></div><div id="perfil-content"></div></div>
+<!-- Producto detalle desde favoritos (z-top2 para estar encima) -->
+<div class="ov zt2" id="ov-prod-fav" onclick="cerrarOv('ov-prod-fav',event)">
+  <div class="modal"><div class="mhandle"></div><div id="prod-det-fav-content"></div></div>
 </div>
-<div class="modal-overlay" id="modal-confirmar-pedido" onclick="cerrarModal('modal-confirmar-pedido',event)">
+<!-- Login -->
+<div class="ov" id="ov-login" onclick="cerrarOv('ov-login',event)">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header"><i class="ti ti-receipt" style="font-size:1.2rem;color:var(--cafe)"></i><h2 class="modal-title">Revisar orden</h2></div>
-    <div class="confirm-box">
-      <p>Al confirmar su orden, nos llegará la solicitud y le avisaremos por WhatsApp cuando esté lista para recoger.</p>
-      <button class="mostrar-mas" onclick="toggleTerminos()">Mostrar términos completos</button>
-      <div class="detalle-extra" id="terminos-extra"><p id="terminos-extra-texto" style="margin-top:6px;font-size:0.84rem"></p></div>
+    <div class="mhandle"></div>
+    <div class="mhdr">
+      <i class="ti ti-user-circle" style="font-size:1.2rem;color:var(--cafe)"></i>
+      <span class="mtitle">Ingresar</span>
+      <button class="closebtn" onclick="cerrarOvById('ov-login')"><i class="ti ti-x"></i></button>
     </div>
-    <div id="resumen-pedido-confirm" style="margin:11px 0"></div>
-    <!-- Hora recogida custom -->
-    <div id="hora-recogida-section" class="form-group">
-      <label>Hora de recogida (opcional — solo hoy)</label>
-      <div id="hora-recogida-trigger" onclick="abrirTimePicker()" style="display:flex;align-items:center;gap:8px;padding:10px 13px;border:1.5px solid var(--borde-fuerte);border-radius:var(--r-sm);cursor:pointer;background:var(--blanco);transition:var(--tr);">
-        <i class="ti ti-clock" style="font-size:1rem;color:var(--cafe-light)"></i>
-        <span id="hora-display" style="font-size:0.92rem;color:var(--texto-muy-suave)">Sin hora programada</span>
-        <span id="hora-clear" onclick="event.stopPropagation();limpiarHora()" style="display:none;margin-left:auto;font-size:0.8rem;color:var(--cafe);text-decoration:underline;cursor:pointer">Quitar</span>
-      </div>
+    <div class="fg"><label>Nombre *</label><input type="text" id="ln" placeholder="Su nombre"></div>
+    <div class="fg"><label>Apellido (opcional)</label><input type="text" id="la" placeholder="Su apellido"></div>
+    <div class="fg"><label>Teléfono — 8 dígitos *</label><input type="tel" id="lt" placeholder="0000 0000" maxlength="9" oninput="fmtTel(this)"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" id="btn-login" onclick="hacerLogin()"><span class="lbl">Ingresar</span><div class="bsp"></div></button>
+  </div>
+</div>
+<!-- Perfil -->
+<div class="ov" id="ov-perfil" onclick="cerrarOv('ov-perfil',event)">
+  <div class="modal"><div class="mhandle"></div><div id="perfil-content"></div></div>
+</div>
+<!-- Confirmar pedido -->
+<div class="ov" id="ov-confirm-ped" onclick="cerrarOv('ov-confirm-ped',event)">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="mhdr">
+      <i class="ti ti-receipt" style="font-size:1.2rem;color:var(--cafe)"></i>
+      <span class="mtitle">Revisar orden</span>
+      <button class="closebtn" onclick="cerrarOvById('ov-confirm-ped')"><i class="ti ti-x"></i></button>
     </div>
-    <!-- Nota -->
-    <div id="nota-section" class="form-group">
+    <div class="cbox">
+      <p>Al confirmar, nos llegará su solicitud y le avisaremos por WhatsApp cuando esté lista.</p>
+      <button class="mas-btn" onclick="toggleTerminos()">Mostrar términos completos</button>
+      <div class="det-x" id="terminos-x"><p id="terminos-txt" style="margin-top:6px;font-size:.84rem"></p></div>
+    </div>
+    <div id="resumen-ped" style="margin:11px 0"></div>
+    <!-- nota -->
+    <div id="sect-nota" class="fg">
       <label>Nota para la panadería (opcional)</label>
-      <textarea id="nota-pedido" placeholder="Ej: Sin sal, etc." rows="2"></textarea>
+      <textarea id="nota-ped" placeholder="Ej: sin sal, alergias, etc." rows="2"></textarea>
     </div>
-    <!-- Domicilio -->
-    <div id="domicilio-section" class="form-group" style="background:var(--crema);border-radius:10px;padding:12px;border:1px solid var(--borde)">
-      <label style="margin-bottom:8px;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <input type="checkbox" id="chk-domicilio" style="width:auto;margin:0;accent-color:var(--cafe)" onchange="toggleDomicilio()">
-        <span>Solicitar entrega a domicilio</span>
+    <!-- domicilio -->
+    <div id="sect-domicilio" style="border:1px solid var(--borde);border-radius:10px;padding:12px;margin-bottom:11px">
+      <label style="margin-bottom:8px;display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:.88rem;font-weight:500">
+        <input type="checkbox" id="chk-dom" style="width:auto;margin:0;accent-color:var(--cafe)" onchange="toggleDomicilio()">
+        Solicitar entrega a domicilio
       </label>
-      <div id="domicilio-fields" style="display:none;margin-top:8px">
-        <div class="form-group"><label>Dirección *</label><input type="text" id="dom-direccion" placeholder="Ej: Zona 10, Calle Principal"></div>
-        <div class="form-group"><label>Link de Google Maps *</label><input type="url" id="dom-maps" placeholder="https://maps.google.com/…"></div>
+      <div id="dom-fields" style="display:none;margin-top:8px">
+        <div class="fg"><label>Dirección *</label><input type="text" id="dom-dir" placeholder="Ej: Zona 10, Calle Principal"></div>
+        <div class="fg"><label>Link de Google Maps *</label><input type="url" id="dom-maps" placeholder="https://maps.google.com/…"></div>
       </div>
     </div>
-    <p style="font-size:0.76rem;color:var(--texto-muy-suave);margin:10px 0;display:flex;align-items:center;gap:4px">
+    <!-- hora recogida TOGGLE -->
+    <div id="sect-hora" style="border:1px solid var(--borde);border-radius:10px;padding:12px;margin-bottom:11px">
+      <label style="margin-bottom:8px;display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:.88rem;font-weight:500">
+        <input type="checkbox" id="chk-hora" style="width:auto;margin:0;accent-color:var(--cafe)" onchange="toggleHoraSection()">
+        Programar hora de recogida
+      </label>
+      <p style="font-size:.79rem;color:var(--texto-ms);margin-bottom:6px" id="hora-default-txt">Lo más rápido posible</p>
+      <div id="hora-pick-btn" style="display:none">
+        <div onclick="abrirTimePicker()" style="display:flex;align-items:center;gap:8px;padding:10px 13px;border:1.5px solid var(--bordeF);border-radius:var(--rsm);cursor:pointer;background:var(--blanco)">
+          <i class="ti ti-clock" style="font-size:1rem;color:var(--cafe-light)"></i>
+          <span id="hora-display" style="font-size:.92rem;color:var(--texto-ms)">Toca para seleccionar hora</span>
+          <button id="hora-clear-btn" onclick="event.stopPropagation();limpiarHora()" style="display:none;margin-left:auto;background:none;border:none;font-family:inherit;font-size:.8rem;color:var(--cafe);cursor:pointer;text-decoration:underline">Quitar</button>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:.76rem;color:var(--texto-ms);margin-bottom:10px;display:flex;align-items:center;gap:4px">
       <i class="ti ti-brand-whatsapp" style="color:#25D366;font-size:1rem"></i>
       Es necesario enviar un mensaje de WhatsApp para completar su orden.
     </p>
     <div style="display:flex;gap:8px">
-      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-confirmar-pedido')">Cancelar</button>
-      <button class="btn btn-wa" style="flex:2" id="btn-confirmar-pedido" onclick="confirmarPedido()"><span class="btn-label"><i class="ti ti-brand-whatsapp"></i> Enviar y confirmar</span><div class="btn-spinner"></div></button>
+      <button class="btn" style="flex:1" onclick="cerrarOvById('ov-confirm-ped')">Cancelar</button>
+      <button class="btn btn-wa" style="flex:2" id="btn-confirm-ped" onclick="confirmarPedido()"><span class="lbl"><i class="ti ti-brand-whatsapp"></i> Enviar y confirmar</span><div class="bsp"></div></button>
     </div>
   </div>
 </div>
-<div class="modal-overlay" id="modal-post-pedido">
+<!-- Post-pedido OK -->
+<div class="ov" id="ov-post-ped">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="post-pedido">
-      <div class="post-pedido-icon"><i class="ti ti-circle-check"></i></div>
-      <h2>¡Orden enviada!</h2>
-      <p style="margin-bottom:4px">Revise WhatsApp para completar su solicitud.</p>
-      <div class="post-pedido-tabla" id="post-pedido-info"></div>
-      <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="cerrarModalById('modal-post-pedido')">Listo</button>
+    <div class="mhandle"></div>
+    <div class="post-order">
+      <div class="poi poi-ok"><i class="ti ti-circle-check"></i></div>
+      <h2 style="color:var(--cafe-dark);margin-bottom:6px">¡Orden enviada!</h2>
+      <p style="font-size:.88rem;color:var(--texto-s);margin-bottom:4px">Revise WhatsApp para completar su solicitud.</p>
+      <div class="ptabla" id="post-ped-info"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="cerrarOvById('ov-post-ped')">Listo</button>
     </div>
   </div>
 </div>
-<div class="modal-overlay" id="modal-detalle-pedido" onclick="cerrarModal('modal-detalle-pedido',event)">
-  <div class="modal"><div class="modal-handle"></div><div id="detalle-pedido-content"></div></div>
+<!-- Confirmar cancelación usuario -->
+<div class="ov ctr zt" id="ov-cancel-confirm">
+  <div class="modal">
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:1.2rem;font-weight:600;color:var(--cafe-dark);margin-bottom:6px">¿Cancelar esta orden?</div>
+      <p style="font-size:.87rem;color:var(--texto-s)">Se enviará un mensaje de WhatsApp a la panadería para confirmar la cancelación.</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" style="flex:1" onclick="cerrarOvById('ov-cancel-confirm')">No, mantener</button>
+      <button class="btn btn-danger" style="flex:2" id="btn-do-cancel" onclick="ejecutarCancelPedido()"><span class="lbl"><i class="ti ti-x"></i> Sí, cancelar</span><div class="bsp"></div></button>
+    </div>
+  </div>
+</div>
+<!-- Post cancelación -->
+<div class="ov" id="ov-post-cancel">
+  <div class="modal">
+    <div class="mhandle"></div>
+    <div class="post-order">
+      <div class="poi poi-cancel"><i class="ti ti-circle-x"></i></div>
+      <h2 style="color:var(--pel);margin-bottom:6px">Orden cancelada</h2>
+      <p style="font-size:.88rem;color:var(--texto-s);margin-bottom:4px">Se abrió WhatsApp para notificar a la panadería.</p>
+      <div class="ptabla" id="post-cancel-info"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="cerrarOvById('ov-post-cancel')">Listo</button>
+    </div>
+  </div>
+</div>
+<!-- Detalle pedido usuario -->
+<div class="ov" id="ov-det-ped" onclick="cerrarOv('ov-det-ped',event)">
+  <div class="modal"><div class="mhandle"></div><div id="det-ped-content"></div></div>
 </div>
 <!-- Time picker -->
-<div class="modal-overlay center-modal z-top" id="modal-time-picker" onclick="cerrarModal('modal-time-picker',event)">
+<div class="ov ctr zt" id="ov-timepick" onclick="cerrarOv('ov-timepick',event)">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header"><i class="ti ti-clock" style="font-size:1.2rem;color:var(--cafe)"></i><h2 class="modal-title">Hora de recogida</h2></div>
-    <div class="time-picker-wrap">
-      <div class="time-drum-wrap"><div class="time-drum-selected"></div><div class="time-drum" id="drum-horas"></div></div>
-      <span class="time-sep">:</span>
-      <div class="time-drum-wrap"><div class="time-drum-selected"></div><div class="time-drum" id="drum-minutos"></div></div>
-      <div style="display:flex;flex-direction:column;gap:5px">
-        <button class="time-period-btn active" id="btn-am" onclick="setPeriod('AM')">AM</button>
-        <button class="time-period-btn" id="btn-pm" onclick="setPeriod('PM')">PM</button>
-      </div>
+    <div class="mhandle"></div>
+    <div class="mhdr"><i class="ti ti-clock" style="font-size:1.2rem;color:var(--cafe)"></i><span class="mtitle">Hora de recogida</span></div>
+    <div class="tpwrap">
+      <div class="drum-o"><div class="drum-sel"></div><div class="drum" id="drum-h"></div></div>
+      <span class="tsep">:</span>
+      <div class="drum-o"><div class="drum-sel"></div><div class="drum" id="drum-m"></div></div>
     </div>
     <div style="display:flex;gap:8px;margin-top:8px">
-      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-time-picker')">Cancelar</button>
+      <button class="btn" style="flex:1" onclick="cerrarOvById('ov-timepick')">Cancelar</button>
       <button class="btn btn-primary" style="flex:2" onclick="confirmarHora()">Confirmar hora</button>
     </div>
   </div>
 </div>
 
 <!-- ===== MODALES ADMIN ===== -->
-<div class="modal-overlay" id="modal-admin-pedido" onclick="cerrarModal('modal-admin-pedido',event)">
-  <div class="modal"><div class="modal-handle"></div><div id="admin-pedido-detalle-content"></div></div>
+<div class="ov" id="ov-admin-ped" onclick="cerrarOv('ov-admin-ped',event)">
+  <div class="modal"><div class="mhandle"></div><div id="admin-ped-det"></div></div>
 </div>
-<div class="modal-overlay z-top" id="modal-admin-producto-detalle" onclick="cerrarModal('modal-admin-producto-detalle',event)">
-  <div class="modal"><div class="modal-handle"></div><div id="admin-producto-detalle-content"></div></div>
+<!-- producto detalle desde admin (encima de la orden) -->
+<div class="ov zt" id="ov-admin-prod-det" onclick="cerrarOv('ov-admin-prod-det',event)">
+  <div class="modal"><div class="mhandle"></div><div id="admin-prod-det-cont"></div></div>
 </div>
-<div class="modal-overlay z-top" id="modal-wa-confirm" onclick="cerrarModal('modal-wa-confirm',event)">
+<!-- WA confirm -->
+<div class="ov zt" id="ov-wa" onclick="cerrarOv('ov-wa',event)">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header"><i class="ti ti-brand-whatsapp" style="font-size:1.2rem;color:#25D366"></i><h2 class="modal-title">Confirmar mensaje</h2></div>
-    <div class="form-group"><label>Mensaje — puede editarlo</label><textarea id="wa-mensaje-edit" rows="5"></textarea></div>
-    <p style="font-size:0.81rem;color:var(--texto-suave);margin-bottom:12px">Número: <strong id="wa-numero-display"></strong></p>
+    <div class="mhandle"></div>
+    <div class="mhdr"><i class="ti ti-brand-whatsapp" style="font-size:1.2rem;color:#25D366"></i><span class="mtitle">Confirmar mensaje</span></div>
+    <div class="fg"><label>Mensaje — puede editarlo</label><textarea id="wa-msg" rows="5"></textarea></div>
+    <p style="font-size:.81rem;color:var(--texto-s);margin-bottom:12px">Número: <strong id="wa-num"></strong></p>
     <div style="display:flex;gap:8px">
-      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-wa-confirm')">Cancelar</button>
-      <button class="btn btn-wa" style="flex:2" id="btn-enviar-wa" onclick="confirmarEnvioWA()"><span class="btn-label"><i class="ti ti-brand-whatsapp"></i> Enviar y confirmar</span><div class="btn-spinner"></div></button>
+      <button class="btn" style="flex:1" onclick="cerrarOvById('ov-wa')">Cancelar</button>
+      <button class="btn btn-wa" style="flex:2" id="btn-wa-send" onclick="doEnvioWA()"><span class="lbl"><i class="ti ti-brand-whatsapp"></i> Enviar y confirmar</span><div class="bsp"></div></button>
     </div>
   </div>
 </div>
-<div class="modal-overlay z-top" id="modal-prod-nodisponible" onclick="cerrarModal('modal-prod-nodisponible',event)">
+<!-- No disponibles -->
+<div class="ov zt" id="ov-nodisp" onclick="cerrarOv('ov-nodisp',event)">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-header"><i class="ti ti-package-off" style="font-size:1.2rem;color:var(--peligro)"></i><h2 class="modal-title">Productos no disponibles</h2></div>
-    <p style="font-size:0.84rem;color:var(--texto-suave);margin-bottom:10px">Seleccione los que no están disponibles:</p>
-    <div id="prod-nodisponible-lista"></div>
-    <button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="armarMsgNoDisponible()">Continuar con mensaje</button>
+    <div class="mhandle"></div>
+    <div class="mhdr"><i class="ti ti-package-off" style="font-size:1.2rem;color:var(--pel)"></i><span class="mtitle">Productos no disponibles</span></div>
+    <p style="font-size:.84rem;color:var(--texto-s);margin-bottom:10px">Seleccione los que no están disponibles:</p>
+    <div id="nodisp-lista"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="armarMsgNoDisp()">Continuar con mensaje</button>
   </div>
 </div>
-<div class="modal-overlay" id="modal-admin-usuario" onclick="cerrarModal('modal-admin-usuario',event)">
-  <div class="modal"><div class="modal-handle"></div><div id="admin-usuario-detalle"></div></div>
+<!-- Admin usuario -->
+<div class="ov" id="ov-admin-usr" onclick="cerrarOv('ov-admin-usr',event)">
+  <div class="modal"><div class="mhandle"></div><div id="admin-usr-det"></div></div>
 </div>
-<div class="modal-overlay" id="modal-form-producto" onclick="cerrarModal('modal-form-producto',event)">
+<!-- Form producto -->
+<div class="ov" id="ov-form-prod" onclick="cerrarOv('ov-form-prod',event)">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <h2 class="modal-title" id="form-producto-titulo" style="margin-bottom:14px">Agregar producto</h2>
+    <div class="mhandle"></div>
+    <h2 class="mtitle" id="fprod-titulo" style="margin-bottom:14px">Agregar producto</h2>
     <input type="hidden" id="fp-id">
-    <div class="form-group"><label>Nombre *</label><input type="text" id="fp-nombre" placeholder="Ej: Pan de mantequilla"></div>
-    <div class="form-group">
+    <div class="fg"><label>Nombre *</label><input type="text" id="fp-nombre" placeholder="Ej: Pan de mantequilla"></div>
+    <div class="fg">
       <label>Categoría *</label>
-      <div class="cat-dropdown-wrap">
-        <button type="button" class="cat-input-btn" id="cat-btn" onclick="toggleCatDropdown()"><span id="cat-btn-text" style="color:var(--texto-muy-suave)">Seleccionar categoría</span><i class="ti ti-chevron-down"></i></button>
-        <div class="cat-dropdown-list" id="cat-dropdown-list">
-          <div id="cat-opciones-list"></div>
-          <div class="cat-nueva-wrap">
-            <input type="text" class="cat-nueva-input" id="cat-nueva-input" placeholder="Nueva categoría…">
-            <button class="cat-nueva-btn" onclick="crearCategoriaNueva()">+</button>
-          </div>
+      <div class="cdw">
+        <button type="button" class="cibtn" id="cat-btn" onclick="toggleCatDD()"><span id="cat-btn-txt" style="color:var(--texto-ms)">Seleccionar categoría</span><i class="ti ti-chevron-down"></i></button>
+        <div class="cdlist" id="cat-ddlist">
+          <div id="cat-opts"></div>
+          <div class="cdnew"><input type="text" class="cdni" id="cat-new-inp" placeholder="Nueva categoría…"><button class="cdnbtn" onclick="crearCatNueva('cat')">+</button></div>
         </div>
       </div>
-      <input type="hidden" id="fp-categoria">
+      <input type="hidden" id="fp-cat">
     </div>
-    <div class="form-group"><label>Sub-categoría (opcional)</label><input type="text" id="fp-subcategoria" placeholder="Ej: Pan dulce, Pan integral"></div>
-    <div class="form-group"><label>Precio (Q) *</label><input type="number" id="fp-precio" placeholder="0.00" min="0" step="0.25"></div>
-    <div class="form-group"><label>URL de imagen</label><input type="text" id="fp-imagen" placeholder="https://…"></div>
-    <div class="form-group"><label>Detalles del producto</label><textarea id="fp-detalles" placeholder="Ingredientes, descripción… (Enter = nueva línea)" rows="3"></textarea></div>
-    <div class="form-group"><label>Extra (disponibilidad manual)</label><textarea id="fp-extra" placeholder="Ej: Solo disponible fines de semana" rows="2"></textarea></div>
-    <!-- Bloqueo programado -->
+    <div class="fg">
+      <label>Sub-categoría (opcional)</label>
+      <div class="cdw">
+        <button type="button" class="cibtn" id="subcat-btn" onclick="toggleSubcatDD()"><span id="subcat-btn-txt" style="color:var(--texto-ms)">Sin sub-categoría</span><i class="ti ti-chevron-down"></i></button>
+        <div class="cdlist" id="subcat-ddlist">
+          <div id="subcat-opts"></div>
+          <div class="cdnew"><input type="text" class="cdni" id="subcat-new-inp" placeholder="Nueva sub-categoría…"><button class="cdnbtn" onclick="crearCatNueva('subcat')">+</button></div>
+        </div>
+      </div>
+      <input type="hidden" id="fp-subcat">
+    </div>
+    <div class="fg"><label>Precio (Q) *</label><input type="number" id="fp-precio" placeholder="0.00" min="0" step="0.25"></div>
+    <div class="fg"><label>URL de imagen</label><input type="text" id="fp-imagen" placeholder="https://…"></div>
+    <div class="fg"><label>Detalles (Enter = nueva línea)</label><textarea id="fp-detalles" rows="3" placeholder="Ingredientes, descripción, etc."></textarea></div>
+    <div class="fg"><label>Extra (disponibilidad manual)</label><textarea id="fp-extra" rows="2" placeholder="Ej: Solo disponible fines de semana"></textarea></div>
     <div class="divider"></div>
-    <div class="section-title" style="margin-bottom:8px">Bloqueo programado</div>
-    <div id="prog-bloqueo-lista"></div>
-    <button class="btn btn-sm" style="margin-bottom:4px;width:100%" onclick="agregarReglaProg('dias')"><i class="ti ti-calendar"></i> Bloquear en días específicos</button>
-    <button class="btn btn-sm" style="width:100%" onclick="agregarReglaProg('horas')"><i class="ti ti-clock"></i> Bloquear en rango de horas</button>
+    <div class="stitle" style="margin-bottom:8px">Bloqueo programado</div>
+    <div id="pb-lista"></div>
+    <div style="display:flex;gap:6px;margin-bottom:4px">
+      <button class="btn btn-sm" style="flex:1" onclick="addProgBlock('dias')"><i class="ti ti-calendar"></i> Días específicos</button>
+      <button class="btn btn-sm" style="flex:1" onclick="addProgBlock('horas')"><i class="ti ti-clock"></i> Rango de horas</button>
+    </div>
     <div style="display:flex;gap:8px;margin-top:14px">
-      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-form-producto')">Cancelar</button>
-      <button class="btn btn-primary" style="flex:2" id="btn-guardar-producto" onclick="guardarProducto()"><span class="btn-label"><i class="ti ti-device-floppy"></i> Guardar</span><div class="btn-spinner"></div></button>
+      <button class="btn" style="flex:1" onclick="cerrarOvById('ov-form-prod')">Cancelar</button>
+      <button class="btn btn-primary" style="flex:2" id="btn-save-prod" onclick="guardarProducto()"><span class="lbl"><i class="ti ti-device-floppy"></i> Guardar</span><div class="bsp"></div></button>
     </div>
   </div>
 </div>
-<!-- Modal advertencia con nota -->
-<div class="modal-overlay center-modal z-top2" id="modal-advertencia-nota" onclick="cerrarModal('modal-advertencia-nota',event)">
+<!-- Time picker bloqueo programado (zt2) -->
+<div class="ov ctr zt2" id="ov-timepick-blk" onclick="cerrarOv('ov-timepick-blk',event)">
   <div class="modal">
-    <h2 class="modal-title" style="margin-bottom:10px">Agregar advertencia</h2>
-    <div class="form-group"><label>Nota interna (solo visible para admin)</label><textarea id="adv-nota-input" placeholder="Ej: No pasó a recoger su orden #1042" rows="2"></textarea></div>
-    <div style="display:flex;gap:8px">
-      <button class="btn" style="flex:1" onclick="cerrarModalById('modal-advertencia-nota')">Cancelar</button>
-      <button class="btn btn-danger" style="flex:2" id="btn-confirmar-adv" onclick="confirmarAdvertencia()"><span class="btn-label"><i class="ti ti-alert-triangle"></i> Agregar</span><div class="btn-spinner"></div></button>
+    <div class="mhandle"></div>
+    <div class="mhdr"><i class="ti ti-clock" style="font-size:1.2rem;color:var(--cafe)"></i><span class="mtitle" id="blk-tp-titulo">Hora de bloqueo</span></div>
+    <div class="tpwrap">
+      <div class="drum-o"><div class="drum-sel"></div><div class="drum" id="drum-blk-h"></div></div>
+      <span class="tsep">:</span>
+      <div class="drum-o"><div class="drum-sel"></div><div class="drum" id="drum-blk-m"></div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn" style="flex:1" onclick="cerrarOvById('ov-timepick-blk')">Cancelar</button>
+      <button class="btn btn-primary" style="flex:2" onclick="confirmarHoraBlk()">Confirmar</button>
     </div>
   </div>
 </div>
-<!-- Confirmación genérica -->
-<div class="modal-overlay center-modal z-top2" id="modal-confirm-dialog">
-  <div class="modal"><div id="confirm-dialog-content"></div></div>
+<!-- Advertencia con nota -->
+<div class="ov ctr zt2" id="ov-adv-nota" onclick="cerrarOv('ov-adv-nota',event)">
+  <div class="modal">
+    <div style="font-size:1.15rem;font-weight:600;color:var(--cafe-dark);margin-bottom:10px">Agregar advertencia</div>
+    <div class="fg"><label>Nota interna (solo admin)</label><textarea id="adv-nota" placeholder="Ej: No pasó a recoger su orden #1042" rows="2"></textarea></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" style="flex:1" onclick="cerrarOvById('ov-adv-nota')">Cancelar</button>
+      <button class="btn btn-danger" style="flex:2" id="btn-adv-ok" onclick="confirmarAdv()"><span class="lbl"><i class="ti ti-alert-triangle"></i> Agregar</span><div class="bsp"></div></button>
+    </div>
+  </div>
+</div>
+<!-- Confirm genérico -->
+<div class="ov ctr zt2" id="ov-confirm">
+  <div class="modal"><div id="confirm-content"></div></div>
 </div>
 
-<button class="carrito-fab hidden" id="carrito-fab" onclick="abrirCarrito()">
+<button class="fab hidden" id="fab" onclick="abrirCarrito()">
   <i class="ti ti-shopping-bag"></i> <span id="fab-total">Q0.00</span>
 </button>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// SUPABASE — reemplaza con tus credenciales
+// ═══════════════════════════════════════════════════════
+const SURL='https://evoewvoxfcmldrhcbmcj.supabase.co';
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2b2V3dm94ZmNtbGRyaGNibWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NjI1ODYsImV4cCI6MjA5NDUzODU4Nn0.eAeIJnpGOKbjZbWdz5KAfa_3yp2tHaDV_ArjPoTVdx8';
+const{createClient}=supabase;
+const sb=createClient(SURL,SKEY);
+
+// ═══════════════════════════════════════════════════════
+// ESTADO
+// ═══════════════════════════════════════════════════════
+let U=null;          // usuario actual
+let ADMIN=false;     // es admin
+let cfg={};          // configuración global
+let prods=[];        // cache productos
+let carrito=[];      // carrito local + DB
+let filtroAct='todos';
+let ordenAct=null;
+let subcatAct=null;
+let pedSec='pendiente';
+let waCtx={};
+let fpMode=null;      // id producto en edición
+let progBlocks=[];    // reglas bloqueo programado
+let advTel=null;
+let cancelPedId=null;
+let blkTpCallback=null; // callback para timepicker de bloqueo
+
+// ═══════════════════════════════════════════════════════
+// AUDIO
+// ═══════════════════════════════════════════════════════
+function playOk(){try{const c=new(window.AudioContext||window.webkitAudioContext)(),t=c.currentTime;[523.25,659.25,783.99].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t+i*.12);g.gain.linearRampToValueAtTime(.18,t+i*.12+.04);g.gain.linearRampToValueAtTime(0,t+i*.12+.22);o.connect(g);g.connect(c.destination);o.start(t+i*.12);o.stop(t+i*.12+.25);});}catch(e){}}
+function playReady(){try{const c=new(window.AudioContext||window.webkitAudioContext)(),t=c.currentTime;[880,1046.5].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t+i*.15);g.gain.linearRampToValueAtTime(.22,t+i*.15+.05);g.gain.linearRampToValueAtTime(0,t+i*.15+.28);o.connect(g);g.connect(c.destination);o.start(t+i*.15);o.stop(t+i*.15+.3);});}catch(e){}}
+
+// ═══════════════════════════════════════════════════════
+// UI UTILS
+// ═══════════════════════════════════════════════════════
+let tTimer;
+function toast(msg,ms=2600){clearTimeout(tTimer);const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');tTimer=setTimeout(()=>t.classList.remove('show'),ms);}
+
+function abrirOv(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
+function cerrarOvById(id){document.getElementById(id).classList.remove('open');if(!document.querySelector('.ov.open'))document.body.style.overflow='';}
+function cerrarOv(id,e){if(e.target===document.getElementById(id))cerrarOvById(id);}
+
+function ld(id,on){const b=document.getElementById(id);if(!b)return;b.classList.toggle('ld',on);}
+
+function confirm2(titulo,texto,lblOk,fn,danger=false){
+  document.getElementById('confirm-content').innerHTML=`
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:1.15rem;font-weight:600;color:var(--cafe-dark);margin-bottom:6px">${titulo}</div>
+      ${texto?`<p style="font-size:.87rem;color:var(--texto-s)">${texto}</p>`:''}
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" style="flex:1" onclick="cerrarOvById('ov-confirm')">Cancelar</button>
+      <button class="btn ${danger?'btn-danger':'btn-primary'}" style="flex:2" id="ok-btn">${lblOk}</button>
+    </div>`;
+  document.getElementById('ok-btn').onclick=()=>{fn();cerrarOvById('ov-confirm');};
+  abrirOv('ov-confirm');
+}
+
+// ═══════════════════════════════════════════════════════
+// FORMATO
+// ═══════════════════════════════════════════════════════
+function fmtTel(i){let v=i.value.replace(/\D/g,'').slice(0,8);i.value=v.length>4?v.slice(0,4)+' '+v.slice(4):v;}
+function fQ(n){return'Q'+Number(n).toFixed(2);}
+// Hora Guatemala: UTC-6
+function nowGT(){const d=new Date();d.setHours(d.getHours()-6);return d;}
+function isoGT(){return nowGT().toISOString().replace('Z','-06:00');}
+function fmtHora(iso){return new Date(iso).toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'America/Guatemala'});}
+function fmtFecha(iso){return new Date(iso).toLocaleDateString('es-GT',{day:'2-digit',month:'short',year:'numeric',timeZone:'America/Guatemala'});}
+function fmtHoraMin(iso){return new Date(iso).toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'America/Guatemala'});}
+function txtHora(iso){const d=new Date(new Date(iso).getTime()+30*60000);return d.toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'America/Guatemala'});}
+function getAdvc(u){return Array.isArray(u.advertencias)?u.advertencias.length:0;}
+function genId(){return String(Math.floor(1000+Math.random()*9000));}
+function nlHtml(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>');}
+
+const CAT_IC={Pan:'ti-bread','Pan dulce':'ti-croissant',Bebidas:'ti-bottle',Repostería:'ti-cake',Tienda:'ti-basket'};
+const catIco=c=>CAT_IC[c]||'ti-shopping-bag';
+function estadoBadge(e){const m={pendiente:'<span class="badge b-w">Recibida</span>',confirmado:'<span class="badge b-i">Confirmada</span>',listo:'<span class="badge b-ok">Lista</span>',entregado:'<span class="badge b-n">Entregada</span>',cancelado:'<span class="badge b-err">Cancelada</span>'};return m[e]||e;}
+
+function horaEstimada(p){
+  if(p.hora_recogida)return{hora:p.hora_recogida,custom:true};
+  return{hora:txtHora(p.created_at),custom:false};
+}
+
+function prodEstaDisp(p){
+  if(p.bloqueado)return false;
+  if(!p.bloqueo_prog||!p.bloqueo_prog.length)return true;
+  const now=nowGT();const dia=now.getDay();const hm=now.getHours()*60+now.getMinutes();
+  for(const r of p.bloqueo_prog){
+    if(r.tipo==='dias'&&r.dias&&r.dias.includes(dia))return false;
+    if(r.tipo==='horas'&&r.desde&&r.hasta){
+      const[dh,dm]=r.desde.split(':').map(Number);const[hh,hmm]=r.hasta.split(':').map(Number);
+      if(hm>=dh*60+dm&&hm<=hh*60+hmm)return false;
+    }
+  }
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════
+// BETA BANNER
+// ═══════════════════════════════════════════════════════
+(function(){const b=document.getElementById('beta-banner');if(localStorage.getItem('mdj_beta_ok')==='1')b.style.display='none';})();
+function cerrarBeta(){document.getElementById('beta-banner').style.display='none';localStorage.setItem('mdj_beta_ok','1');}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',async()=>{
+  await cargarCfg();
+  await restaurarSesion();
+  await cargarProductos();
+  renderFiltros();
+  actTerminos();
+  initDrums();
+  // click analytics global
+  document.addEventListener('click',()=>{if(U&&!ADMIN)incr('clicks');},{passive:true});
+});
+
+// ═══════════════════════════════════════════════════════
+// SESIÓN PERSISTENTE
+// ═══════════════════════════════════════════════════════
+async function restaurarSesion(){
+  const rol=localStorage.getItem('mdj_rol'); // 'admin' | 'user'
+  const tel=localStorage.getItem('mdj_tel');
+  if(!tel)return;
+  try{
+    const{data,error}=await sb.from('usuarios').select('*').eq('telefono',tel).single();
+    if(data&&!error){
+      U=data;carrito=Array.isArray(data.carrito)?data.carrito:[];
+      actuCarritoUI();
+      // registrar visita
+      await incr('visitas');
+      await sb.from('usuarios').update({ultima_conexion:isoGT()}).eq('id',U.id);
+      if(rol==='admin'&&data.rol==='admin'){ADMIN=true;setTimeout(()=>entrarAdmin(),100);}
+    }else{limpiarSesion();}
+  }catch(e){limpiarSesion();}
+}
+function limpiarSesion(){localStorage.removeItem('mdj_tel');localStorage.removeItem('mdj_rol');U=null;ADMIN=false;}
+
+async function incr(campo){
+  if(!U)return;
+  try{
+    const{data}=await sb.from('usuarios').select(campo).eq('id',U.id).single();
+    if(data)await sb.from('usuarios').update({[campo]:(data[campo]||0)+1}).eq('id',U.id);
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════
+// CONFIG GLOBAL
+// ═══════════════════════════════════════════════════════
+async function cargarCfg(){
+  try{
+    const{data}=await sb.from('configuracion').select('*');
+    if(data)data.forEach(r=>{try{cfg[r.clave]=typeof r.valor==='string'?JSON.parse(r.valor):r.valor;}catch(e){cfg[r.clave]=r.valor;}});
+  }catch(e){}
+  cfg.telefono_tienda=cfg.telefono_tienda||'';
+  cfg.terminos_extra=cfg.terminos_extra||'Una vez confirmada su orden, tiene 15 minutos para pasar a recogerla.';
+  cfg.estados_info=cfg.estados_info||{pendiente:'Su orden fue recibida.',confirmado:'En preparación.',listo:'Lista para recoger.',entregado:'Completada.',cancelado:'Cancelada.'};
+  cfg.funciones_bloqueadas=cfg.funciones_bloqueadas||{realizar_pedidos:false,hora_recogida:false,pedido_domicilio:false,nota_pedido:false};
+}
+async function saveCfg(k,v){try{await sb.from('configuracion').upsert({clave:k,valor:JSON.stringify(v),updated_at:isoGT()});}catch(e){}cfg[k]=v;}
+function actTerminos(){const el=document.getElementById('terminos-txt');if(el)el.textContent=cfg.terminos_extra||'';}
+
+// ═══════════════════════════════════════════════════════
+// PRODUCTOS
+// ═══════════════════════════════════════════════════════
+async function cargarProductos(){
+  try{const{data}=await sb.from('productos').select('*').order('nombre');if(data)prods=data;}catch(e){prods=[];}
+  renderProductos();
+}
+function getCats(){return[...new Set(prods.map(p=>p.categoria))].sort();}
+function getSubcats(cat){return[...new Set(prods.filter(p=>p.categoria===cat&&p.subcategoria).map(p=>p.subcategoria))].sort();}
+function getAllSubcats(){return[...new Set(prods.filter(p=>p.subcategoria).map(p=>p.subcategoria))].sort();}
+
+function renderFiltros(){
+  const cont=document.getElementById('filtros-container');
+  cont.querySelectorAll('[data-cat]').forEach(b=>b.remove());
+  getCats().forEach(cat=>{
+    const b=document.createElement('button');b.className='filtro-btn';b.setAttribute('data-cat',cat);
+    b.innerHTML=`<i class="ti ${catIco(cat)}"></i> ${cat}`;b.onclick=function(){setFiltro(cat,this);};cont.appendChild(b);
+  });
+}
+
+function setFiltro(cat,btn){
+  filtroAct=cat;ordenAct=null;subcatAct=null;
+  document.querySelectorAll('.filtro-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  // subcat bar
+  const bar=document.getElementById('subcat-bar');
+  if(cat!=='todos'){
+    const scs=getSubcats(cat);
+    if(scs.length){
+      bar.style.display='flex';
+      bar.innerHTML=scs.map(s=>`<button class="scpill" onclick="setSubcat('${s}',this)">${s}</button>`).join('');
+    }else{bar.style.display='none';}
+  }else{bar.style.display='none';}
+  renderProductos();
+}
+function setSubcat(sc,btn){subcatAct=sc;document.querySelectorAll('.scpill').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderProductos();}
+function setOrden(o,btn){ordenAct=o;filtroAct='todos';subcatAct=null;document.querySelectorAll('.filtro-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');document.getElementById('subcat-bar').style.display='none';renderProductos();}
+
+function renderProductos(){
+  const grid=document.getElementById('pgrid');
+  const q=(document.getElementById('nav-search')||{}).value?.toLowerCase()||'';
+  const favs=U?.favoritos||[];
+  let ps=[...prods];
+  if(filtroAct&&filtroAct!=='todos')ps=ps.filter(p=>p.categoria===filtroAct);
+  if(subcatAct)ps=ps.filter(p=>p.subcategoria===subcatAct);
+  if(q)ps=ps.filter(p=>p.nombre.toLowerCase().includes(q)||p.categoria.toLowerCase().includes(q)||(p.subcategoria||'').toLowerCase().includes(q));
+  if(ordenAct==='precio-asc')ps.sort((a,b)=>a.precio-b.precio);
+  if(ordenAct==='precio-desc')ps.sort((a,b)=>b.precio-a.precio);
+  if(!ps.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><i class="ti ti-search"></i><p>Sin resultados</p></div>';return;}
+  grid.innerHTML=ps.map(p=>{
+    const disp=prodEstaDisp(p);
+    const fav=favs.includes(p.id);
+    return`<div class="card pcard fin" onclick="verProd(${p.id})">
+      <div class="pimg">
+        ${p.imagen?`<img src="${p.imagen}" alt="${p.nombre}" onerror="this.parentNode.innerHTML='<i class=\\'ti ${catIco(p.categoria)} pimg-icon\\'></i>'">`:`<i class="ti ${catIco(p.categoria)} pimg-icon"></i>`}
+        ${!disp?`<div class="ndov"><i class="ti ti-ban" style="font-size:1rem"></i>No disponible</div>`:''}
+      </div>
+      <div class="pinfo">
+        <div class="pname">${p.nombre}${p.subcategoria?`<span style="font-size:.68rem;color:var(--texto-ms);margin-left:4px">${p.subcategoria}</span>`:''}</div>
+        <div class="pprice">${fQ(p.precio)}</div>
+        ${p.extra?`<div class="etag"><i class="ti ti-clock" style="font-size:.7rem"></i>${p.extra}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function verProd(id,ovId='ov-producto',contId='prod-det-content'){
+  const p=prods.find(x=>x.id===id);if(!p)return;
+  const disp=prodEstaDisp(p);
+  const fav=(U?.favoritos||[]).includes(p.id);
+  // click analytics
+  if(U&&!ADMIN)sbIncProd(id,'clicks_vista');
+  document.getElementById(contId).innerHTML=`
+    <div class="mhdr"><span class="mtitle">${p.nombre}</span><button class="closebtn" onclick="cerrarOvById('${ovId}')"><i class="ti ti-x"></i></button></div>
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="width:110px;height:110px;border-radius:14px;background:var(--beige);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;overflow:hidden;position:relative">
+        ${p.imagen?`<img src="${p.imagen}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentNode.innerHTML='<i class=\\'ti ${catIco(p.categoria)}\\' style=\\'font-size:2.8rem;color:var(--cafe-light)\\'></i>'">`:`<i class="ti ${catIco(p.categoria)}" style="font-size:2.8rem;color:var(--cafe-light)"></i>`}
+        ${!disp?'<div class="ndov" style="font-size:.7rem"><i class="ti ti-ban" style="font-size:1rem;display:block"></i>No disponible</div>':''}
+      </div>
+      <div style="font-size:1.25rem;font-weight:700;color:var(--cafe)">${fQ(p.precio)}</div>
+      <span class="badge b-n" style="margin-top:4px">${p.categoria}${p.subcategoria?' · '+p.subcategoria:''}</span>
+    </div>
+    ${p.detalles?`<div style="margin-bottom:11px"><div class="stitle">Detalles</div><p style="font-size:.86rem;color:var(--texto-s);line-height:1.7">${nlHtml(p.detalles)}</p></div>`:''}
+    ${p.extra?`<div style="margin-bottom:13px"><div class="stitle">Disponibilidad</div><div class="etag"><i class="ti ti-clock" style="font-size:.75rem"></i>${p.extra}</div></div>`:''}
+    ${U&&!ADMIN?`<button class="fav-btn-det${fav?' active':''}" onclick="toggleFav(${p.id})"><i class="ti ti-heart${fav?'-filled':''}"></i> ${fav?'Quitar de favoritos':'Agregar a favoritos'}</button>`:''}
+    ${disp&&!ADMIN?`<button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="agregarCarrito(${p.id});cerrarOvById('${ovId}')"><i class="ti ti-shopping-bag-plus"></i> Agregar al carrito</button>`:''}
+  `;
+  abrirOv(ovId);
+}
+
+async function sbIncProd(id,campo){
+  try{
+    const{data}=await sb.from('productos').select(campo).eq('id',id).single();
+    if(data!==null)await sb.from('productos').update({[campo]:(data[campo]||0)+1}).eq('id',id);
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════
+// FAVORITOS
+// ═══════════════════════════════════════════════════════
+async function toggleFav(id){
+  if(!U){toast('Inicia sesión para guardar favoritos');return;}
+  let favs=Array.isArray(U.favoritos)?[...U.favoritos]:[];
+  const i=favs.indexOf(id);if(i>=0)favs.splice(i,1);else favs.push(id);
+  U.favoritos=favs;
+  try{await sb.from('usuarios').update({favoritos:favs,updated_at:isoGT()}).eq('id',U.id);}catch(e){}
+  renderProductos();
+}
+
+function abrirFavoritos(){
+  if(!U){toast('Inicia sesión para ver favoritos');return;}
+  const favs=U.favoritos||[];const ps=prods.filter(p=>favs.includes(p.id));
+  document.getElementById('fav-content').innerHTML=!ps.length
+    ?'<div class="empty"><i class="ti ti-heart"></i><p>Sin favoritos aún.<br>Presiona un producto para añadirlo.</p></div>'
+    :ps.map(p=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--borde);cursor:pointer" onclick="verProd(${p.id},'ov-prod-fav','prod-det-fav-content')">
+        <div class="ci-img">${p.imagen?`<img src="${p.imagen}" onerror="this.parentNode.innerHTML='<i class=\\'ti ${catIco(p.categoria)}\\'></i>'">`:`<i class="ti ${catIco(p.categoria)}"></i>`}</div>
+        <div style="flex:1"><div style="font-size:.88rem;font-weight:500">${p.nombre}</div><div style="font-size:.8rem;color:var(--cafe)">${fQ(p.precio)}</div></div>
+        <i class="ti ti-chevron-right" style="color:var(--texto-ms)"></i>
+      </div>`).join('');
+  abrirOv('ov-favoritos');
+}
+
+// ═══════════════════════════════════════════════════════
+// CARRITO
+// ═══════════════════════════════════════════════════════
+function agregarCarrito(id){
+  if(U?.bloqueado){toast('Tu cuenta está bloqueada.');return;}
+  const p=prods.find(x=>x.id===id);if(!p)return;
+  if(!prodEstaDisp(p)){toast('Este producto no está disponible ahora.');return;}
+  const ex=carrito.find(c=>c.id===id);
+  if(ex)ex.cantidad++;else carrito.push({id:p.id,nombre:p.nombre,precio:p.precio,categoria:p.categoria,imagen:p.imagen||'',cantidad:1});
+  actuCarritoUI();
+  if(document.getElementById('ov-carrito').classList.contains('open'))renderCarritoModal();
+  sincCarrito();
+  sbIncProd(id,'clicks_carrito');
+  toast(p.nombre+' agregado al carrito');
+}
+function quitarCarrito(id){const ex=carrito.find(c=>c.id===id);if(!ex)return;if(ex.cantidad>1)ex.cantidad--;else carrito=carrito.filter(c=>c.id!==id);actuCarritoUI();renderCarritoModal();sincCarrito();}
+async function sincCarrito(){if(!U)return;try{await sb.from('usuarios').update({carrito,updated_at:isoGT()}).eq('id',U.id);}catch(e){}}
+
+function actuCarritoUI(){
+  const tot=carrito.reduce((s,c)=>s+c.precio*c.cantidad,0);
+  const cnt=carrito.reduce((s,c)=>s+c.cantidad,0);
+  const cc=document.getElementById('carrito-count');
+  document.getElementById('fab-total').textContent=fQ(tot);
+  if(cc){cc.style.display=cnt>0?'flex':'none';cc.textContent=cnt;}
+  document.getElementById('fab').classList.toggle('hidden',cnt===0);
+}
+function abrirCarrito(){renderCarritoModal();abrirOv('ov-carrito');}
+function renderCarritoModal(){
+  const lista=document.getElementById('carrito-lista');const totEl=document.getElementById('carrito-total');const accEl=document.getElementById('carrito-acc');
+  if(!carrito.length){lista.innerHTML='<div class="empty"><i class="ti ti-shopping-bag"></i><p>Su carrito está vacío</p></div>';totEl.innerHTML='';accEl.innerHTML='';return;}
+  lista.innerHTML=carrito.map(c=>`<div class="ci">
+    <div class="ci-img">${c.imagen?`<img src="${c.imagen}" onerror="this.parentNode.innerHTML='<i class=\\'ti ${catIco(c.categoria)}\\'></i>'">`:`<i class="ti ${catIco(c.categoria)}"></i>`}</div>
+    <div class="ci-info"><div class="ci-name">${c.nombre}</div><div class="ci-price">${fQ(c.precio)} c/u</div></div>
+    <div class="qctrl"><button class="qbtn" onclick="quitarCarrito(${c.id})">−</button><span class="qnum">${c.cantidad}</span><button class="qbtn" onclick="agregarCarrito(${c.id})">+</button></div>
+  </div>`).join('');
+  const tot=carrito.reduce((s,c)=>s+c.precio*c.cantidad,0);
+  totEl.innerHTML=`<div class="divider"></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--texto-s)">Total</span><span style="font-size:1.15rem;font-weight:700;color:var(--cafe-dark)">${fQ(tot)}</span></div>`;
+  accEl.innerHTML=`<button class="btn btn-primary" style="width:100%;margin-top:9px" onclick="irAConfirmar()"><i class="ti ti-arrow-right"></i> Continuar con la orden</button>`;
+}
+
+function irAConfirmar(){
+  const fb=cfg.funciones_bloqueadas||{};
+  if(!U){cerrarOvById('ov-carrito');toast('Por favor inicia sesión primero');setTimeout(()=>abrirLogin(),400);return;}
+  if(U.bloqueado){cerrarOvById('ov-carrito');mostrarBloqueoMsg(U.msg_bloqueo);return;}
+  if(fb.realizar_pedidos){cerrarOvById('ov-carrito');toast('Los pedidos en línea están temporalmente desactivados.');return;}
+  cerrarOvById('ov-carrito');mostrarConfirmPed();
+}
+
+function mostrarBloqueoMsg(msg){
+  document.getElementById('prod-det-content').innerHTML=`<div class="blk-bann"><i class="ti ti-lock"></i><div><p style="font-weight:600;margin-bottom:3px">Cuenta bloqueada</p><p>${msg||'No puedes realizar pedidos. Contáctanos para más información.'}</p></div></div><button class="btn" style="width:100%;margin-top:4px" onclick="cerrarOvById('ov-producto')"><i class="ti ti-x"></i> Cerrar</button>`;
+  abrirOv('ov-producto');
+}
+
+function toggleTerminos(){const el=document.getElementById('terminos-x');const b=document.querySelector('.mas-btn');if(!el||!b)return;el.classList.toggle('vis');b.textContent=el.classList.contains('vis')?'Ocultar':'Mostrar términos completos';}
+
+function mostrarConfirmPed(){
+  actTerminos();
+  const fb=cfg.funciones_bloqueadas||{};
+  const tot=carrito.reduce((s,c)=>s+c.precio*c.cantidad,0);
+  document.getElementById('resumen-ped').innerHTML=`<div style="background:var(--crema);border-radius:10px;padding:11px;border:1px solid var(--borde)">${carrito.map(c=>`<div style="display:flex;justify-content:space-between;font-size:.84rem;padding:3px 0"><span>${c.nombre} ×${c.cantidad}</span><span>${fQ(c.precio*c.cantidad)}</span></div>`).join('')}<div class="divider"></div><div style="display:flex;justify-content:space-between;font-weight:700"><span>Total</span><span style="color:var(--cafe-dark)">${fQ(tot)}</span></div></div>`;
+  // secciones según bloqueos
+  const sn=document.getElementById('sect-nota');if(sn)sn.style.display=fb.nota_pedido?'none':'block';
+  const sd=document.getElementById('sect-domicilio');if(sd)sd.style.display=fb.pedido_domicilio?'none':'block';
+  const sh=document.getElementById('sect-hora');if(sh)sh.style.display=fb.hora_recogida?'none':'block';
+  // reset fields
+  const notaEl=document.getElementById('nota-ped');if(notaEl)notaEl.value='';
+  const chkD=document.getElementById('chk-dom');if(chkD){chkD.checked=false;document.getElementById('dom-fields').style.display='none';}
+  // rellenar dirección si existe en perfil
+  if(U?.direccion&&document.getElementById('dom-dir'))document.getElementById('dom-dir').value=U.direccion;
+  if(U?.maps_link&&document.getElementById('dom-maps'))document.getElementById('dom-maps').value=U.maps_link;
+  const chkH=document.getElementById('chk-hora');if(chkH){chkH.checked=false;}
+  document.getElementById('hora-pick-btn').style.display='none';
+  document.getElementById('hora-default-txt').style.display='block';
+  limpiarHora();
+  const det=document.getElementById('terminos-x');const mb=document.querySelector('.mas-btn');
+  if(det)det.classList.remove('vis');if(mb)mb.textContent='Mostrar términos completos';
+  abrirOv('ov-confirm-ped');
+}
+
+function toggleDomicilio(){
+  const c=document.getElementById('chk-dom');
+  document.getElementById('dom-fields').style.display=c.checked?'block':'none';
+}
+function toggleHoraSection(){
+  const c=document.getElementById('chk-hora');
+  document.getElementById('hora-pick-btn').style.display=c.checked?'block':'none';
+  document.getElementById('hora-default-txt').style.display=c.checked?'none':'block';
+  if(!c.checked)limpiarHora();
+}
+
+async function confirmarPedido(){
+  const fb=cfg.funciones_bloqueadas||{};
+  const chkD=document.getElementById('chk-dom');
+  const esDom=chkD&&chkD.checked&&!fb.pedido_domicilio;
+  if(esDom){
+    const dir=(document.getElementById('dom-dir')||{}).value?.trim();
+    const maps=(document.getElementById('dom-maps')||{}).value?.trim();
+    if(!dir||!maps){toast('Para domicilio, ingresa tu dirección y link de Google Maps');return;}
+  }
+  ld('btn-confirm-ped',true);
+  try{
+    const tot=carrito.reduce((s,c)=>s+c.precio*c.cantidad,0);
+    const id=genId();
+    const nota=!fb.nota_pedido?(document.getElementById('nota-ped')||{}).value?.trim()||'':'';
+    const horaEl=document.getElementById('hora-display');
+    const horaChk=document.getElementById('chk-hora');
+    const hora=(!fb.hora_recogida&&horaChk&&horaChk.checked)?horaEl?.dataset?.hora||'':'';
+    const dir=esDom?(document.getElementById('dom-dir')||{}).value?.trim()||'':'';
+    const maps=esDom?(document.getElementById('dom-maps')||{}).value?.trim()||'':'';
+    // Guardar dirección en perfil si no la tenía
+    if(esDom&&dir&&(!U.direccion||!U.maps_link)){
+      const upd={};if(!U.direccion&&dir)upd.direccion=dir;if(!U.maps_link&&maps)upd.maps_link=maps;
+      if(Object.keys(upd).length){Object.assign(U,upd,{updated_at:isoGT()});await sb.from('usuarios').update({...upd,updated_at:isoGT()}).eq('id',U.id);}
+    }
+    const now=isoGT();
+    const ped={id,usuario_id:U.id,usuario_tel:U.telefono,productos:carrito.map(c=>({id:c.id,nombre:c.nombre,precio:c.precio,cantidad:c.cantidad})),total:tot,estado:'pendiente',nota,hora_recogida:hora,es_domicilio:esDom,dir_domicilio:dir,maps_domicilio:maps,msg_cancelacion:'',historial_estados:[{estado:'pendiente',fecha:now}],created_at:now,updated_at:now};
+    const{error}=await sb.from('pedidos').insert(ped);
+    if(error)throw error;
+    // incrementar clicks_orden por cada producto
+    for(const c of carrito)await sbIncProd(c.id,'clicks_orden');
+    carrito=[];await sb.from('usuarios').update({carrito:[],updated_at:isoGT()}).eq('id',U.id);
+    actuCarritoUI();
+    cerrarOvById('ov-confirm-ped');
+    playOk();
+    const tel=cfg.telefono_tienda||'';
+    let msgWa=`¡Hola! He realizado una orden con el ID #${id}.`;
+    if(esDom)msgWa+=` Solicito entrega a domicilio en: ${dir}.`;
+    if(hora)msgWa+=` Hora de recogida: ${hora}.`;
+    if(nota)msgWa+=` Nota: ${nota}.`;
+    msgWa+=' Quedo atento a la confirmación. 😊';
+    window.open(`https://wa.me/502${tel}?text=${encodeURIComponent(msgWa)}`,'_blank');
+    // mostrar post-pedido
+    document.getElementById('post-ped-info').innerHTML=buildPostPedHtml(ped);
+    abrirOv('ov-post-ped');
+  }catch(e){toast('Error al crear la orden: '+(e.message||e));}
+  ld('btn-confirm-ped',false);
+}
+
+function buildPostPedHtml(p){
+  return`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-weight:700;font-size:1.05rem;color:var(--cafe-dark)">#${p.id}</span>${estadoBadge(p.estado)}</div>
+  ${p.hora_recogida?`<div style="font-size:.82rem;color:var(--inf);display:flex;align-items:center;gap:4px;margin-bottom:6px"><i class="ti ti-clock"></i>Recogida: <strong>${p.hora_recogida}</strong></div>`:'<div style="font-size:.82rem;color:var(--texto-ms);margin-bottom:6px">Recogida: Lo más rápido posible</div>'}
+  ${p.es_domicilio?`<div style="font-size:.82rem;color:var(--ex);display:flex;align-items:center;gap:4px;margin-bottom:6px"><i class="ti ti-truck"></i>Entrega a domicilio</div>`:''}
+  ${p.productos.map(pr=>`<div style="display:flex;justify-content:space-between;font-size:.83rem;padding:2px 0"><span>${pr.nombre} ×${pr.cantidad}</span><span>${fQ(pr.precio*pr.cantidad)}</span></div>`).join('')}
+  <div class="divider"></div>
+  <div style="display:flex;justify-content:space-between;font-weight:700;font-size:.9rem"><span>Total</span><span style="color:var(--cafe-dark)">${fQ(p.total)}</span></div>
+  ${p.nota?`<div style="margin-top:8px;font-size:.8rem;color:var(--texto-s);border-top:1px solid var(--borde);padding-top:7px;display:flex;align-items:center;gap:4px"><i class="ti ti-note"></i>${p.nota}</div>`:''}`;
+}
+
+// ═══════════════════════════════════════════════════════
+// TIME PICKER
+// ═══════════════════════════════════════════════════════
+const HORAS=[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22];
+const MINS=[0,5,10,15,20,25,30,35,40,45,50,55];
+
+function initDrums(){
+  buildDrum('drum-h',HORAS,'drum-h');buildDrum('drum-m',MINS,'drum-m');
+  buildDrum('drum-blk-h',HORAS,'drum-blk-h');buildDrum('drum-blk-m',MINS,'drum-blk-m');
+}
+function buildDrum(id,vals){
+  const d=document.getElementById(id);if(!d)return;
+  const pad='<div class="ditem" style="pointer-events:none"></div>';
+  d.innerHTML=pad+vals.map(v=>`<div class="ditem" data-val="${v}">${String(v).padStart(2,'0')}</div>`).join('')+pad;
+  d.addEventListener('scroll',()=>hilite(d),{passive:true});
+  setTimeout(()=>{d.scrollTop=0;hilite(d);},80);
+}
+function hilite(d){const its=d.querySelectorAll('.ditem[data-val]');const c=d.scrollTop+60;its.forEach(it=>{const m=it.offsetTop+20;it.classList.toggle('sel',Math.abs(m-c)<22);});}
+function getDrumVal(id){const d=document.getElementById(id);const its=d.querySelectorAll('.ditem[data-val]');const c=d.scrollTop+60;let best=null,bd=999;its.forEach(it=>{const m=it.offsetTop+20;const dv=Math.abs(m-c);if(dv<bd){bd=dv;best=it.dataset.val;}});return best;}
+
+function abrirTimePicker(){abrirOv('ov-timepick');}
+function confirmarHora(){
+  const h=getDrumVal('drum-h');const m=getDrumVal('drum-m');if(!h)return;
+  const str=`${String(h).padStart(2,'0')}:${String(m||0).padStart(2,'0')}`;
+  const disp=document.getElementById('hora-display');
+  if(disp){disp.textContent=str;disp.dataset.hora=str;disp.style.color='var(--texto)';}
+  const clr=document.getElementById('hora-clear-btn');if(clr)clr.style.display='inline';
+  cerrarOvById('ov-timepick');
+}
+function limpiarHora(){
+  const disp=document.getElementById('hora-display');
+  if(disp){disp.textContent='Toca para seleccionar hora';disp.dataset.hora='';disp.style.color='var(--texto-ms)';}
+  const clr=document.getElementById('hora-clear-btn');if(clr)clr.style.display='none';
+}
+
+// Time picker bloqueo
+function abrirTpBlk(callback,titulo='Hora de bloqueo'){
+  blkTpCallback=callback;
+  document.getElementById('blk-tp-titulo').textContent=titulo;
+  abrirOv('ov-timepick-blk');
+}
+function confirmarHoraBlk(){
+  const h=getDrumVal('drum-blk-h');const m=getDrumVal('drum-blk-m');if(!h)return;
+  const str=`${String(h).padStart(2,'0')}:${String(m||0).padStart(2,'0')}`;
+  if(blkTpCallback)blkTpCallback(str);
+  cerrarOvById('ov-timepick-blk');
+}
+
+// ═══════════════════════════════════════════════════════
+// LOGIN / USUARIO
+// ═══════════════════════════════════════════════════════
+function abrirLogin(){if(U){abrirPerfil();return;}abrirOv('ov-login');}
+
+async function hacerLogin(){
+  const nombre=document.getElementById('ln').value.trim();
+  const apellido=document.getElementById('la').value.trim();
+  const tel=document.getElementById('lt').value.replace(/\D/g,'');
+  if(!nombre){toast('El nombre es obligatorio');return;}
+  if(tel.length!==8){toast('El teléfono debe tener 8 dígitos');return;}
+  ld('btn-login',true);
+  try{
+    let{data:usr}=await sb.from('usuarios').select('*').eq('telefono',tel).single();
+    if(usr){
+      // verificar si nombre+apellido coincide (para rol admin)
+      const coincide=usr.nombre===nombre&&(usr.apellido||'')===(apellido||'');
+      if(usr.rol==='admin'&&coincide){
+        ADMIN=true;localStorage.setItem('mdj_rol','admin');
+      }else{ADMIN=false;localStorage.setItem('mdj_rol','user');}
+      toast('¡Bienvenido de vuelta, '+usr.nombre+'!');
+    }else{
+      const now=isoGT();
+      const nu={nombre,apellido,telefono:tel,rol:'cliente',created_at:now,updated_at:now,ultima_conexion:now,advertencias:[],bloqueado:false,msg_bloqueo:'',favoritos:[],carrito:[],clicks:0,visitas:1};
+      const{data:cr}=await sb.from('usuarios').insert(nu).select().single();
+      usr=cr;ADMIN=false;localStorage.setItem('mdj_rol','user');
+      toast('¡Bienvenido! Cuenta creada.');
+    }
+    U=usr;carrito=Array.isArray(usr.carrito)?usr.carrito:[];actuCarritoUI();
+    localStorage.setItem('mdj_tel',tel);
+    await sb.from('usuarios').update({ultima_conexion:isoGT(),updated_at:isoGT()}).eq('id',U.id);
+    await incr('visitas');
+    cerrarOvById('ov-login');renderFiltros();renderProductos();
+    if(ADMIN)entrarAdmin();else abrirPerfil();
+  }catch(e){toast('Error: '+(e.message||e));}
+  ld('btn-login',false);
+}
+
+function abrirPerfil(){if(!U){abrirLogin();return;}renderPerfil();abrirOv('ov-perfil');}
+
+async function renderPerfil(){
+  try{const{data}=await sb.from('usuarios').select('*').eq('id',U.id).single();if(data)U=data;}catch(e){}
+  const advc=getAdvc(U);
+  let peds=[];try{const{data}=await sb.from('pedidos').select('*').eq('usuario_tel',U.telefono).order('created_at',{ascending:false});if(data)peds=data;}catch(e){}
+  const activas=peds.filter(p=>p.estado!=='entregado'&&p.estado!=='cancelado');
+  const hist=peds.filter(p=>p.estado==='entregado'||p.estado==='cancelado');
+  document.getElementById('perfil-content').innerHTML=`
+    <div class="mhdr"><span class="mtitle">Mi perfil</span><button class="closebtn" onclick="cerrarOvById('ov-perfil')"><i class="ti ti-x"></i></button></div>
+    <div style="text-align:center;padding:0 0 16px">
+      <div class="pavatar">${U.nombre[0]}${U.apellido?U.apellido[0]:''}</div>
+      <div class="pnombre">${U.nombre} ${U.apellido||''}</div>
+      <div class="ptel"><i class="ti ti-phone" style="font-size:.88rem"></i>${U.telefono.slice(0,4)+' '+U.telefono.slice(4)}</div>
+      <button class="btn btn-xs" style="margin-top:7px" onclick="editarPerfil()"><i class="ti ti-edit"></i> Editar perfil</button>
+    </div>
+    ${U.bloqueado?`<div class="blk-bann"><i class="ti ti-lock"></i><div><p style="font-weight:600;margin-bottom:2px">Cuenta bloqueada</p><p>${U.msg_bloqueo||'No puedes realizar pedidos.'}</p></div></div>`:''}
+    ${advc>0?`<div style="display:flex;align-items:center;gap:7px;background:var(--avbg);border-radius:8px;padding:8px 11px;margin-bottom:10px;font-size:.82rem;color:var(--av);font-weight:500"><i class="ti ti-alert-triangle" style="font-size:1rem"></i> Tiene ${advc} advertencia${advc>1?'s':''} acumulada${advc>1?'s':''}</div>`:''}
+    <div class="divider"></div>
+    ${activas.length?`<div style="margin-bottom:14px"><div class="stitle">Órdenes activas (${activas.length})</div>${activas.map(p=>`<div style="margin-top:6px">${p.estado==='pendiente'?`<div class="edit-aviso" style="margin-bottom:4px"><i class="ti ti-pencil" style="font-size:.9rem"></i> #${p.id} — Aún puede modificarla</div>`:''}<div class="pmini" onclick="verDetPed('${p.id}')"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:1.05rem;font-weight:700;color:var(--cafe-dark)">#${p.id}</span>${estadoBadge(p.estado)}</div><div style="font-size:.8rem;color:var(--texto-s);margin-top:2px">${p.productos.length} producto(s) · ${fQ(p.total)}${p.hora_recogida?` · ${p.hora_recogida}`:' · Lo más rápido posible'}${p.es_domicilio?' · 🚚 Domicilio':''}</div></div></div>`).join('')}</div>`:''}
+    <div class="stitle">Historial</div>
+    ${hist.length?hist.map(p=>`<div class="pmini" style="margin-top:6px" onclick="verDetPed('${p.id}')"><div style="display:flex;justify-content:space-between"><span style="font-weight:700;color:var(--cafe-dark)">#${p.id}</span>${estadoBadge(p.estado)}</div><div style="font-size:.78rem;color:var(--texto-s);margin-top:2px">${fQ(p.total)} · ${fmtFecha(p.created_at)}</div></div>`).join(''):'<div class="empty" style="padding:18px 0"><i class="ti ti-clock"></i><p>Sin órdenes completadas</p></div>'}
+    <div class="divider"></div>
+    <button class="btn" style="width:100%" onclick="pedirCerrarSesion()"><i class="ti ti-logout"></i> Cerrar sesión</button>
+  `;
+}
+
+function pedirCerrarSesion(){
+  confirm2('¿Cerrar sesión?','Tendrá que ingresar nuevamente con su teléfono.','Cerrar sesión',()=>{
+    limpiarSesion();carrito=[];actuCarritoUI();cerrarOvById('ov-perfil');renderFiltros();renderProductos();toast('Sesión cerrada');
+  });
+}
+
+function editarPerfil(){
+  document.getElementById('perfil-content').innerHTML=`
+    <div class="mhdr"><button class="back-btn" onclick="renderPerfil()"><i class="ti ti-arrow-left"></i></button><span class="mtitle">Editar perfil</span><button class="closebtn" onclick="cerrarOvById('ov-perfil')"><i class="ti ti-x"></i></button></div>
+    <div class="fg"><label>Nombre *</label><input type="text" id="en" value="${U.nombre}"></div>
+    <div class="fg"><label>Apellido</label><input type="text" id="ea" value="${U.apellido||''}"></div>
+    <div class="fg"><label>Dirección</label><input type="text" id="ed" value="${U.direccion||''}" placeholder="Ej: Zona 10, Calle Principal"></div>
+    <div class="fg"><label>Link de Google Maps</label><input type="url" id="em" value="${U.maps_link||''}" placeholder="https://maps.google.com/…"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px" id="btn-save-perfil" onclick="guardarPerfil()"><span class="lbl"><i class="ti ti-device-floppy"></i> Guardar</span><div class="bsp"></div></button>
+  `;
+}
+async function guardarPerfil(){
+  const n=document.getElementById('en').value.trim();if(!n){toast('El nombre es obligatorio');return;}
+  ld('btn-save-perfil',true);
+  try{
+    const u={nombre:n,apellido:document.getElementById('ea').value.trim(),direccion:document.getElementById('ed').value.trim(),maps_link:document.getElementById('em').value.trim(),updated_at:isoGT()};
+    await sb.from('usuarios').update(u).eq('id',U.id);Object.assign(U,u);
+    toast('Perfil actualizado');renderPerfil();
+  }catch(e){toast('Error: '+e.message);}
+  ld('btn-save-perfil',false);
+}
+
+async function verDetPed(pedId){
+  let p=null;try{const{data}=await sb.from('pedidos').select('*').eq('id',pedId).single();p=data;}catch(e){}
+  if(!p)return;
+  const pE=p.estado==='pendiente';const pC=p.estado==='pendiente';
+  const ei=(cfg.estados_info||{})[p.estado]||'';
+  document.getElementById('det-ped-content').innerHTML=`
+    <div class="mhdr"><span class="mtitle">Orden #${p.id}</span><button class="closebtn" onclick="cerrarOvById('ov-det-ped')"><i class="ti ti-x"></i></button></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <div>${estadoBadge(p.estado)}<button onclick="this.nextElementSibling.classList.toggle('vis')" class="closebtn" style="color:var(--texto-ms);margin-left:4px"><i class="ti ti-info-circle" style="font-size:.88rem"></i></button></div>
+      <div style="font-size:.78rem;color:var(--texto-ms)">${fmtFecha(p.created_at)}</div>
+    </div>
+    <div class="det-x" style="background:var(--beige-dark);border-radius:8px;padding:8px 11px;font-size:.8rem;color:var(--texto-s);margin-bottom:8px">${ei}</div>
+    ${pE?'<div class="edit-aviso"><i class="ti ti-pencil" style="font-size:.9rem"></i> Aún puede modificar su orden</div>':''}
+    ${p.hora_recogida?`<div style="font-size:.82rem;color:var(--inf);display:flex;align-items:center;gap:4px;margin:6px 0"><i class="ti ti-clock"></i>Recogida: <strong>${p.hora_recogida}</strong></div>`:'<div style="font-size:.82rem;color:var(--texto-ms);margin:4px 0">Recogida: Lo más rápido posible</div>'}
+    ${p.es_domicilio?`<div style="font-size:.82rem;color:var(--ex);display:flex;align-items:center;gap:4px;margin-bottom:6px"><i class="ti ti-truck"></i>Domicilio${p.dir_domicilio?': '+p.dir_domicilio:''}</div>`:''}
+    <div style="margin:10px 0">
+      ${p.productos.map(pr=>`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--borde)">
+        <div style="width:33px;height:33px;border-radius:7px;background:var(--beige);display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="ti ${catIco(prods.find(x=>x.id===pr.id)?.categoria||'')}" style="font-size:1rem;color:var(--cafe-light)"></i></div>
+        <div style="flex:1"><div style="font-size:.86rem;font-weight:500">${pr.nombre}</div><div style="font-size:.76rem;color:var(--texto-s)">${fQ(pr.precio)} × ${pr.cantidad}</div></div>
+        <div style="font-weight:700;color:var(--cafe-dark);font-size:.88rem">${fQ(pr.precio*pr.cantidad)}</div>
+        ${pE?`<div style="display:flex;gap:4px"><button class="qbtn" onclick="editCantPed('${p.id}',${pr.id},-1)">−</button><button class="qbtn" onclick="editCantPed('${p.id}',${pr.id},1)">+</button></div>`:''}
+      </div>`).join('')}
+      ${p.nota?`<div style="margin-top:8px;font-size:.82rem;color:var(--texto-s);display:flex;align-items:center;gap:5px"><i class="ti ti-note"></i>${p.nota}</div>`:''}
+      <div style="display:flex;justify-content:space-between;font-weight:700;padding:10px 0"><span>Total</span><span style="color:var(--cafe-dark)">${fQ(p.total)}</span></div>
+    </div>
+    ${pC?`<button class="btn btn-danger" style="width:100%;margin-bottom:8px" onclick="pedirCancelarPed('${p.id}')"><i class="ti ti-x"></i> Cancelar esta orden</button>`:''}
+    <button class="btn" style="width:100%" onclick="cerrarOvById('ov-det-ped')"><i class="ti ti-x"></i> Cerrar</button>
+  `;
+  abrirOv('ov-det-ped');
+}
+
+function pedirCancelarPed(pedId){cancelPedId=pedId;abrirOv('ov-cancel-confirm');}
+
+async function ejecutarCancelPed(){
+  if(!cancelPedId)return;
+  ld('btn-do-cancel',true);
+  try{
+    const{data:ped}=await sb.from('pedidos').select('*').eq('id',cancelPedId).single();
+    const hist=[...(ped?.historial_estados||[]),{estado:'cancelado',fecha:isoGT()}];
+    await sb.from('pedidos').update({estado:'cancelado',historial_estados:hist,updated_at:isoGT()}).eq('id',cancelPedId);
+    cerrarOvById('ov-cancel-confirm');cerrarOvById('ov-det-ped');
+    // post-cancel
+    document.getElementById('post-cancel-info').innerHTML=buildPostPedHtml({...ped,estado:'cancelado'});
+    abrirOv('ov-post-cancel');
+    renderPerfil();
+    const tel=cfg.telefono_tienda||'';
+    window.open(`https://wa.me/502${tel}?text=${encodeURIComponent('¡Hola! Me gustaría cancelar mi orden con el ID #'+cancelPedId+'. Por favor confirmen la cancelación. Gracias.')}`,'_blank');
+  }catch(e){toast('Error: '+e.message);}
+  ld('btn-do-cancel',false);
+}
+// alias para HTML
+function ejecutarCancelPedido(){ejecutarCancelPed();}
+
+async function editCantPed(pid,prodId,delta){
+  try{
+    const{data:p}=await sb.from('pedidos').select('*').eq('id',pid).single();
+    if(!p||p.estado!=='pendiente')return;
+    const ps=[...p.productos];const pr=ps.find(x=>x.id===prodId);if(!pr)return;
+    pr.cantidad=Math.max(0,pr.cantidad+delta);
+    const np=ps.filter(x=>x.cantidad>0);
+    if(!np.length){await sb.from('pedidos').update({estado:'cancelado',updated_at:isoGT()}).eq('id',pid);cerrarOvById('ov-det-ped');renderPerfil();toast('Orden cancelada');return;}
+    const nt=np.reduce((s,x)=>s+x.precio*x.cantidad,0);
+    await sb.from('pedidos').update({productos:np,total:nt,updated_at:isoGT()}).eq('id',pid);
+    verDetPed(pid);
+  }catch(e){toast('Error: '+e.message);}
+}
+
+// ═══════════════════════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════════════════════
+function entrarAdmin(){
+  ADMIN=true;
+  document.getElementById('page-tienda').classList.remove('active');
+  document.getElementById('page-admin').classList.add('active');
+  renderAdminPedidos();
+}
+
+function pedirCerrarAdmin(){
+  confirm2('¿Salir del panel?','Volverá a la tienda y se cerrará la sesión admin.','Salir',()=>{
+    ADMIN=false;limpiarSesion();
+    document.getElementById('page-admin').classList.remove('active');
+    document.getElementById('page-tienda').classList.add('active');
+    U=null;carrito=[];actuCarritoUI();renderFiltros();renderProductos();
+  });
+}
+
+function adminTab(v,btn){
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.aview').forEach(vw=>vw.classList.remove('active'));document.getElementById('admin-'+v).classList.add('active');
+  ({pedidos:renderAdminPedidos,historial:renderAdminHistorial,productos:renderAdminProductos,usuarios:renderAdminUsrs,config:renderAdminCfg})[v]?.();
+}
+function setPedSec(s,btn){pedSec=s;document.querySelectorAll('.ssb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderListaPeds();}
+
+async function renderAdminPedidos(){
+  let all=[];try{const{data}=await sb.from('pedidos').select('*');if(data)all=data;}catch(e){}
+  document.getElementById('admin-resum').innerHTML=`
+    <div class="rcrd"><div class="rcrd-n">${all.filter(p=>p.estado==='pendiente').length}</div><div class="rcrd-l">Pendientes</div></div>
+    <div class="rcrd"><div class="rcrd-n">${all.filter(p=>p.estado==='confirmado').length}</div><div class="rcrd-l">Confirmadas</div></div>
+    <div class="rcrd"><div class="rcrd-n">${all.filter(p=>p.estado==='listo').length}</div><div class="rcrd-l">Listas</div></div>`;
+  renderListaPeds();
+}
+
+async function renderListaPeds(){
+  const lista=document.getElementById('admin-ped-lista');
+  lista.innerHTML='<div class="ldwrap"><div class="sp"></div></div>';
+  let peds=[];let usrs=[];
+  try{const{data}=await sb.from('pedidos').select('*').eq('estado',pedSec).order('created_at',{ascending:true});if(data)peds=data;}catch(e){}
+  try{const{data}=await sb.from('usuarios').select('id,nombre,apellido,telefono');if(data)usrs=data;}catch(e){}
+  if(!peds.length){lista.innerHTML='<div class="empty"><i class="ti ti-clipboard-list"></i><p>Sin órdenes en esta sección</p></div>';return;}
+  lista.innerHTML=peds.map(p=>{
+    const u=usrs.find(x=>x.telefono===p.usuario_tel);
+    const{hora,custom}=horaEstimada(p);
+    return`<div class="apcard" onclick="verAdminPed('${p.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="display:flex;align-items:center;gap:7px">
+          <span class="apid">#${p.id}</span>
+          <span style="font-size:.83rem;color:var(--texto-s);font-weight:500">${u?u.nombre+' '+(u.apellido||''):'Cliente'}</span>
+          ${p.es_domicilio?'<span class="badge b-ok" style="font-size:.65rem">Domicilio</span>':''}
+        </div>
+        <span style="font-weight:700;color:var(--cafe-dark)">${fQ(p.total)}</span>
+      </div>
+      <div style="font-size:.76rem;color:var(--texto-ms);display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+        <span><i class="ti ti-package" style="vertical-align:-2px"></i> ${p.productos.length} producto(s)</span>
+        <span><i class="ti ti-clock" style="vertical-align:-2px"></i> ${fmtHora(p.created_at)}</span>
+      </div>
+      <span class="hchip ${custom?'hchip-cust':'hchip-def'}"><i class="ti ti-alarm" style="font-size:.8rem"></i> Entrega: ${hora}</span>
+      ${p.nota?`<div style="font-size:.74rem;color:var(--texto-s);margin-top:6px;display:flex;align-items:center;gap:3px"><i class="ti ti-note" style="font-size:.8rem"></i>${p.nota}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+async function verAdminPed(pedId){
+  let p=null;let usrs=[];
+  try{const{data}=await sb.from('pedidos').select('*').eq('id',pedId).single();p=data;}catch(e){}
+  if(!p)return;
+  try{const{data}=await sb.from('usuarios').select('id,nombre,apellido,telefono');if(data)usrs=data;}catch(e){}
+  const u=usrs.find(x=>x.telefono===p.usuario_tel);
+  const esA=p.estado!=='entregado'&&p.estado!=='cancelado';
+  const{hora,custom}=horaEstimada(p);
+  document.getElementById('admin-ped-det').innerHTML=`
+    <div class="mhdr"><div><span class="apid">#${p.id}</span><div style="margin-top:3px"><span class="hchip ${custom?'hchip-cust':'hchip-def'}"><i class="ti ti-alarm" style="font-size:.8rem"></i> Entrega: ${hora}</span></div></div>${estadoBadge(p.estado)}<button class="closebtn" style="margin-left:8px" onclick="cerrarOvById('ov-admin-ped')"><i class="ti ti-x"></i></button></div>
+    <div style="background:var(--crema);border-radius:10px;padding:11px;margin-bottom:12px;cursor:pointer;border:1px solid var(--borde)" onclick="verAdminUsr('${p.usuario_tel}')">
+      <div style="display:flex;align-items:center;gap:9px">
+        <div style="width:34px;height:34px;border-radius:50%;background:var(--beige-dark);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--cafe-dark);flex-shrink:0">${u?u.nombre[0]:'?'}</div>
+        <div style="flex:1"><div style="font-size:.88rem;font-weight:500">${u?u.nombre+' '+(u.apellido||''):'Desconocido'}</div><div style="font-size:.78rem;color:var(--cafe);display:flex;align-items:center;gap:3px"><i class="ti ti-phone" style="font-size:.82rem"></i>${p.usuario_tel.slice(0,4)+' '+p.usuario_tel.slice(4)}</div></div>
+        <i class="ti ti-chevron-right" style="color:var(--texto-ms)"></i>
+      </div>
+    </div>
+    ${p.es_domicilio?`<div style="background:var(--exbg);border-radius:8px;padding:9px 12px;margin-bottom:10px;font-size:.84rem;color:var(--ex);display:flex;align-items:flex-start;gap:6px"><i class="ti ti-truck" style="font-size:1rem;flex-shrink:0"></i><div><strong>Domicilio:</strong> ${p.dir_domicilio||''}${p.maps_domicilio?`<br><a href="${p.maps_domicilio}" target="_blank" style="color:var(--ex);font-size:.78rem">Ver en Maps</a>`:''}</div></div>`:''}
+    <div style="margin-bottom:12px">
+      <div class="stitle" style="margin-bottom:6px">Productos — toca para ver detalles</div>
+      ${p.productos.map(pr=>`<div class="aprow" onclick="verProd(${pr.id},'ov-admin-prod-det','admin-prod-det-cont')">
+        ${esA?`<span class="qchip">${pr.cantidad}</span>`:`<span style="font-size:.82rem;color:var(--texto-ms);font-weight:600;flex-shrink:0">×${pr.cantidad}</span>`}
+        <div style="flex:1"><div style="font-size:.88rem;font-weight:500">${pr.nombre}${pr.noDisponible?'<span class="badge b-err" style="margin-left:5px;font-size:.64rem">No disp.</span>':''}</div><div style="font-size:.76rem;color:var(--texto-s)">${fQ(pr.precio)} c/u · ${fQ(pr.precio*pr.cantidad)}</div></div>
+        <i class="ti ti-info-circle aptap"></i>
+      </div>`).join('')}
+      ${p.nota?`<div style="margin-top:8px;font-size:.82rem;color:var(--texto-s);display:flex;align-items:flex-start;gap:5px;padding:6px 0 0"><i class="ti ti-note" style="flex-shrink:0;margin-top:1px"></i><span><strong>Nota:</strong> ${p.nota}</span></div>`:''}
+      <div style="display:flex;justify-content:space-between;font-weight:700;padding:9px 0"><span>Total</span><span style="color:var(--cafe-dark)">${fQ(p.total)}</span></div>
+    </div>
+    <div class="divider"></div>
+    <div class="stitle" style="margin-bottom:8px">Acciones</div>
+    ${renderAccAdmin(p)}
+  `;
+  abrirOv('ov-admin-ped');
+}
+
+function renderAccAdmin(p){
+  let h='';
+  if(p.estado==='listo')h+=`<button class="abtn" onclick="accEntregado('${p.id}')"><i class="ti ti-checks" style="color:var(--cafe)"></i> Marcar como entregada</button>`;
+  if(p.estado==='pendiente')h+=`<button class="abtn" onclick="accConfirmar('${p.id}')"><i class="ti ti-circle-check" style="color:var(--inf)"></i> Confirmar orden recibida</button>`;
+  if(p.estado!=='listo'&&p.estado!=='entregado'&&p.estado!=='cancelado')h+=`<button class="abtn" onclick="accListo('${p.id}')"><i class="ti ti-package-export" style="color:var(--ex)"></i> Orden lista para recoger</button>`;
+  if(p.estado!=='entregado'&&p.estado!=='cancelado'){
+    h+=`<button class="abtn" onclick="accNoDisp('${p.id}')"><i class="ti ti-package-off" style="color:var(--av)"></i> Productos no disponibles</button>`;
+    h+=`<button class="abtn danger" onclick="accCancelar('${p.id}')"><i class="ti ti-x"></i> Cancelar orden</button>`;
+  }
+  return h;
+}
+
+async function cambiarEstado(pedId,nuevoE){
+  const{data:ped}=await sb.from('pedidos').select('historial_estados').eq('id',pedId).single();
+  const hist=[...(ped?.historial_estados||[]),{estado:nuevoE,fecha:isoGT()}];
+  await sb.from('pedidos').update({estado:nuevoE,historial_estados:hist,updated_at:isoGT()}).eq('id',pedId);
+}
+
+async function accConfirmar(id){
+  try{await cambiarEstado(id,'confirmado');cerrarOvById('ov-admin-ped');renderAdminPedidos();toast('Orden #'+id+' confirmada');}catch(e){toast('Error: '+e.message);}
+}
+
+async function accListo(id){
+  let p=null;try{const{data}=await sb.from('pedidos').select('*').eq('id',id).single();p=data;}catch(e){}
+  if(!p)return;
+  waCtx={pedId:id,nuevoE:'listo'};
+  let usrs=[];try{const{data}=await sb.from('usuarios').select('nombre,telefono');if(data)usrs=data;}catch(e){}
+  const u=usrs.find(x=>x.telefono===p.usuario_tel);
+  document.getElementById('wa-msg').value=`¡Hola, ${u?u.nombre:'cliente'}! Su orden #${p.id} está lista para recoger en el local. Recuerde que tiene 15 minutos para pasar. ¡Le esperamos! 🥐`;
+  document.getElementById('wa-num').textContent=p.usuario_tel.slice(0,4)+' '+p.usuario_tel.slice(4);
+  abrirOv('ov-wa');
+}
+
+async function accNoDisp(id){
+  let p=null;try{const{data}=await sb.from('pedidos').select('*').eq('id',id).single();p=data;}catch(e){}
+  if(!p)return;
+  waCtx={pedId:id,nuevoE:null,noDispIds:[]};
+  document.getElementById('nodisp-lista').innerHTML=p.productos.map(pr=>`<label class="pcheck"><input type="checkbox" value="${pr.id}" style="width:auto;margin:0;width:16px;height:16px;accent-color:var(--cafe)"><span style="font-size:.87rem">${pr.nombre}</span></label>`).join('');
+  abrirOv('ov-nodisp');
+}
+
+async function armarMsgNoDisp(){
+  const checks=document.querySelectorAll('#nodisp-lista input:checked');
+  if(!checks.length){toast('Seleccione al menos un producto');return;}
+  let p=null;try{const{data}=await sb.from('pedidos').select('*').eq('id',waCtx.pedId).single();p=data;}catch(e){}if(!p)return;
+  let usrs=[];try{const{data}=await sb.from('usuarios').select('nombre,telefono');if(data)usrs=data;}catch(e){}
+  const u=usrs.find(x=>x.telefono===p.usuario_tel);const nom=u?u.nombre:'cliente';
+  const sel=Array.from(checks).map(c=>{const pr=p.productos.find(x=>x.id==c.value);return pr?.nombre||'';}).filter(Boolean);
+  waCtx.noDispIds=Array.from(checks).map(c=>parseInt(c.value));
+  const todos=waCtx.noDispIds.length===p.productos.length;
+  if(todos){waCtx.nuevoE='cancelado';document.getElementById('wa-msg').value=`¡Hola, ${nom}! Lamentablemente ninguno de los productos de su orden #${p.id} está disponible:\n\n- ${sel.join('\n- ')}\n\nPor esta razón, su orden ha sido cancelada. Disculpe los inconvenientes.`;}
+  else{waCtx.nuevoE=null;document.getElementById('wa-msg').value=`¡Hola, ${nom}! Algunos productos de su orden #${p.id} no están disponibles:\n\n- ${sel.join('\n- ')}\n\n¿Desea proceder con el resto o prefiere cancelarla?`;}
+  document.getElementById('wa-num').textContent=p.usuario_tel.slice(0,4)+' '+p.usuario_tel.slice(4);
+  cerrarOvById('ov-nodisp');abrirOv('ov-wa');
+}
+
+async function accCancelar(id){
+  let p=null;try{const{data}=await sb.from('pedidos').select('*').eq('id',id).single();p=data;}catch(e){}if(!p)return;
+  let usrs=[];try{const{data}=await sb.from('usuarios').select('nombre,telefono');if(data)usrs=data;}catch(e){}
+  const u=usrs.find(x=>x.telefono===p.usuario_tel);const nom=u?u.nombre:'cliente';
+  waCtx={pedId:id,nuevoE:'cancelado'};
+  document.getElementById('wa-msg').value=`¡Hola, ${nom}! Lamentablemente su orden #${p.id} fue cancelada. Si tiene consultas, puede comunicarse con nosotros. Disculpe los inconvenientes.`;
+  document.getElementById('wa-num').textContent=p.usuario_tel.slice(0,4)+' '+p.usuario_tel.slice(4);
+  abrirOv('ov-wa');
+}
+
+async function accEntregado(id){
+  try{await cambiarEstado(id,'entregado');cerrarOvById('ov-admin-ped');renderAdminPedidos();toast('Orden marcada como entregada');}catch(e){toast('Error: '+e.message);}
+}
+
+async function doEnvioWA(){
+  ld('btn-wa-send',true);
+  try{
+    const msg=document.getElementById('wa-msg').value;
+    if(waCtx.nuevoE)await cambiarEstado(waCtx.pedId,waCtx.nuevoE);
+    if(waCtx.noDispIds?.length){
+      const{data:ped}=await sb.from('pedidos').select('productos').eq('id',waCtx.pedId).single();
+      if(ped){const ps=ped.productos.map(pr=>({...pr,noDisponible:waCtx.noDispIds.includes(pr.id)?true:pr.noDisponible}));await sb.from('pedidos').update({productos:ps,updated_at:isoGT()}).eq('id',waCtx.pedId);}
+    }
+    if(waCtx.nuevoE==='listo')playReady();
+    const{data:ped}=await sb.from('pedidos').select('usuario_tel').eq('id',waCtx.pedId).single();
+    if(ped)window.open(`https://wa.me/502${ped.usuario_tel}?text=${encodeURIComponent(msg)}`,'_blank');
+    cerrarOvById('ov-wa');cerrarOvById('ov-admin-ped');renderAdminPedidos();toast('WhatsApp abierto · estado actualizado');
+  }catch(e){toast('Error: '+e.message);}
+  ld('btn-wa-send',false);
+}
+
+// ── ADMIN HISTORIAL ──────────────────────────────────
+async function renderAdminHistorial(){
+  const lista=document.getElementById('admin-hist-lista');
+  const q=((document.getElementById('hist-search')||{}).value||'').toLowerCase().trim();
+  lista.innerHTML='<div class="ldwrap"><div class="sp"></div></div>';
+  let all=[];let usrs=[];
+  try{const{data}=await sb.from('pedidos').select('*').order('created_at',{ascending:false});if(data)all=data;}catch(e){}
+  try{const{data}=await sb.from('usuarios').select('id,nombre,apellido,telefono');if(data)usrs=data;}catch(e){}
+  if(q)all=all.filter(p=>{const u=usrs.find(x=>x.telefono===p.usuario_tel);return p.id.toLowerCase().includes(q)||(u&&(u.nombre.toLowerCase().includes(q)||u.apellido?.toLowerCase().includes(q)))||p.usuario_tel.includes(q);});
+  if(!all.length){lista.innerHTML='<div class="empty"><i class="ti ti-history"></i><p>'+(q?'Sin resultados':'Sin órdenes aún')+'</p></div>';return;}
+  lista.innerHTML=`<p style="font-size:.78rem;color:var(--texto-ms);margin-bottom:10px">${all.length} orden(es)</p>`+all.map(p=>{
+    const u=usrs.find(x=>x.telefono===p.usuario_tel);
+    const{hora,custom}=horaEstimada(p);
+    return`<div class="hitem" style="cursor:pointer" onclick="verAdminPed('${p.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div style="display:flex;align-items:center;gap:7px"><span style="font-weight:700;color:var(--cafe-dark)">#${p.id}</span>${estadoBadge(p.estado)}</div><span style="font-weight:700;color:var(--cafe-dark)">${fQ(p.total)}</span></div>
+      <div style="font-size:.81rem;font-weight:500;color:var(--texto-s);margin-bottom:3px">${u?u.nombre+' '+(u.apellido||''):'Cliente'}</div>
+      <div style="font-size:.75rem;color:var(--texto-ms);margin-bottom:4px">${fmtFecha(p.created_at)} · ${fmtHora(p.created_at)}</div>
+      <div>${p.productos.map(pr=>`<span style="font-size:.73rem;color:var(--texto-s)">${pr.nombre} ×${pr.cantidad}</span>`).join(' · ')}</div>
+      ${p.nota?`<div style="font-size:.73rem;color:var(--texto-ms);margin-top:4px;display:flex;align-items:center;gap:3px"><i class="ti ti-note" style="font-size:.8rem"></i>${p.nota}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ── ADMIN PRODUCTOS ──────────────────────────────────
+async function renderAdminProductos(){
+  const lista=document.getElementById('admin-prod-lista');
+  lista.innerHTML='<div class="ldwrap"><div class="sp"></div></div>';
+  await cargarProductos();
+  if(!prods.length){lista.innerHTML='<div class="empty"><i class="ti ti-bread"></i><p>Sin productos aún</p></div>';return;}
+  lista.innerHTML=prods.map(p=>`
+    <div class="apcard" style="display:flex;align-items:center;gap:10px">
+      <div style="width:40px;height:40px;border-radius:9px;background:var(--beige);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">
+        ${p.imagen?`<img src="${p.imagen}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentNode.innerHTML='<i class=\\'ti ${catIco(p.categoria)}\\' style=\\'font-size:1.1rem;color:var(--cafe-light)\\'></i>'">`:`<i class="ti ${catIco(p.categoria)}" style="font-size:1.1rem;color:var(--cafe-light)"></i>`}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.87rem;font-weight:500">${p.nombre}${p.bloqueado?'<span class="badge b-err" style="margin-left:4px;font-size:.64rem">Bloqueado</span>':''}${!prodEstaDisp(p)&&!p.bloqueado?'<span class="badge b-w" style="margin-left:4px;font-size:.64rem">No disp. ahora</span>':''}</div>
+        <div style="font-size:.76rem;color:var(--texto-s)">${p.categoria}${p.subcategoria?' · '+p.subcategoria:''} · ${fQ(p.precio)}</div>
+        ${p.extra?`<div style="font-size:.7rem;color:var(--av);margin-top:1px;display:flex;align-items:center;gap:2px"><i class="ti ti-clock" style="font-size:.72rem"></i>${p.extra}</div>`:''}
+      </div>
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        <button class="btn-icon" style="width:34px;height:34px;color:${p.bloqueado?'var(--pel)':'var(--cafe-light)'}" onclick="toggleBlqProd(${p.id})" title="${p.bloqueado?'Desbloquear':'Bloquear'}"><i class="ti ti-${p.bloqueado?'lock-open':'lock'}" style="font-size:.9rem"></i></button>
+        <button class="btn-icon" style="width:34px;height:34px" onclick="abrirFormProd(${p.id})"><i class="ti ti-edit" style="font-size:.9rem"></i></button>
+        <button class="btn-icon" style="width:34px;height:34px;color:var(--pel)" onclick="elimProd(${p.id})"><i class="ti ti-trash" style="font-size:.9rem"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+async function toggleBlqProd(id){
+  const p=prods.find(x=>x.id===id);if(!p)return;
+  try{await sb.from('productos').update({bloqueado:!p.bloqueado,updated_at:isoGT()}).eq('id',id);toast(p.bloqueado?'Producto desbloqueado':'Producto bloqueado');renderAdminProductos();}catch(e){toast('Error: '+e.message);}
+}
+
+// ── DROPDOWNS CATEGORÍA / SUBCATEGORÍA ──────────────
+let catDDOpen=false,subcatDDOpen=false;
+function toggleCatDD(){catDDOpen=!catDDOpen;apDDState('cat',catDDOpen);if(catDDOpen){renderDDOpts('cat',getCats(),'cat-opts','fp-cat');document.getElementById('cat-new-inp').value='';}}
+function toggleSubcatDD(){subcatDDOpen=!subcatDDOpen;apDDState('subcat',subcatDDOpen);if(subcatDDOpen){renderDDOpts('subcat',getAllSubcats(),'subcat-opts','fp-subcat');document.getElementById('subcat-new-inp').value='';}}
+
+function apDDState(tipo,open){
+  const btn=document.getElementById(tipo+'-btn');const list=document.getElementById(tipo+'-ddlist');
+  btn.classList.toggle('open',open);list.classList.toggle('open',open);
+}
+function renderDDOpts(tipo,opts,optsDivId,hiddenId){
+  const sel=document.getElementById(hiddenId).value;
+  document.getElementById(optsDivId).innerHTML=(tipo==='subcat'?'<div class="cdi" onclick="selDD(\'subcat\',\'\',\'fp-subcat\',\'subcat-btn-txt\')">Sin sub-categoría</div>':'')+opts.map(c=>`<div class="cdi${c===sel?' sel':''}" onclick="selDD('${tipo}','${c}','fp-${tipo==='cat'?'cat':'subcat'}','${tipo}-btn-txt')">${c}</div>`).join('');
+}
+function selDD(tipo,val,hiddenId,btnTxtId){
+  document.getElementById(hiddenId).value=val;
+  document.getElementById(btnTxtId).textContent=val||'Sin sub-categoría';
+  document.getElementById(btnTxtId).style.color=val?'var(--texto)':'var(--texto-ms)';
+  apDDState(tipo,false);if(tipo==='cat')catDDOpen=false;else subcatDDOpen=false;
+}
+function crearCatNueva(tipo){
+  const inp=document.getElementById(tipo==='cat'?'cat-new-inp':'subcat-new-inp');
+  const v=inp.value.trim();if(!v)return;
+  selDD(tipo,v,`fp-${tipo==='cat'?'cat':'subcat'}`,`${tipo}-btn-txt`);
+  inp.value='';
+}
+document.addEventListener('click',e=>{
+  if(catDDOpen&&!document.querySelector('.cdw')?.contains(e.target)){catDDOpen=false;apDDState('cat',false);}
+  if(subcatDDOpen){const dds=document.querySelectorAll('.cdw');let inside=false;dds.forEach(d=>{if(d.contains(e.target))inside=true;});if(!inside){subcatDDOpen=false;apDDState('subcat',false);}}
+});
+
+// ── BLOQUEO PROGRAMADO ──────────────────────────────
+function addProgBlock(tipo){
+  // Solo 1 regla de días permitida
+  if(tipo==='dias'&&progBlocks.some(r=>r.tipo==='dias')){toast('Ya existe una regla de días. Edítala o elimínala.');return;}
+  progBlocks.push(tipo==='dias'?{tipo:'dias',dias:[]}:{tipo:'horas',desde:'09:00',hasta:'18:00'});
+  renderPB();
+}
+function renderPB(){
+  const c=document.getElementById('pb-lista');if(!c)return;
+  const dias=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  c.innerHTML=progBlocks.map((r,i)=>`
+    <div class="pb-row">
+      ${r.tipo==='dias'?`<div style="flex:1"><div style="font-size:.78rem;color:var(--texto-s);margin-bottom:6px">Días bloqueados:</div><div style="display:flex;gap:4px;flex-wrap:wrap">${dias.map((d,di)=>`<button onclick="toggleDia(${i},${di})" style="padding:3px 7px;border-radius:6px;border:1.5px solid var(--bordeF);background:${(r.dias||[]).includes(di)?'var(--cafe)':'var(--blanco)'};color:${(r.dias||[]).includes(di)?'#fff':'var(--cafe)'};font-size:.75rem;cursor:pointer">${d}</button>`).join('')}</div></div>`
+      :`<div style="flex:1">
+          <div style="font-size:.78rem;color:var(--texto-s);margin-bottom:6px">Rango de horas:</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span style="font-size:.82rem">Desde:</span>
+            <button class="btn btn-sm" onclick="abrirTpBlk(h=>{ progBlocks[${i}].desde=h;renderPB(); },'Hora inicio')" style="min-width:70px">${r.desde}</button>
+            <span style="font-size:.82rem">Hasta:</span>
+            <button class="btn btn-sm" onclick="abrirTpBlk(h=>{ progBlocks[${i}].hasta=h;renderPB(); },'Hora fin')" style="min-width:70px">${r.hasta}</button>
+          </div>
+        </div>`}
+      <button onclick="progBlocks.splice(${i},1);renderPB()" style="width:28px;height:28px;border-radius:50%;border:none;background:var(--pelbg);color:var(--pel);cursor:pointer;flex-shrink:0;font-size:1rem;display:flex;align-items:center;justify-content:center"><i class="ti ti-x"></i></button>
+    </div>`).join('');
+}
+function toggleDia(ri,di){const r=progBlocks[ri];if(!r.dias)r.dias=[];const i=r.dias.indexOf(di);if(i>=0)r.dias.splice(i,1);else r.dias.push(di);renderPB();}
+
+function abrirFormProd(id){
+  fpMode=id;catDDOpen=false;subcatDDOpen=false;progBlocks=[];
+  if(id){
+    const p=prods.find(x=>x.id===id);if(!p)return;
+    document.getElementById('fprod-titulo').textContent='Editar producto';
+    document.getElementById('fp-id').value=id;document.getElementById('fp-nombre').value=p.nombre;
+    document.getElementById('fp-cat').value=p.categoria;document.getElementById('cat-btn-txt').textContent=p.categoria;document.getElementById('cat-btn-txt').style.color='var(--texto)';
+    document.getElementById('fp-subcat').value=p.subcategoria||'';document.getElementById('subcat-btn-txt').textContent=p.subcategoria||'Sin sub-categoría';document.getElementById('subcat-btn-txt').style.color=p.subcategoria?'var(--texto)':'var(--texto-ms)';
+    document.getElementById('fp-precio').value=p.precio;document.getElementById('fp-imagen').value=p.imagen||'';
+    document.getElementById('fp-detalles').value=p.detalles||'';document.getElementById('fp-extra').value=p.extra||'';
+    progBlocks=Array.isArray(p.bloqueo_prog)?JSON.parse(JSON.stringify(p.bloqueo_prog)):[];
+  }else{
+    document.getElementById('fprod-titulo').textContent='Agregar producto';
+    ['fp-id','fp-nombre','fp-cat','fp-subcat','fp-precio','fp-imagen','fp-detalles','fp-extra'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+    document.getElementById('cat-btn-txt').textContent='Seleccionar categoría';document.getElementById('cat-btn-txt').style.color='var(--texto-ms)';
+    document.getElementById('subcat-btn-txt').textContent='Sin sub-categoría';document.getElementById('subcat-btn-txt').style.color='var(--texto-ms)';
+  }
+  apDDState('cat',false);apDDState('subcat',false);renderPB();
+  abrirOv('ov-form-prod');
+}
+
+async function guardarProducto(){
+  const n=document.getElementById('fp-nombre').value.trim();
+  const c=document.getElementById('fp-cat').value.trim();
+  const pr=parseFloat(document.getElementById('fp-precio').value);
+  const sc=document.getElementById('fp-subcat').value.trim();
+  const img=document.getElementById('fp-imagen').value.trim();
+  const det=document.getElementById('fp-detalles').value;
+  const ext=document.getElementById('fp-extra').value.trim();
+  if(!n||!c||isNaN(pr)){toast('Complete los campos obligatorios');return;}
+  ld('btn-save-prod',true);
+  try{
+    const datos={nombre:n,categoria:c,subcategoria:sc||null,precio:pr,imagen:img,detalles:det,extra:ext,bloqueo_prog:progBlocks,updated_at:isoGT()};
+    if(fpMode){await sb.from('productos').update(datos).eq('id',fpMode);toast('Producto actualizado');}
+    else{datos.created_at=isoGT();datos.bloqueado=false;datos.clicks_vista=0;datos.clicks_carrito=0;datos.clicks_orden=0;await sb.from('productos').insert(datos);toast('Producto agregado');}
+    cerrarOvById('ov-form-prod');await renderAdminProductos();renderFiltros();
+  }catch(e){toast('Error: '+e.message);}
+  ld('btn-save-prod',false);
+}
+
+async function elimProd(id){
+  if(!confirm('¿Eliminar este producto?'))return;
+  try{await sb.from('productos').delete().eq('id',id);toast('Producto eliminado');renderAdminProductos();}catch(e){toast('Error: '+e.message);}
+}
+
+// ── ADMIN USUARIOS ───────────────────────────────────
+async function renderAdminUsrs(){
+  const lista=document.getElementById('admin-usr-lista');
+  lista.innerHTML='<div class="ldwrap"><div class="sp"></div></div>';
+  let usrs=[];try{const{data}=await sb.from('usuarios').select('*').order('created_at',{ascending:false});if(data)usrs=data;}catch(e){}
+  lista.innerHTML=`<p style="font-size:.78rem;color:var(--texto-ms);margin-bottom:9px">${usrs.length} cliente(s)</p>`+usrs.map(u=>{
+    const advc=getAdvc(u);const cl=u.bloqueado?'uav-b':advc>0?'uav-w':'';
+    return`<div class="urow" onclick="verAdminUsr('${u.telefono}')">
+      <div class="uav ${cl}">${u.nombre[0]}${u.apellido?u.apellido[0]:''}</div>
+      <div style="flex:1"><div style="font-size:.87rem;font-weight:500;display:flex;align-items:center;gap:5px">${u.nombre} ${u.apellido||''}${u.bloqueado?'<i class="ti ti-lock" style="font-size:.85rem;color:var(--pel)"></i>':''}${u.rol==='admin'?'<span class="badge b-i" style="font-size:.62rem">Admin</span>':''}</div><div style="font-size:.76rem;color:var(--cafe);display:flex;align-items:center;gap:3px"><i class="ti ti-phone" style="font-size:.8rem"></i>${u.telefono.slice(0,4)+' '+u.telefono.slice(4)}</div></div>
+      <div style="text-align:right"><div style="font-size:.7rem;color:var(--texto-ms)">${fmtFecha(u.created_at)}</div>${advc?`<span class="badge b-err" style="margin-top:2px"><i class="ti ti-alert-triangle" style="font-size:.72rem"></i>${advc}</span>`:''}</div>
+    </div>`;
+  }).join('');
+}
+
+async function verAdminUsr(tel){
+  let u=null;let peds=[];
+  try{const{data}=await sb.from('usuarios').select('*').eq('telefono',tel).single();u=data;}catch(e){}if(!u)return;
+  try{const{data}=await sb.from('pedidos').select('*').eq('usuario_tel',tel).order('created_at',{ascending:false});if(data)peds=data;}catch(e){}
+  const advc=getAdvc(u);const telId=tel.replace(/\s/g,'');
+  document.getElementById('admin-usr-det').innerHTML=`
+    <div class="mhdr"><span class="mtitle">${u.nombre} ${u.apellido||''}</span><button class="closebtn" onclick="cerrarOvById('ov-admin-usr')"><i class="ti ti-x"></i></button></div>
+    <div style="text-align:center;padding:0 0 14px">
+      <div class="pavatar">${u.nombre[0]}${u.apellido?u.apellido[0]:''}</div>
+      <div class="pnombre">${u.nombre} ${u.apellido||''}</div>
+      <div class="ptel"><i class="ti ti-phone" style="font-size:.88rem"></i>${u.telefono.slice(0,4)+' '+u.telefono.slice(4)}</div>
+      ${u.rol==='admin'?'<span class="badge b-i" style="margin-top:5px">Admin</span>':''}
+    </div>
+    ${u.bloqueado?`<div class="blk-bann"><i class="ti ti-lock"></i><div><p style="font-weight:600;margin-bottom:2px">Cuenta bloqueada</p><p>${u.msg_bloqueo||'Sin mensaje.'}</p></div></div>`:''}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0">
+      <div class="rcrd"><div class="rcrd-n">${peds.length}</div><div class="rcrd-l">Órdenes</div></div>
+      <div class="rcrd"><div class="rcrd-n">${advc}</div><div class="rcrd-l">Advertencias</div></div>
+      <div class="rcrd"><div class="rcrd-n">${u.visitas||0}</div><div class="rcrd-l">Visitas</div></div>
+    </div>
+    ${u.direccion?`<div style="font-size:.84rem;color:var(--texto-s);margin-bottom:3px;display:flex;align-items:center;gap:5px"><i class="ti ti-map-pin" style="font-size:.92rem"></i>${u.direccion}</div>`:''}
+    ${u.maps_link?`<a href="${u.maps_link}" target="_blank" style="font-size:.8rem;color:var(--cafe);display:flex;align-items:center;gap:4px;margin-bottom:8px;text-decoration:none"><i class="ti ti-external-link" style="font-size:.88rem"></i>Ver en Google Maps</a>`:''}
+    <div style="font-size:.72rem;color:var(--texto-ms);margin-bottom:8px">Registro: ${fmtFecha(u.created_at)} · Última conexión: ${u.ultima_conexion?fmtFecha(u.ultima_conexion):'N/A'} · Clicks: ${u.clicks||0}</div>
+    <div class="divider"></div>
+    <div class="stitle" style="margin-bottom:8px">Gestión de cuenta</div>
+    <div style="display:flex;gap:6px;margin-bottom:8px">
+      <button class="btn btn-sm btn-danger" onclick="abrirAdvNota('${tel}')" style="flex:1"><i class="ti ti-alert-triangle"></i> Agregar advertencia</button>
+      ${advc>0?`<button class="btn btn-sm" onclick="quitarAdv('${tel}')" style="flex:1"><i class="ti ti-minus"></i> Quitar advertencia</button>`:''}
+    </div>
+    ${advc>0&&Array.isArray(u.advertencias)?`<div style="margin-bottom:10px"><div class="stitle" style="margin-bottom:6px">Notas de advertencias</div>${u.advertencias.map((a,i)=>`<div style="font-size:.8rem;color:var(--texto-s);padding:5px 8px;background:var(--avbg);border-radius:6px;margin-bottom:4px"><span style="font-weight:600;color:var(--av)">#${i+1}</span>${a.nota?' — '+a.nota:' (sin nota)'}</div>`).join('')}</div>`:''}
+    ${u.bloqueado
+      ?`<button class="abtn" onclick="pedirDesbloquear('${tel}')"><i class="ti ti-lock-open" style="color:var(--ex)"></i> Desbloquear cuenta</button>`
+      :`<button class="abtn danger" onclick="abrirFrmBlq('${telId}')"><i class="ti ti-lock"></i> Bloquear cuenta</button>`}
+    <div id="frm-blq-${telId}" style="display:none;border:1px solid var(--borde);border-radius:10px;padding:12px;margin-bottom:8px">
+      <div class="fg" style="margin-bottom:8px"><label>Mensaje para el usuario</label><textarea id="msg-blq-${telId}" placeholder="Ej: Múltiples incumplimientos" rows="2">${u.msg_bloqueo||''}</textarea></div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm" style="flex:1" onclick="document.getElementById('frm-blq-${telId}').style.display='none'">Cancelar</button>
+        <button class="btn btn-sm btn-danger" style="flex:2" id="btn-blq-${telId}" onclick="bloquearUsr('${tel}','${telId}')"><span class="lbl"><i class="ti ti-lock"></i> Confirmar bloqueo</span><div class="bsp"></div></button>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="stitle" style="margin-bottom:8px">Historial</div>
+    ${peds.map(p=>`<div class="hitem"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;color:var(--cafe-dark)">#${p.id}</span>${estadoBadge(p.estado)}</div><div style="font-size:.78rem;color:var(--texto-s);margin-top:2px">${fQ(p.total)} · ${fmtFecha(p.created_at)}</div><div style="margin-top:4px">${p.productos.map(pr=>`<span style="font-size:.73rem;color:var(--texto-s)">${pr.nombre} ×${pr.cantidad}</span>`).join(' · ')}</div></div>`).join('')||'<p style="font-size:.84rem;color:var(--texto-ms)">Sin órdenes</p>'}
+  `;
+  abrirOv('ov-admin-usr');
+}
+
+function abrirAdvNota(tel){advTel=tel;const i=document.getElementById('adv-nota');if(i)i.value='';abrirOv('ov-adv-nota');}
+async function confirmarAdv(){
+  const{data}=await sb.from('usuarios').select('advertencias').eq('telefono',advTel).single();
+  const adv=Array.isArray(data?.advertencias)?[...data.advertencias]:[];
+  const nota=(document.getElementById('adv-nota')||{}).value?.trim()||'';
+  adv.push({nota,fecha:isoGT()});
+  ld('btn-adv-ok',true);
+  try{await sb.from('usuarios').update({advertencias:adv,updated_at:isoGT()}).eq('telefono',advTel);cerrarOvById('ov-adv-nota');toast('Advertencia agregada');verAdminUsr(advTel);}catch(e){toast('Error: '+e.message);}
+  ld('btn-adv-ok',false);
+}
+async function quitarAdv(tel){
+  const{data}=await sb.from('usuarios').select('advertencias').eq('telefono',tel).single();
+  const adv=Array.isArray(data?.advertencias)?[...data.advertencias]:[];
+  if(adv.length>0)adv.pop();
+  try{await sb.from('usuarios').update({advertencias:adv,updated_at:isoGT()}).eq('telefono',tel);toast('Advertencia eliminada');verAdminUsr(tel);}catch(e){toast('Error: '+e.message);}
+}
+function abrirFrmBlq(telId){const f=document.getElementById('frm-blq-'+telId);if(f)f.style.display=f.style.display==='none'?'block':'none';}
+async function bloquearUsr(tel,telId){
+  const msg=(document.getElementById('msg-blq-'+telId)||{}).value?.trim()||'';
+  ld('btn-blq-'+telId,true);
+  try{await sb.from('usuarios').update({bloqueado:true,msg_bloqueo:msg,updated_at:isoGT()}).eq('telefono',tel);toast('Cuenta bloqueada');verAdminUsr(tel);}catch(e){toast('Error: '+e.message);}
+  ld('btn-blq-'+telId,false);
+}
+function pedirDesbloquear(tel){
+  confirm2('¿Desbloquear cuenta?','El usuario podrá volver a realizar pedidos.','Desbloquear',async()=>{
+    try{await sb.from('usuarios').update({bloqueado:false,updated_at:isoGT()}).eq('telefono',tel);toast('Cuenta desbloqueada');verAdminUsr(tel);}catch(e){toast('Error: '+e.message);}
+  });
+}
+
+// ── ADMIN CONFIG ─────────────────────────────────────
+async function renderAdminCfg(){
+  await cargarCfg();
+  const fb=cfg.funciones_bloqueadas||{};
+  document.getElementById('admin-cfg-content').innerHTML=`
+    <div class="fg"><label>Teléfono de la tienda</label><input type="text" id="cfg-tel" value="${cfg.telefono_tienda||''}"></div>
+    <div class="fg"><label>Términos adicionales</label><textarea id="cfg-term" rows="4">${cfg.terminos_extra||''}</textarea></div>
+    <div class="divider"></div>
+    <div class="stitle" style="margin-bottom:10px">Descripción de estados</div>
+    ${['pendiente','confirmado','listo','entregado','cancelado'].map(k=>`<div class="fg"><label>${k}</label><input type="text" id="cfg-e-${k}" value="${(cfg.estados_info||{})[k]||''}"></div>`).join('')}
+    <div class="divider"></div>
+    <div class="stitle" style="margin-bottom:4px">Funciones de usuarios</div>
+    <p style="font-size:.78rem;color:var(--texto-ms);margin-bottom:10px">Al activar, el usuario verá un mensaje y no podrá usar esa función.</p>
+    ${[['realizar_pedidos','Realizar pedidos'],['hora_recogida','Hora de recogida'],['pedido_domicilio','Pedido a domicilio'],['nota_pedido','Nota para la panadería']].map(([k,l])=>`<div class="trow"><span class="tlbl">${l}</span><label class="tswitch"><input type="checkbox" id="tog-${k}" ${fb[k]?'checked':''} onchange="saveFnBlq('${k}',this.checked)"><span class="tslider"></span></label></div>`).join('')}
+    <button class="btn btn-primary" style="width:100%;margin-top:14px" id="btn-save-cfg" onclick="guardarCfgAdmin()"><span class="lbl"><i class="ti ti-device-floppy"></i> Guardar configuración</span><div class="bsp"></div></button>
+  `;
+}
+
+async function saveFnBlq(k,v){const fb={...(cfg.funciones_bloqueadas||{})};fb[k]=v;await saveCfg('funciones_bloqueadas',fb);}
+
+async function guardarCfgAdmin(){
+  ld('btn-save-cfg',true);
+  try{
+    const tel=document.getElementById('cfg-tel').value.replace(/\D/g,'');
+    const term=document.getElementById('cfg-term').value;
+    const estados={};['pendiente','confirmado','listo','entregado','cancelado'].forEach(k=>{const el=document.getElementById('cfg-e-'+k);if(el)estados[k]=el.value;});
+    await saveCfg('telefono_tienda',tel);await saveCfg('terminos_extra',term);await saveCfg('estados_info',estados);
+    actTerminos();toast('Configuración guardada');
+  }catch(e){toast('Error: '+e.message);}
+  ld('btn-save-cfg',false);
+}
+</script>
 </body>
 </html>
-
